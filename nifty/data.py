@@ -1,10 +1,12 @@
 from django.utils.translation import gettext_lazy as _
 
 from .models import Setting
+
+
 # from ..data import load_general_setting_stores, load_theme_setting_stores, load_themes_stores
 
 def load_admin_setting_stores(user_id=None):
-    #Setting = apps.get_model("nifty", "Setting")
+    # Setting = apps.get_model("nifty", "Setting")
 
     admin_site_title = Setting(
         user_id=user_id,
@@ -30,7 +32,7 @@ def load_admin_setting_stores(user_id=None):
         user_id=user_id,
         name=_('Favicon'),
         value='admin_site_favicon',
-        content='/static/nifty/img/favicon.png',
+        content='/static/niftyv2/img/favicon.png',
         type='admin',
         autoload='yes'
     )
@@ -41,7 +43,7 @@ def load_admin_setting_stores(user_id=None):
         user_id=user_id,
         name=_('Logo'),
         value='admin_site_logo',
-        content='/static/nifty/img/logo.png',
+        content='/static/niftyv2/img/logo.png',
         type='admin',
         autoload='yes'
     )
@@ -90,9 +92,8 @@ def load_admin_setting_stores(user_id=None):
     admin_address.save()
 
 
-
 def load_site_setting_stores(user_id=None):
-    #Setting = apps.get_model("nifty", "Setting")
+    # Setting = apps.get_model("nifty", "Setting")
 
     site_title = Setting(
         user_id=user_id,
@@ -226,13 +227,13 @@ def load_site_setting_stores(user_id=None):
 
 
 def load_admin_theme_setting_stores(user_id=None):
-    #Setting = apps.get_model("nifty", "Setting")
+    # Setting = apps.get_model("nifty", "Setting")
 
     admin_colpase_menu = Setting(
         user_id=user_id,
         name=_('Navigation Collapsed Mode'),
         value='admin_colpase_menu',
-        content='mainnav-lg',
+        content='mn--max',
         type='admin_theme',
         autoload='yes'
     )
@@ -242,177 +243,27 @@ def load_admin_theme_setting_stores(user_id=None):
         user_id=user_id,
         name=_('Navbar Fixed Position'),
         value='admin_navbar_fixed',
-        content='navbar-fixed',
+        content='mn--sticky',
         type='admin_theme',
         autoload='yes'
     )
     admin_navbar_fixed.save()
 
-    admin_navbar_show_menu = Setting(
-        user_id=user_id,
-        name=_('Navbar Show Menu'),
-        value='admin_navbar_show_menu',
-        content='',
-        type='admin_theme',
-        autoload='yes'
-    )
-    admin_navbar_show_menu.save()
-
-    admin_navbar_show_usermenu = Setting(
-        user_id=user_id,
-        name=_('Navbar Show User Menu'),
-        value='admin_navbar_show_usermenu',
-        content='nav-user-menu',
-        type='admin_theme',
-        autoload='yes'
-    )
-    admin_navbar_show_usermenu.save()
-
-    admin_mainnav_show_menu = Setting(
-        user_id=user_id,
-        name=_('Navigation Show Menu'),
-        value='admin_nav_show_menu',
-        content='nav-show-menu',
-        type='admin_theme',
-        autoload='yes'
-    )
-    admin_mainnav_show_menu.save()
-
-    admin_mainnav_fixed = Setting(
-        user_id=user_id,
-        name=_('Navigation Fixed Position'),
-        value='admin_mainnav_fixed',
-        content='mainnav-fixed',
-        type='admin_theme',
-        autoload='yes'
-    )
-    admin_mainnav_fixed.save()
-
-    admin_footer_fixed = Setting(
-        user_id=user_id,
-        name=_('Footer Fixed Position'),
-        value='admin_footer_fixed',
-        content='',
-        type='admin_theme',
-        autoload='yes'
-    )
-    admin_footer_fixed.save()
-
-    admin_mainnav_offcanvas = Setting(
-        user_id=user_id,
-        name=_('Navigation Off Canvas'),
-        value='admin_mainnav_offcanvas',
-        content='none',
-        type='admin_theme',
-        autoload='yes'
-    )
-    admin_mainnav_offcanvas.save()
-
-    admin_mainnav_profile = Setting(
-        user_id=user_id,
-        name=_('Navigation Widget Profil'),
-        value='admin_mainnav_profile',
-        content='',
-        type='admin_theme',
-        autoload='yes'
-    )
-    admin_mainnav_profile.save()
-
-    admin_mainnav_shortcut = Setting(
-        user_id=user_id,
-        name=_('Navigation Shortcut Buttons'),
-        value='admin_mainnav_shortcut',
-        content='hidden',
-        type='admin_theme',
-        autoload='yes'
-    )
-    admin_mainnav_shortcut.save()
-
     admin_theme_animation = Setting(
         user_id=user_id,
         name=_('Theme Animations'),
         value='admin_theme_animation',
-        content='effect',
+        content='out-back',
         type='admin_theme',
         autoload='yes'
     )
     admin_theme_animation.save()
 
-    admin_enable_theme_animation = Setting(
-        user_id=user_id,
-        name=_('Enable Theme Animations'),
-        value='admin_enable_theme_animation',
-        content='effect',
-        type='admin_theme',
-        autoload='yes'
-    )
-    admin_enable_theme_animation.save()
-
-    admin_hide_aside = Setting(
-        user_id=user_id,
-        name=_('Hide Aside In Menu'),
-        value='admin_hide_aside',
-        content='aside-hide',
-        type='admin_theme',
-        autoload='yes'
-    )
-    admin_hide_aside.save()
-
-    admin_visible_aside = Setting(
-        user_id=user_id,
-        name=_('Visible Aside'),
-        value='admin_visible_aside',
-        content='',
-        type='admin_theme',
-        autoload='yes'
-    )
-    admin_visible_aside.save()
-
-    admin_fixed_aside = Setting(
-        user_id=user_id,
-        name=_('Aside Fixed Position'),
-        value='admin_fixed_aside',
-        content='aside-fixed',
-        type='admin_theme',
-        autoload='yes'
-    )
-    admin_fixed_aside.save()
-
-    admin_float_aside = Setting(
-        user_id=user_id,
-        name=_('Aside Fload'),
-        value='admin_float_aside',
-        content='aside-float',
-        type='admin_theme',
-        autoload='yes'
-    )
-    admin_float_aside.save()
-
-    admin_left_aside = Setting(
-        user_id=user_id,
-        name=_('Aside Left Position'),
-        value='admin_left_aside',
-        content='',
-        type='admin_theme',
-        autoload='yes'
-    )
-    admin_left_aside.save()
-
-    admin_dark_aside = Setting(
-        user_id=user_id,
-        name=_('Aside Dark Version'),
-        value='admin_dark_aside',
-        content='aside-bright',
-        type='admin_theme',
-        autoload='yes'
-    )
-    admin_dark_aside.save()
-
     admin_color_theme = Setting(
         user_id=user_id,
         name=_('Color Theme'),
         value='admin_color_theme',
-        content='type-d/theme-dark.min.css',
+        content='navy',
         type='admin_theme',
         autoload='yes'
     )
@@ -432,8 +283,128 @@ def load_admin_theme_setting_stores(user_id=None):
         user_id=user_id,
         name=_('Admin Boxed Background'),
         value='admin_boxed_bg',
-        content='',
+        content='/static/niftyv2/premium/boxed-bg/abstract/bg/9.jpg',
         type='admin_theme',
         autoload='yes'
     )
     admin_boxed_bg.save()
+
+    admin_color_modes = Setting(
+        user_id=user_id,
+        name=_('Admin Color Modes'),
+        value='admin_color_modes',
+        content='light',
+        type='admin_theme',
+        autoload='yes'
+    )
+    admin_color_modes.save()
+
+    admin_header_fixed = Setting(
+        user_id=user_id,
+        name=_('Header Fixed Position'),
+        value='admin_header_fixed',
+        content='hd--sticky',
+        type='admin_theme',
+        autoload='yes'
+    )
+    admin_header_fixed.save()
+
+    admin_layout_color_mode = Setting(
+        user_id=user_id,
+        name=_('Layout Color Mode'),
+        value='admin_layout_color_mode',
+        content='tm--full-hd',
+        type='admin_theme',
+        autoload='yes'
+    )
+    admin_layout_color_mode.save()
+
+    admin_font_size = Setting(
+        user_id=user_id,
+        name=_('Admin Font Size'),
+        value='admin_font_size',
+        content='16',
+        type='admin_theme',
+        autoload='yes'
+    )
+    admin_font_size.save()
+
+    admin_sidebar_mode = Setting(
+        user_id=user_id,
+        name=_('Admin Sidebar mode'),
+        value='admin_sidebar_mode',
+        content='',
+        type='admin_theme',
+        autoload='yes'
+    )
+    admin_sidebar_mode.save()
+
+    admin_sidebar_show = Setting(
+        user_id=user_id,
+        name=_('Admin Sidebar Show'),
+        value='admin_sidebar_show',
+        content='',
+        type='admin_theme',
+        autoload='yes'
+    )
+    admin_sidebar_show.save()
+
+    admin_pinned_sidebar = Setting(
+        user_id=user_id,
+        name=_('Admin Pinned Sidebar'),
+        value='admin_pinned_sidebar',
+        content='',
+        type='admin_theme',
+        autoload='yes'
+    )
+    admin_pinned_sidebar.save()
+
+    admin_unite_sidebar = Setting(
+        user_id=user_id,
+        name=_('Admin Unite Sidebar'),
+        value='admin_unite_sidebar',
+        content='',
+        type='admin_theme',
+        autoload='yes'
+    )
+    admin_unite_sidebar.save()
+
+    admin_stuck_sidebar = Setting(
+        user_id=user_id,
+        name=_('Admin Stuck Sidebar'),
+        value='admin_stuck_sidebar',
+        content='',
+        type='admin_theme',
+        autoload='yes'
+    )
+    admin_stuck_sidebar.save()
+
+    admin_static_sidebar = Setting(
+        user_id=user_id,
+        name=_('Admin Static position'),
+        value='admin_static_sidebar',
+        content='',
+        type='admin_theme',
+        autoload='yes'
+    )
+    admin_static_sidebar.save()
+
+    admin_bd_sidebar = Setting(
+        user_id=user_id,
+        name=_('Admin Disable backdrop'),
+        value='admin_bd_sidebar',
+        content='',
+        type='admin_theme',
+        autoload='yes'
+    )
+    admin_bd_sidebar.save()
+
+    admin_sdh_btn = Setting(
+        user_id=user_id,
+        name=_('Admin Hide sidebar button'),
+        value='admin_sdh_btn',
+        content='',
+        type='admin_theme',
+        autoload='yes'
+    )
+    admin_sdh_btn.save()

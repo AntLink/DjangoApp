@@ -8,8 +8,9 @@
 {% block extrahead %}
     {{ media }}
 
-    {% if perms.admin.change_theme_ajax_setting %}<script type="text/javascript" src="{% static 'nifty/js/setting.js' %}"></script>{% endif %}
-     <script type="text/javascript" src="{% static 'nifty/js/demo/nifty-demo2.min.js' %}"></script>
+    {% if perms.admin.change_theme_ajax_setting %}
+        <script type="text/javascript" src="{% static 'nifty/js/setting.js' %}"></script>{% endif %}
+    <script type="text/javascript" src="{% static 'nifty/js/demo/nifty-demo2.min.js' %}"></script>
 {% endblock %}
 {% block coltype %}colMS{% endblock %}
 
@@ -29,407 +30,417 @@
 {% endblock %}
 
 {% block content %}
-    <div class="panel">
-        <div class="panel-heading">
-            <h3 class="panel-title">{% trans 'Theme Settings' %}</h3>
-        </div>
-        <div class="panel-body">
-            <div id="demo-nifty-settings" class="row">
-                <div class="col-lg-3">
-
-                    <p class="text-main text-bold text-uppercase">Layout</p>
-                    <p class="text-semibold text-uppercase text-xs text-muted">Boxed Layout</p>
-                    <hr class="new-section-xs">
-                    <div class="mar-btm">
-                        <div class="pull-right">
-                            <input id="demo-box-lay" class="toggle-switch" type="checkbox">
-                            <label for="demo-box-lay" class="setting-admin" data-value="admin_boxed_layout" data-content="{{ admin_boxed_layout }}"></label>
+    <div id="_dm-settingsContainer" class="card" tabindex="-1">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-4">
+                    <h4 class="fw-bold pb-3 mb-2">Layouts</h4>
+                    <!-- OPTION : Centered Layout -->
+                    <h6 class="mb-2 pb-1">Layouts</h6>
+                    <div class="d-flex align-items-center pt-1 mb-2">
+                        <label class="form-check-label flex-fill" for="_dm-fluidLayoutRadio">Fluid Layout</label>
+                        <div class="form-check form-switch">
+                            <input id="_dm-fluidLayoutRadio" class="form-check-input ms-0" type="radio" name="settingLayouts" autocomplete="off" checked>
                         </div>
-                        Boxed Layout
-                    </div>
-                    <div class="mar-btm">
-                        <div class="pull-right">
-                            <input id="demo-box-img" class="toggle-switch" type="checkbox" disabled="">
-                            <label for="demo-box-img"></label>
-                        </div>
-                        Background Images <i id="demo-set-tooltip" class="demo-psi-information icon-lg" data-title="You must enable the BOXED LAYOUT to use this feature."></i>
                     </div>
 
-                    <hr class="new-section-xs bord-no">
-                    <p class="text-semibold text-uppercase text-xs text-muted">Animations</p>
-                    <hr class="new-section-xs">
-                    <div class="mar-btm">
-                        <div class="pull-right">
-                            <input id="demo-anim" class="toggle-switch" type="checkbox" checked="">
-                            <label for="demo-anim" class="setting-admin" data-value="admin_enable_theme_animation" data-content="{{ admin_enable_theme_animation }}"></label>
+
+                    <!-- OPTION : Boxed layout -->
+                    <div class="d-flex align-items-center pt-1 mb-2">
+                        <label class="form-check-label flex-fill" for="_dm-boxedLayoutRadio">Boxed Layout</label>
+                        <div class="form-check form-switch">
+                            <input id="_dm-boxedLayoutRadio" class="form-check-input ms-0" type="radio" name="settingLayouts" autocomplete="off">
                         </div>
-                        Enable Animations
-                    </div>
-                    <div class="mar-btm clearfix">
-                        <div class="select pull-right">
-                            <select id="demo-ease" data-value="admin_theme_animation" data-content="{{ admin_theme_animation }}">
-                                <option value="effect" {% if  admin_theme_animation == "effect" %}selected{% endif %}>ease (Default)</option>
-                                <option value="easeInQuart" {% if  admin_theme_animation == "easeInQuart" %}selected{% endif %}>easeInQuart</option>
-                                <option value="easeOutQuart" {% if  admin_theme_animation == "easeOutQuart" %}selected{% endif %}>easeOutQuart</option>
-                                <option value="easeInBack" {% if  admin_theme_animation == "easeInBack" %}selected{% endif %}>easeInBack</option>
-                                <option value="easeOutBack" {% if  admin_theme_animation == "easeOutBack" %}selected{% endif %}>easeOutBack</option>
-                                <option value="easeInOutBack" {% if  admin_theme_animation == "easeInOutBack" %}selected{% endif %}>easeInOutBack</option>
-                                <option value="steps" {% if  admin_theme_animation == "steps" %}selected{% endif %}>Steps</option>
-                                <option value="jumping" {% if  admin_theme_animation == "rubber" %}selected{% endif %}>Jumping</option>
-                                <option value="rubber" {% if  admin_theme_animation == "rubber" %}selected{% endif %}>Rubber</option>
-                            </select>
-                        </div>
-                        <p style="margin-top: 6px">Transitions</p>
                     </div>
 
-                    <hr class="new-section-xs bord-no">
 
-                    <p class="text-semibold text-uppercase text-xs text-muted">Header / Navbar</p>
-                    <hr class="new-section-xs">
-                    <div class="mar-btm">
-                        <div class="pull-right">
-                            <input id="demo-navbar-fixed" class="toggle-switch" type="checkbox">
-                            <label for="demo-navbar-fixed" class="setting-admin" data-value="admin_navbar_fixed" data-content="{{ admin_navbar_fixed }}"></label>
-                        </div>
-                        Fixed Position
+                    <!-- OPTION : Boxed layout with background images -->
+                    <div id="_dm-boxedBgOption" class="d-flex align-items-center pt-1 mb-2">
+                        <label class="form-label flex-fill mb-0">BG for Boxed Layout</label>
 
-                    </div>
-                    <div class="mar-btm">
-                        <div class="pull-right">
-                            <input id="demo-navbar-menu" class="toggle-switch" type="checkbox">
-                            <label for="demo-navbar-menu" class="setting-admin" data-value="admin_navbar_show_menu" data-content="{{ admin_navbar_show_menu }}"></label>
-                        </div>
-                        Show Menu
+                        <button id="_dm-boxedBgBtn" class="btn btn-icon btn-primary btn-xs" type="button" data-bs-toggle="offcanvas" data-bs-target="#_dm-boxedBgContent" {% if admin_boxed_layout != 'boxed-layout' %}disabled{% endif %}>
+                            <i class="demo-psi-dot-horizontal"></i>
+                        </button>
                     </div>
 
-                    <div class="mar-btm">
-                        <div class="pull-right">
-                            <input id="demo-navbar-usermenu" class="toggle-switch" type="checkbox">
-                            <label for="demo-navbar-usermenu" class="setting-admin" data-value="admin_navbar_show_usermenu" data-content="{{ admin_navbar_show_usermenu }}"></label>
+
+                    <!-- OPTION : Centered Layout -->
+                    <div class="d-flex align-items-start py-1">
+                        <label class="form-check-label flex-fill text-nowrap" for="_dm-centeredLayoutRadio">Centered Layout</label>
+                        <div class="form-check form-switch">
+                            <input id="_dm-centeredLayoutRadio" class="form-check-input ms-0" type="radio" name="settingLayouts" autocomplete="off">
                         </div>
-                        Show User Menu
                     </div>
 
-                    <hr class="new-section-xs bord-no">
 
-                    <p class="text-semibold text-uppercase text-xs text-muted">Footer</p>
-                    <hr class="new-section-xs">
-                    <div class="pad-btm">
-                        <div class="pull-right">
-                            <input id="demo-footer-fixed" class="toggle-switch" type="checkbox">
-                            <label for="demo-footer-fixed" class="setting-admin" data-value="admin_footer_fixed" data-content="{{ admin_footer_fixed }}"></label>
+                    <!-- OPTION : Transition timing -->
+                    <h6 class="mt-4 mb-2 py-1">{% trans "Transitions" %}</h6>
+                    <div class="d-flex">
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-center py-1">
+                                <select id="_dm-transitionSelect" class="form-select" aria-label="select transition timing">
+                                    <option value="in-quart" {% if admin_theme_animation == "in-quart" %} selected {% endif %}>In Quart</option>
+                                    <option value="out-quart" {% if admin_theme_animation == "out-quart" %} selected {% endif %}>Out Quart</option>
+                                    <option value="in-back" {% if admin_theme_animation == "in-back" %} selected {% endif %}>In Back</option>
+                                    <option value="out-back" {% if admin_theme_animation == "out-back" %} selected {% endif %}>Out Back</option>
+                                    <option value="in-out-back" {% if admin_theme_animation == "in-out-back" %} selected {% endif %}>In Out Back</option>
+                                    <option value="steps" {% if admin_theme_animation == "steps" %} selected {% endif %}>Steps</option>
+                                    <option value="jumping" {% if admin_theme_animation == "jumping" %} selected {% endif %}>Jumping</option>
+                                    <option value="rubber" {% if admin_theme_animation == "rubber" %} selected {% endif %}>Rubber</option>
+                                </select>
+                            </div>
                         </div>
-                        Fixed Position
+                        <div class="flex-shrink-0">
+                            <div id="_dm-tryTransitions" class="d-none mt-1">
+                                <button class="nav-toggler btn btn-warning ms-2" type="button">
+                                    {% trans 'Try it!' %}
+                                </button>
+                            </div>
+                        </div>
                     </div>
+
+
+                    <!-- OPTION : Sticky Header -->
+                    <h6 class="mt-4 mb-2 py-1">Header</h6>
+                    <div class="d-flex align-items-center py-1">
+                        <label class="form-check-label flex-fill" for="_dm-stickyHeaderCheckbox">Sticky header</label>
+                        <div class="form-check form-switch">
+                            <input id="_dm-stickyHeaderCheckbox" class="form-check-input ms-0" type="checkbox" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center py-1">
+                        <label class="form-check-label flex-fill" for="_dm-stickyHeaderCheckbox">Hide sidebar button</label>
+                        <div class="form-check form-switch">
+                            <input id="_dm-sidebarHeaderCheckbox" class="form-check-input ms-0" type="checkbox" autocomplete="off">
+                        </div>
+                    </div>
+
+
+                    <!-- OPTION : Additional Offcanvas -->
+                    <h6 class="mt-4 mb-2 py-1">Additional Offcanvas</h6>
+                    <p>Select the offcanvas placement.</p>
+                    <div class="text-nowrap">
+                        <button type="button" class="_dm-offcanvasBtn btn btn-sm btn-primary" value="offcanvas-top">Top</button>
+                        <button type="button" class="_dm-offcanvasBtn btn btn-sm btn-primary" value="offcanvas-end">Right</button>
+                        <button type="button" class="_dm-offcanvasBtn btn btn-sm btn-primary" value="offcanvas-bottom">Btm</button>
+                        <button type="button" class="_dm-offcanvasBtn btn btn-sm btn-primary" value="offcanvas-start">Left</button>
+                    </div>
+
+                    <!-- OPTION : Additional Offcanvas -->
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <h6 class="mt-4 mb-2 py-1">Direction</h6>
+                        </div>
+                        <div class="flex-grow-1 ms-3 mt-3 mb-2 py-1">
+                            <div class="d-grid gap-2">
+                                <button type="button" id="_dm-rtlBtn" class="btn btn-sm btn-danger" style="width: 20%">Switch to RTL</button>
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
-                <div class="col-lg-9">
-                    <div class="row">
-                        <div class="col-lg-4">
-                            <p class="text-bold text-uppercase text-main">Sidebars</p>
-                            <p class="text-semibold text-uppercase text-xs text-muted">Navigation</p>
-                            <hr class="new-section-xs">
-                            <div class="mar-btm">
-                                <div class="pull-right">
-                                    <input id="demo-nav-fixed" class="toggle-switch" type="checkbox">
-                                    <label for="demo-nav-fixed" class="setting-admin" data-value="admin_mainnav_fixed" data-content="{{ admin_mainnav_fixed }}"></label>
-                                </div>
-                                Fixed Position
-                            </div>
-                            <div class="mar-btm">
-                                <div class="pull-right">
-                                    <input id="demo-nav-profile" class="toggle-switch" type="checkbox" checked="">
-                                    <label for="demo-nav-profile" class="setting-admin" data-value="admin_mainnav_profile" data-content="{{ admin_mainnav_profile }}"></label>
-                                </div>
-                                Widget Profil
-                            </div>
-                            <div class="mar-btm">
-                                <div class="pull-right">
-                                    <input id="demo-nav-shortcut" class="toggle-switch" type="checkbox" checked="">
-                                    <label for="demo-nav-shortcut" class="setting-admin" data-value="admin_mainnav_shortcut" data-content="{{ admin_mainnav_shortcut }}"></label>
-                                </div>
-                                Shortcut Buttons
-                            </div>
-                            <div class="mar-btm">
-                                <div class="pull-right">
-                                    <input id="demo-nav-coll" class="toggle-switch" type="checkbox">
-                                    <label for="demo-nav-coll" class="setting-admin" data-value="admin_colpase_menu" data-content="{{ admin_colpase_menu }}"></label>
-                                </div>
-                                Collapsed Mode
-                            </div>
+                <div class="col-lg-4">
 
-                            <div class="mar-btm">
-                                <div class="pull-right">
-                                    <input id="demo-nav-menu" class="toggle-switch" type="checkbox">
-                                    <label for="demo-nav-menu" class="setting-admin" data-value="admin_nav_show_menu" data-content="{{ admin_nav_show_menu }}"></label>
-                                </div>
-                                Show Menu
-                            </div>
+                    <h4 class="fw-bold pb-3 mb-2">Sidebars</h4>
 
-                            <div class="clearfix">
-                                <div class="pad-btm pull-right">
-                                    <div class="select">
-                                        <select id="demo-nav-offcanvas" data-value="admin_mainnav_offcanvas" data-content="{{ admin_mainnav_offcanvas }}">
-                                            <option value="none" {% if admin_mainnav_offcanvas == 'none' %} selected="" {% endif %}>-- Select Mode --</option>
-                                            <option value="push" {% if admin_mainnav_offcanvas == 'push' %} selected="" {% endif %}>Push</option>
-                                            <option value="slide" {% if admin_mainnav_offcanvas == 'slide' %} selected="" {% endif %}>Slide in on top</option>
-                                            <option value="reveal" {% if admin_mainnav_offcanvas == 'reveal' %} selected="" {% endif %}>Reveal</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <p style="margin-top: 6px">Off-Canvas</p>
-                            </div>
 
-                            <p class="text-semibold text-uppercase text-xs text-muted">Aside</p>
-                            <hr class="new-section-xs">
-                            <div class="mar-btm">
-                                <div class="pull-right">
-                                    <input id="demo-asd-hide" class="toggle-switch" type="checkbox">
-                                    <label for="demo-asd-hide" class="setting-admin" data-value="admin_hide_aside" data-content="{{ admin_hide_aside }}"></label>
-                                </div>
-                                Hide in Menu
-                            </div>
-                            <div class="mar-btm">
-                                <div class="pull-right">
-                                    <input id="demo-asd-vis" class="toggle-switch" type="checkbox">
-                                    <label for="demo-asd-vis" class="setting-admin" data-value="admin_visible_aside" data-content="{{ admin_visible_aside }}"></label>
-                                </div>
-                                Visible
-                            </div>
-                            <div class="mar-btm">
-                                <div class="pull-right">
-                                    <input id="demo-asd-fixed" class="toggle-switch" type="checkbox">
-                                    <label for="demo-asd-fixed" class="setting-admin" data-value="admin_fixed_aside" data-content="{{ admin_fixed_aside }}"></label>
-                                </div>
-                                Fixed Position
-                            </div>
-                            <div class="mar-btm">
-                                <div class="pull-right">
-                                    <input id="demo-asd-float" class="toggle-switch" type="checkbox">
-                                    <label for="demo-asd-float" class="setting-admin" data-value="admin_float_aside" data-content="{{ admin_float_aside }}"></label>
-                                </div>
-                                Floating
-                            </div>
-                            <div class="mar-btm">
-                                <div class="pull-right">
-                                    <input id="demo-asd-align" class="toggle-switch" type="checkbox">
-                                    <label for="demo-asd-align" class="setting-admin" data-value="admin_left_aside" data-content="{{ admin_left_aside }}"></label>
-                                </div>
-                                Left Side
-                            </div>
-                            <div>
-                                <div class="pull-right">
-                                    <input id="demo-asd-themes" class="toggle-switch" type="checkbox">
-                                    <label for="demo-asd-themes" class="setting-admin" data-value="admin_dark_aside" data-content="{{ admin_dark_aside }}"></label>
-                                </div>
-                                Dark Version
+                    <!-- OPTION : Sticky Navigation -->
+                    <h6 class="mb-2 pb-1">Navigation</h6>
+                    <div class="d-flex align-items-center pt-1 mb-2">
+                        <label class="form-check-label flex-fill" for="_dm-stickyNavCheckbox">Sticky navigation</label>
+                        <div class="form-check form-switch">
+                            <input id="_dm-stickyNavCheckbox" class="form-check-input ms-0" type="checkbox" autocomplete="off">
+                        </div>
+                    </div>
+
+
+                    <!-- OPTION : Navigation Profile Widget -->
+                    <div class="d-flex align-items-center pt-1 mb-2">
+                        <label class="form-check-label flex-fill" for="_dm-profileWidgetCheckbox">Hide Widget Profile</label>
+                        <div class="form-check form-switch">
+                            <input id="_dm-profileWidgetCheckbox" class="form-check-input ms-0" type="checkbox" autocomplete="off" checked>
+                        </div>
+                    </div>
+
+
+                    <!-- OPTION : Mini navigation mode -->
+                    <div class="d-flex align-items-center pt-3 mb-2">
+                        <label class="form-check-label flex-fill" for="_dm-miniNavRadio">Min / Collapsed Mode</label>
+                        <div class="form-check form-switch">
+                            <input id="_dm-miniNavRadio" class="form-check-input ms-0" type="radio" name="navigation-mode" autocomplete="off">
+                        </div>
+                    </div>
+
+
+                    <!-- OPTION : Maxi navigation mode -->
+                    <div class="d-flex align-items-center pt-1 mb-2">
+                        <label class="form-check-label flex-fill" for="_dm-maxiNavRadio">Max / Expanded Mode</label>
+                        <div class="form-check form-switch">
+                            <input id="_dm-maxiNavRadio" class="form-check-input ms-0" type="radio" name="navigation-mode" autocomplete="off" checked>
+                        </div>
+                    </div>
+
+
+                    <!-- OPTION : Push navigation mode -->
+                    <div class="d-flex align-items-center pt-1 mb-2">
+                        <label class="form-check-label flex-fill" for="_dm-pushNavRadio">Push Mode</label>
+                        <div class="form-check form-switch">
+                            <input id="_dm-pushNavRadio" class="form-check-input ms-0" type="radio" name="navigation-mode" autocomplete="off">
+                        </div>
+                    </div>
+
+
+                    <!-- OPTION : Slide on top navigation mode -->
+                    <div class="d-flex align-items-center pt-1 mb-2">
+                        <label class="form-check-label flex-fill" for="_dm-slideNavRadio">Slide on top</label>
+                        <div class="form-check form-switch">
+                            <input id="_dm-slideNavRadio" class="form-check-input ms-0" type="radio" name="navigation-mode" autocomplete="off">
+                        </div>
+                    </div>
+
+
+                    <!-- OPTION : Slide on top navigation mode -->
+                    <div class="d-flex align-items-center pt-1 mb-2">
+                        <label class="form-check-label flex-fill" for="_dm-revealNavRadio">Reveal Mode</label>
+                        <div class="form-check form-switch">
+                            <input id="_dm-revealNavRadio" class="form-check-input ms-0" type="radio" name="navigation-mode" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between gap-3 py-3">
+                        <button class="nav-toggler btn btn-primary btn-sm" type="button">
+                            Navigation
+                        </button>
+                        <button class="sidebar-toggler btn btn-primary btn-sm" type="button">
+                            Sidebar
+                        </button>
+                    </div>
+
+
+                    <h6 class="mt-3 mb-2 py-1">Sidebar</h6>
+
+
+                    <!-- OPTION : Disable sidebar backdrop -->
+                    <div class="d-flex align-items-center pt-1 mb-2">
+                        <label class="form-check-label flex-fill" for="_dm-disableBackdropCheckbox">Disable backdrop</label>
+                        <div class="form-check form-switch">
+                            <input id="_dm-disableBackdropCheckbox" class="form-check-input ms-0" type="checkbox" autocomplete="off">
+                        </div>
+                    </div>
+
+
+                    <!-- OPTION : Static position -->
+                    <div class="d-flex align-items-center pt-1 mb-2">
+                        <label class="form-check-label flex-fill" for="_dm-staticSidebarCheckbox">Static position</label>
+                        <div class="form-check form-switch">
+                            <input id="_dm-staticSidebarCheckbox" class="form-check-input ms-0" type="checkbox" autocomplete="off">
+                        </div>
+                    </div>
+
+
+                    <!-- OPTION : Stuck sidebar -->
+                    <div class="d-flex align-items-center pt-1 mb-2">
+                        <label class="form-check-label flex-fill" for="_dm-stuckSidebarCheckbox">Stuck Sidebar </label>
+                        <div class="form-check form-switch">
+                            <input id="_dm-stuckSidebarCheckbox" class="form-check-input ms-0" type="checkbox" autocomplete="off">
+                        </div>
+                    </div>
+
+
+                    <!-- OPTION : Unite Sidebar -->
+                    <div class="d-flex align-items-center pt-1 mb-2">
+                        <label class="form-check-label flex-fill" for="_dm-uniteSidebarCheckbox">Unite Sidebar</label>
+                        <div class="form-check form-switch">
+                            <input id="_dm-uniteSidebarCheckbox" class="form-check-input ms-0" type="checkbox" autocomplete="off">
+                        </div>
+                    </div>
+
+
+                    <!-- OPTION : Pinned Sidebar -->
+                    <div class="d-flex align-items-start pt-1 mb-2">
+                        <label class="form-check-label flex-fill" for="_dm-pinnedSidebarCheckbox">Pinned Sidebar</label>
+                        <div class="form-check form-switch">
+                            <input id="_dm-pinnedSidebarCheckbox" class="form-check-input ms-0" type="checkbox" autocomplete="off">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-lg-4">
+                    <h4 class="fw-bold pb-3 mb-2">Colors</h4>
+
+                    <div class="d-flex mb-4 pb-4">
+                        <div class="d-flex flex-column">
+                            <h5 class="h6">Modes</h5>
+                            <div class="form-check form-check-alt form-switch">
+                                <input id="settingsThemeToggler" class="form-check-input mode-switcher" type="checkbox" role="switch">
+                                <label class="form-check-label ps-3 fw-bold d-none d-md-flex align-items-center " for="settingsThemeToggler">
+                                    <i class="mode-switcher-icon icon-light demo-psi-sun fs-3"></i>
+                                    <i class="mode-switcher-icon icon-dark d-none demo-psi-half-moon fs-5"></i>
+                                </label>
                             </div>
                         </div>
-                        <div class="col-lg-8">
-                            <div id="demo-theme">
-                                <p class="text-main text-bold text-uppercase text-left">Color Schemes</p>
-                                <p class="text-semibold text-uppercase text-xs text-muted">Color Theme</p>
-                                <hr class="new-section-xs">
-                                <div class="clearfix demo-full-theme">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="media v-middle">
-                                                <div class="media-left demo-single-theme">
-                                                    <a href="javascript:" class="demo-theme demo-theme-light add-tooltip {% if admin_color_theme == 'type-full/theme-light-full.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-full/theme-light-full.min.css" data-theme="theme-light-full" data-type="full" data-title="Light"></a>
-                                                </div>
-                                                <div class="media-body">
-                                                    <p class="text-bold text-main mar-no text-uppercase text-sm">Light</p>
-                                                    <small class="text-muted text-xs">Completely Light theme</small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="media v-middle">
-                                                <div class="media-left demo-single-theme">
-                                                    <a href="javascript:" class="demo-theme demo-theme-dark add-tooltip {% if admin_color_theme == 'type-full/theme-dark-full.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-full/theme-dark-full.min.css" data-theme="theme-dark-full" data-type="full" data-title="Dark"></a>
-                                                </div>
-                                                <div class="media-body">
-                                                    <p class="text-bold text-main mar-no text-uppercase text-sm">Dark</p>
-                                                    <small class="text-muted text-xs">Completely Dark theme</small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr class="new-section-xs">
-                                <div class="clearfix text-center demo-srow-scheme pad-ver row">
-                                    <div class="col-md-3">
-                                        <p class="text-semibold text-uppercase text-xs text-muted">Modern</p>
-                                        <div class="media">
-                                            <div class="media-left">
-                                                <img src="{% static 'nifty/img/color-schemes-e.png' %}">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <div class="demo-justify-theme">
-                                            <a href="javascript:" class="demo-theme demo-theme-gray add-tooltip {% if admin_color_theme == 'type-e/theme-gray.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-gray.min.css" data-theme="theme-gray" data-type="e" data-title="(E). Gray"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-navy add-tooltip {% if admin_color_theme == 'type-e/theme-navy.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-navy.min.css" data-theme="theme-navy" data-type="e" data-title="(E). Navy Blue"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-ocean add-tooltip {% if admin_color_theme == 'type-e/theme-ocean.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-ocean.min.css" data-theme="theme-ocean" data-type="e" data-title="(E). Ocean"></a>
+                        <div class="vr mx-4"></div>
+                        <div class="_dm-colorSchemesMode__colors">
+                            <h5 class="h6">Color Schemes</h5>
+                            <div id="dm_colorSchemesContainer" class="d-flex flex-wrap justify-content-center">
+                                <button class="_dm-colorSchemes _dm-box-xs _dm-bg-gray" type="button" data-color="gray"></button>
+                                <button class="_dm-colorSchemes _dm-box-xs _dm-bg-navy" type="button" data-color="navy"></button>
+                                <button class="_dm-colorSchemes _dm-box-xs _dm-bg-ocean" type="button" data-color="ocean"></button>
+                                <button class="_dm-colorSchemes _dm-box-xs _dm-bg-lime" type="button" data-color="lime"></button>
 
-                                            <a href="javascript:" class="demo-theme demo-theme-lime add-tooltip {% if admin_color_theme == 'type-e/theme-lime.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-lime.min.css" data-theme="theme-lime" data-type="e" data-title="(E). Lime"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-purple add-tooltip {% if admin_color_theme == 'type-e/theme-purple.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-purple.min.css" data-theme="theme-purple" data-type="e" data-title="(E). Purple"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-dust add-tooltip {% if admin_color_theme == 'type-e/theme-dust.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-dust.min.css" data-theme="theme-dust" data-type="e" data-title="(E). Dust"></a>
+                                <button class="_dm-colorSchemes _dm-box-xs _dm-bg-violet" type="button" data-color="violet"></button>
+                                <button class="_dm-colorSchemes _dm-box-xs _dm-bg-orange" type="button" data-color="orange"></button>
+                                <button class="_dm-colorSchemes _dm-box-xs _dm-bg-teal" type="button" data-color="teal"></button>
+                                <button class="_dm-colorSchemes _dm-box-xs _dm-bg-corn" type="button" data-color="corn"></button>
 
-                                            <a href="javascript:" class="demo-theme demo-theme-mint add-tooltip {% if admin_color_theme == 'type-e/theme-mint.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-mint.min.css" data-theme="theme-mint" data-type="e" data-title="(E). Mint"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-yellow add-tooltip {% if admin_color_theme == 'type-e/theme-yellow.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-yellow.min.css" data-theme="theme-yellow" data-type="e" data-title="(E). Yellow"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-well-red add-tooltip {% if admin_color_theme == 'type-e/theme-well-red.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-well-red.min.css" data-theme="theme-well-red" data-type="e" data-title="(E). Well Red"></a>
-
-                                            <a href="javascript:" class="demo-theme demo-theme-coffee add-tooltip {% if admin_color_theme == 'type-e/theme-coffee.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-coffee.min.css" data-theme="theme-coffee" data-type="e" data-title="(E). Coffee"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-prickly-pear add-tooltip {% if admin_color_theme == 'type-e/theme-prickly-pear.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-prickly-pear.min.css" data-theme="theme-prickly-pear" data-type="e" data-title="(E). Prickly pear"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-dark add-tooltip {% if admin_color_theme == 'type-e/theme-dark.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-dark.min.css" data-theme="theme-dark" data-type="e" data-title="(E). Dark"></a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr class="new-section-xs">
-                                <div class="clearfix text-center row">
-                                    <div class="col-md-3 pad-ver">
-                                        <p class="text-semibold text-uppercase text-xs text-muted">Header</p>
-                                        <div class="mar-btm">
-                                            <img src="{% static 'nifty/img/color-schemes-a.png' %}" class="img-responsive">
-                                        </div>
-                                        <div class="demo-justify-theme">
-                                            <a href="javascript:" class="demo-theme demo-theme-gray add-tooltip {% if admin_color_theme == 'type-a/theme-gray.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-gray.min.css" data-theme="theme-gray" data-type="a" data-title="(A). Gray"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-navy add-tooltip {% if admin_color_theme == 'type-a/theme-navy.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-navy.min.css" data-theme="theme-navy" data-type="a" data-title="(A). Navy Blue"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-ocean add-tooltip {% if admin_color_theme == 'type-a/theme-ocean.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-ocean.min.css" data-theme="theme-ocean" data-type="a" data-title="(A). Ocean"></a>
-                                        </div>
-                                        <div class="demo-justify-theme">
-                                            <a href="javascript:" class="demo-theme demo-theme-lime add-tooltip {% if admin_color_theme == 'type-a/theme-lime.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-lime.min.css" data-theme="theme-lime" data-type="a" data-title="(A). Lime"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-purple add-tooltip {% if admin_color_theme == 'type-a/theme-purple.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-purple.min.css" data-theme="theme-purple" data-type="a" data-title="(A). Purple"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-dust add-tooltip {% if admin_color_theme == 'type-a/theme-dust.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-dust.min.css" data-theme="theme-dust" data-type="a" data-title="(A). Dust"></a>
-                                        </div>
-                                        <div class="demo-justify-theme">
-                                            <a href="javascript:" class="demo-theme demo-theme-mint add-tooltip {% if admin_color_theme == 'type-a/theme-mint.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-mint.min.css" data-theme="theme-mint" data-type="a" data-title="(A). Mint"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-yellow add-tooltip {% if admin_color_theme == 'type-a/theme-yellow.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-yellow.min.css" data-theme="theme-yellow" data-type="a" data-title="(A). Yellow"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-well-red add-tooltip {% if admin_color_theme == 'type-a/theme-well-red.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-well-red.min.css" data-theme="theme-well-red" data-type="a" data-title="(A). Well Red"></a>
-                                        </div>
-                                        <div class="demo-justify-theme">
-                                            <a href="javascript:" class="demo-theme demo-theme-coffee add-tooltip {% if admin_color_theme == 'type-a/theme-coffee.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-coffee.min.css" data-theme="theme-coffee" data-type="a" data-title="(A). Coffee"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-prickly-pear add-tooltip {% if admin_color_theme == 'type-a/theme-prickly-pear.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-prickly-pear.min.css" data-theme="theme-prickly-pear" data-type="a" data-title="(A). Prickly pear"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-dark add-tooltip {% if admin_color_theme == 'type-a/theme-dark.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-dark.min.css" data-theme="theme-dark" data-type="a" data-title="(A). Dark"></a>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 pad-ver">
-                                        <p class="text-semibold text-uppercase text-xs text-muted">Brand</p>
-                                        <div class="mar-btm">
-                                            <img src="{% static 'nifty/img/color-schemes-b.png' %}" class="img-responsive">
-                                        </div>
-                                        <div class="demo-justify-theme">
-                                            <a href="javascript:" class="demo-theme demo-theme-gray add-tooltip {% if admin_color_theme == 'type-b/theme-gray.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-gray.min.css" data-theme="theme-gray" data-type="b" data-title="(B). Gray"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-navy add-tooltip {% if admin_color_theme == 'type-b/theme-navy.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-navy.min.css" data-theme="theme-navy" data-type="b" data-title="(B). Navy Blue"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-ocean add-tooltip {% if admin_color_theme == 'type-b/theme-ocean.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-ocean.min.css" data-theme="theme-ocean" data-type="b" data-title="(B). Ocean"></a>
-                                        </div>
-                                        <div class="demo-justify-theme">
-                                            <a href="javascript:" class="demo-theme demo-theme-lime add-tooltip {% if admin_color_theme == 'type-b/theme-lime.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-lime.min.css" data-theme="theme-lime" data-type="b" data-title="(B). Lime"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-purple add-tooltip {% if admin_color_theme == 'type-b/theme-purple.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-purple.min.css" data-theme="theme-purple" data-type="b" data-title="(B). Purple"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-dust add-tooltip {% if admin_color_theme == 'type-b/theme-dust.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-dust.min.css" data-theme="theme-dust" data-type="b" data-title="(B). Dust"></a>
-                                        </div>
-                                        <div class="demo-justify-theme">
-                                            <a href="javascript:" class="demo-theme demo-theme-mint add-tooltip {% if admin_color_theme == 'type-b/theme-mint.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-mint.min.css" data-theme="theme-mint" data-type="b" data-title="(B). Mint"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-yellow add-tooltip {% if admin_color_theme == 'type-b/theme-yellow.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-yellow.min.css" data-theme="theme-yellow" data-type="b" data-title="(B). Yellow"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-well-red add-tooltip {% if admin_color_theme == 'type-b/theme-well-red.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-well-red.min.css" data-theme="theme-well-red" data-type="b" data-title="(B). Well red"></a>
-                                        </div>
-                                        <div class="demo-justify-theme">
-                                            <a href="javascript:" class="demo-theme demo-theme-coffee add-tooltip {% if admin_color_theme == 'type-b/theme-coffee.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-coffee.min.css" data-theme="theme-coffee" data-type="b" data-title="(B). Coofee"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-prickly-pear add-tooltip {% if admin_color_theme == 'type-b/theme-prickly-pear.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-prickly-pear.min.css" data-theme="theme-prickly-pear" data-type="b" data-title="(B). Prickly pear"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-dark add-tooltip {% if admin_color_theme == 'type-b/theme-dark.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-dark.min.css" data-theme="theme-dark" data-type="b" data-title="(B). Dark"></a>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 pad-ver">
-                                        <p class="text-semibold text-uppercase text-xs text-muted">Navigation</p>
-                                        <div class="mar-btm">
-                                            <img src="{% static 'nifty/img/color-schemes-c.png' %}" class="img-responsive">
-                                        </div>
-                                        <div class="demo-justify-theme">
-                                            <a href="javascript:" class="demo-theme demo-theme-gray add-tooltip {% if admin_color_theme == 'type-c/theme-gray.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-gray.min.css" data-theme="theme-gray" data-type="c" data-title="(C). Gray"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-navy add-tooltip {% if admin_color_theme == 'type-c/theme-navy.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-navy.min.css" data-theme="theme-navy" data-type="c" data-title="(C). Navy Blue"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-ocean add-tooltip {% if admin_color_theme == 'type-c/theme-ocean.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-ocean.min.css" data-theme="theme-ocean" data-type="c" data-title="(C). Ocean"></a>
-                                        </div>
-                                        <div class="demo-justify-theme">
-                                            <a href="javascript:" class="demo-theme demo-theme-lime add-tooltip {% if admin_color_theme == 'type-c/theme-lime.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-lime.min.css" data-theme="theme-lime" data-type="c" data-title="(C). Lime"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-purple add-tooltip {% if admin_color_theme == 'type-c/theme-purple.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-purple.min.css" data-theme="theme-purple" data-type="c" data-title="(C). Purple"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-dust add-tooltip {% if admin_color_theme == 'type-c/theme-dust.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-dust.min.css" data-theme="theme-dust" data-type="c" data-title="(C). Dust"></a>
-                                        </div>
-                                        <div class="demo-justify-theme">
-                                            <a href="javascript:" class="demo-theme demo-theme-mint add-tooltip {% if admin_color_theme == 'type-c/theme-mint.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-mint.min.css" data-theme="theme-mint" data-type="c" data-title="(C). Mint"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-yellow add-tooltip {% if admin_color_theme == 'type-c/theme-yellow.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-yellow.min.css" data-theme="theme-yellow" data-type="c" data-title="(C). Yellow"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-well-red add-tooltip {% if admin_color_theme == 'type-c/theme-well-red.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-well-red.min.css" data-theme="theme-well-red" data-type="c" data-title="(C). Well Red"></a>
-                                        </div>
-                                        <div class="demo-justify-theme">
-                                            <a href="javascript:" class="demo-theme demo-theme-coffee add-tooltip {% if admin_color_theme == 'type-c/theme-coffee.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-coffee.min.css" data-theme="theme-coffee" data-type="c" data-title="(C). Coffee"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-prickly-pear add-tooltip {% if admin_color_theme == 'type-c/theme-prickly-pear.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-prickly-pear.min.css" data-theme="theme-prickly-pear" data-type="c" data-title="(C). Prickly pear"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-dark add-tooltip {% if admin_color_theme == 'type-c/theme-dark.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-dark.min.css" data-theme="theme-dark" data-type="c" data-title="(C). Dark"></a>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 pad-ver">
-                                        <p class="text-semibold text-uppercase text-xs text-muted">Full Top Bar</p>
-                                        <div class="mar-btm">
-                                            <img src="{% static 'nifty/img/color-schemes-d.png' %}" class="img-responsive">
-                                        </div>
-                                        <div class="demo-justify-theme">
-                                            <a href="javascript:" class="demo-theme demo-theme-gray add-tooltip {% if admin_color_theme == 'type-d/theme-gray.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-gray.min.css" data-theme="theme-gray" data-type="d" data-title="(D). Gray"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-navy add-tooltip {% if admin_color_theme == 'type-d/theme-navy.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-navy.min.css" data-theme="theme-navy" data-type="d" data-title="(D). Navy Blue"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-ocean add-tooltip {% if admin_color_theme == 'type-d/theme-ocean.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-ocean.min.css" data-theme="theme-ocean" data-type="d" data-title="(D). Ocean"></a>
-                                        </div>
-                                        <div class="demo-justify-theme">
-                                            <a href="javascript:" class="demo-theme demo-theme-lime add-tooltip {% if admin_color_theme == 'type-d/theme-lime.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-lime.min.css" data-theme="theme-lime" data-type="d" data-title="(D). Lime"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-purple add-tooltip {% if admin_color_theme == 'type-d/theme-purple.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-purple.min.css" data-theme="theme-purple" data-type="d" data-title="(D). Purple"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-dust add-tooltip {% if admin_color_theme == 'type-d/theme-dust.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-dust.min.css" data-theme="theme-dust" data-type="d" data-title="(D). Dust"></a>
-                                        </div>
-                                        <div class="demo-justify-theme">
-                                            <a href="javascript:" class="demo-theme demo-theme-mint add-tooltip {% if admin_color_theme == 'type-d/theme-mint.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-mint.min.css" data-theme="theme-mint" data-type="d" data-title="(D). Mint"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-yellow add-tooltip {% if admin_color_theme == 'type-d/theme-yellow.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-yellow.min.css" data-theme="theme-yellow" data-type="d" data-title="(D). Yellow"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-well-red add-tooltip {% if admin_color_theme == 'type-d/theme-well-red.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-well-red.min.css" data-theme="theme-well-red" data-type="d" data-title="(D). Well Red"></a>
-                                        </div>
-                                        <div class="demo-justify-theme">
-                                            <a href="javascript:" class="demo-theme demo-theme-coffee add-tooltip {% if admin_color_theme == 'type-d/theme-coffee.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-coffee.min.css" data-theme="theme-coffee" data-type="d" data-title="(D). Coffee"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-prickly-pear add-tooltip {% if admin_color_theme == 'type-d/theme-prickly-pear.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-prickly-pear.min.css" data-theme="theme-prickly-pear" data-type="d" data-title="(D). Prickly pear"></a>
-                                            <a href="javascript:" class="demo-theme demo-theme-dark add-tooltip {% if admin_color_theme == 'type-d/theme-dark.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-dark.min.css" data-theme="theme-dark" data-type="d" data-title="(D). Dark"></a>
-                                        </div>
-                                    </div>
-                                </div>
-
+                                <button class="_dm-colorSchemes _dm-box-xs _dm-bg-cherry" type="button" data-color="cherry"></button>
+                                <button class="_dm-colorSchemes _dm-box-xs _dm-bg-coffee" type="button" data-color="coffee"></button>
+                                <button class="_dm-colorSchemes _dm-box-xs _dm-bg-pear" type="button" data-color="pear"></button>
+                                <button class="_dm-colorSchemes _dm-box-xs _dm-bg-night" type="button" data-color="night"></button>
                             </div>
                         </div>
                     </div>
-                    <div id="demo-bg-boxed" class="demo-bg-boxed">
-                        <div class="demo-bg-boxed-content">
-                            <p class="text-bold text-uppercase text-main text-lg mar-no">Background Images</p>
-                            <p class="text-sm text-muted">Add an image to replace the solid background color</p>
-                            <hr class="new-section-sm bord-no">
-                            <div class="row">
-                                <div class="col-lg-4 text-justify">
-                                    <p class="text-bold text-uppercase text-main">Blurred</p>
-                                    <div id="demo-blurred-bg" class="text-justify">
-                                        <!--Blurred Backgrounds-->
-                                    </div>
+
+
+                    <div id="dm_colorModeContainer">
+                        <div class="row text-center mb-2">
+
+                            <!-- Expanded Header -->
+                            <div class="col-md-4">
+                                <h6 class="m-0">Expanded Header</h6>
+                                <div class="_dm-colorShcemesMode">
+
+                                    <!-- Scheme Button -->
+                                    <button type="button" class="_dm-colorModeBtn btn p-1 shadow-none" data-color-mode="tm--expanded-hd">
+                                        <img src="{% static "niftyv2/img/color-schemes/expanded-header.png" %}" alt="color scheme illusttration" loading="lazy">
+                                    </button>
+
                                 </div>
-                                <div class="col-lg-4 text-justify">
-                                    <p class="text-bold text-uppercase text-main">Polygon &amp; Geometric</p>
-                                    <div id="demo-polygon-bg" class="text-justify">
-                                        <!--Polygon Backgrounds-->
-                                    </div>
+                            </div>
+
+
+                            <!-- Fair Header -->
+                            <div class="col-md-4">
+                                <h6 class="m-0">Fair Header</h6>
+                                <div class="_dm-colorShcemesMode">
+
+                                    <!-- Scheme Button -->
+                                    <button type="button" class="_dm-colorModeBtn btn p-1 shadow-none" data-color-mode="tm--fair-hd">
+                                        <img src="{% static "niftyv2/img/color-schemes/fair-header.png" %}" alt="color scheme illusttration" loading="lazy">
+                                    </button>
+
                                 </div>
-                                <div class="col-lg-4 text-justify">
-                                    <p class="text-bold text-uppercase text-main">Abstract</p>
-                                    <div id="demo-abstract-bg" class="text-justify">
-                                        <!--Abstract Backgrounds-->
-                                    </div>
+                            </div>
+
+
+                            <div class="col-md-4">
+                                <h6 class="m-0">Full Header</h6>
+
+                                <div class="_dm-colorShcemesMode">
+
+                                    <!-- Scheme Button -->
+                                    <button type="button" class="_dm-colorModeBtn btn p-1 shadow-none" data-color-mode="tm--full-hd">
+                                        <img src="{% static "niftyv2/img/color-schemes/full-header.png" %}" alt="color scheme illusttration" loading="lazy">
+                                    </button>
+
                                 </div>
                             </div>
                         </div>
-                        <div class="demo-bg-boxed-footer">
-                            <button id="demo-close-boxed-img" class="btn btn-primary">Close</button>
+
+
+                        <div class="row text-center mb-2">
+                            <div class="col-md-4">
+                                <h6 class="m-0">Primary Nav</h6>
+
+                                <div class="_dm-colorShcemesMode">
+
+                                    <!-- Scheme Button -->
+                                    <button type="button" class="_dm-colorModeBtn btn p-1 shadow-none" data-color-mode="tm--primary-mn">
+                                        <img src="{% static "niftyv2/img/color-schemes/navigation.png" %}" alt="color scheme illusttration" loading="lazy">
+                                    </button>
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <h6 class="m-0">Brand</h6>
+
+                                <div class="_dm-colorShcemesMode">
+
+                                    <!-- Scheme Button -->
+                                    <button type="button" class="_dm-colorModeBtn btn p-1 shadow-none" data-color-mode="tm--primary-brand">
+                                        <img src="{% static "niftyv2/img/color-schemes/brand.png" %}" alt="color scheme illusttration" loading="lazy">
+                                    </button>
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <h6 class="m-0">Tall Header</h6>
+                                <div class="_dm-colorShcemesMode">
+
+                                    <!-- Scheme Button -->
+                                    <button type="button" class="_dm-colorModeBtn btn p-1 shadow-none" data-color-mode="tm--tall-hd">
+                                        <img src="{% static "niftyv2/img/color-schemes/tall-header.png" %}" alt="color scheme illusttration" loading="lazy">
+                                    </button>
+
+                                </div>
+                            </div>
+
+
                         </div>
                     </div>
+
+                    <div class="pt-3">
+
+                        <h5 class="fw-bold mt-2">Miscellaneous</h5>
+
+                        <div class="d-flex gap-3 my-3">
+                            <label for="_dm-fontSizeRange" class="form-label flex-shrink-0 mb-0">Root Font sizes</label>
+                            <div class="position-relative flex-fill">
+                                <input type="range" class="form-range" min="9" max="19" step="1" value="{{ admin_font_size }}" id="_dm-fontSizeRange">
+                                <output id="_dm-fontSizeValue" class="range-bubble"></output>
+                            </div>
+                        </div>
+
+                        <h5 class="fw-bold mt-4">Scrollbars</h5>
+                        <p class="mb-2">Hides native scrollbars and creates custom styleable overlay scrollbars.</p>
+                        <div class="row">
+                            <div class="col-5">
+
+                                <!-- OPTION : Apply the OverlayScrollBar to the body. -->
+                                <div class="d-flex align-items-center pt-1 mb-2">
+                                    <label class="form-check-label flex-fill" for="_dm-bodyScrollbarCheckbox">Body scrollbar</label>
+                                    <div class="form-check form-switch">
+                                        <input id="_dm-bodyScrollbarCheckbox" class="form-check-input ms-0" type="checkbox" autocomplete="off">
+                                    </div>
+                                </div>
+
+
+                                <!-- OPTION : Apply the OverlayScrollBar to content containing class .scrollable-content. -->
+                                <div class="d-flex align-items-center pt-1 mb-2">
+                                    <label class="form-check-label flex-fill" for="_dm-sidebarsScrollbarCheckbox">Navigation and Sidebar</label>
+                                    <div class="form-check form-switch">
+                                        <input id="_dm-sidebarsScrollbarCheckbox" class="form-check-input ms-0" type="checkbox" autocomplete="off">
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-7">
+
+                                <div class="alert alert-warning mb-0" role="alert">
+                                    Please consider the performance impact of using any scrollbar plugin.
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
                 </div>
             </div>
         </div>
     </div>
-
-
 {% endblock %}

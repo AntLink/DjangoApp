@@ -15,7 +15,7 @@ from copy import deepcopy
 from nifty.forms import ActionForm
 from nifty.views import nifty_site
 
-from .models import MyGroup, MyUser
+from .models import MyGroup, MyUser, Profile
 
 from .forms import MyUserChangeForm, MyUserAddForm, MyGroupForm
 
@@ -182,11 +182,13 @@ class MyUserAdmin(UserAdmin):
 
     # def save_model(self, request, obj, form, change):
     #     super(MyUserAdmin, self).save_model(request, obj, form, change)
+    #
     #     if not obj.id:
     #         from .data import load_admin_theme_setting_stores
     #         from nifty.models import Setting
     #         load_admin_theme_setting_stores(Setting, obj.id)
     #     else:
+    #
     #         p = Profile.objects.get(user=obj)
     #         p.gender = request.POST.get('gender')
     #         p.address = request.POST.get('address')
