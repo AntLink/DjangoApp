@@ -1,0 +1,424 @@
+{% load static i18n %}
+<div id="_dm-settingsContainer" class="_dm-settings-container offcanvas offcanvas-end rounded-start" tabindex="-1">
+    <button id="_dm-settingsToggler" class="_dm-btn-settings btn btn-sm btn-danger p-2 rounded-0 rounded-start shadow-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#_dm-settingsContainer" aria-label="Customization button" aria-controls="#_dm-settingsContainer">
+        <i class="demo-psi-gear fs-1"></i>
+    </button>
+
+
+    <div class="offcanvas-body py-0">
+        <div class="_dm-settings-container__content row">
+            <div class="col-lg-3 p-4">
+
+                <h4 class="fw-bold pb-3 mb-2">Layouts</h4>
+
+
+                <!-- OPTION : Centered Layout -->
+                <h6 class="mb-2 pb-1">Layouts</h6>
+                <div class="d-flex align-items-center pt-1 mb-2">
+                    <label class="form-check-label flex-fill" for="_dm-fluidLayoutRadio">Fluid Layout</label>
+                    <div class="form-check form-switch">
+                        <input id="_dm-fluidLayoutRadio" class="form-check-input ms-0" type="radio" name="settingLayouts" autocomplete="off" checked>
+                    </div>
+                </div>
+
+
+                <!-- OPTION : Boxed layout -->
+                <div class="d-flex align-items-center pt-1 mb-2">
+                    <label class="form-check-label flex-fill" for="_dm-boxedLayoutRadio">Boxed Layout</label>
+                    <div class="form-check form-switch">
+                        <input id="_dm-boxedLayoutRadio" class="form-check-input ms-0" type="radio" name="settingLayouts" autocomplete="off">
+                    </div>
+                </div>
+
+
+                <!-- OPTION : Boxed layout with background images -->
+                <div id="_dm-boxedBgOption" class="d-flex align-items-center pt-1 mb-2">
+                    <label class="form-label flex-fill mb-0">BG for Boxed Layout</label>
+
+                    <button id="_dm-boxedBgBtn" class="btn btn-icon btn-primary btn-xs" type="button" data-bs-toggle="offcanvas" data-bs-target="#_dm-boxedBgContent" {% if admin_boxed_layout != 'boxed-layout' %}disabled{% endif %}>
+                        <i class="demo-psi-dot-horizontal"></i>
+                    </button>
+                </div>
+
+
+                <!-- OPTION : Centered Layout -->
+                <div class="d-flex align-items-start py-1">
+                    <label class="form-check-label flex-fill text-nowrap" for="_dm-centeredLayoutRadio">Centered Layout</label>
+                    <div class="form-check form-switch">
+                        <input id="_dm-centeredLayoutRadio" class="form-check-input ms-0" type="radio" name="settingLayouts" autocomplete="off">
+                    </div>
+                </div>
+
+
+                <!-- OPTION : Transition timing -->
+                <h6 class="mt-4 mb-2 py-1">{% trans "Transitions" %}</h6>
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center py-1">
+                            <select id="_dm-transitionSelect" class="form-select" aria-label="select transition timing">
+                                <option value="in-quart" {% if admin_theme_animation == "in-quart" %} selected {% endif %}>In Quart</option>
+                                <option value="out-quart" {% if admin_theme_animation == "out-quart" %} selected {% endif %}>Out Quart</option>
+                                <option value="in-back" {% if admin_theme_animation == "in-back" %} selected {% endif %}>In Back</option>
+                                <option value="out-back" {% if admin_theme_animation == "out-back" %} selected {% endif %}>Out Back</option>
+                                <option value="in-out-back" {% if admin_theme_animation == "in-out-back" %} selected {% endif %}>In Out Back</option>
+                                <option value="steps" {% if admin_theme_animation == "steps" %} selected {% endif %}>Steps</option>
+                                <option value="jumping" {% if admin_theme_animation == "jumping" %} selected {% endif %}>Jumping</option>
+                                <option value="rubber" {% if admin_theme_animation == "rubber" %} selected {% endif %}>Rubber</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <div id="_dm-tryTransitions" class="d-none mt-1">
+                            <button class="nav-toggler btn btn-warning ms-2" type="button">
+                                {% trans 'Try it!' %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- OPTION : Sticky Header -->
+                <h6 class="mt-4 mb-2 py-1">Header</h6>
+                <div class="d-flex align-items-center py-1">
+                    <label class="form-check-label flex-fill" for="_dm-stickyHeaderCheckbox">Sticky header</label>
+                    <div class="form-check form-switch">
+                        <input id="_dm-stickyHeaderCheckbox" class="form-check-input ms-0" type="checkbox" autocomplete="off">
+                    </div>
+                </div>
+                <div class="d-flex align-items-center py-1">
+                    <label class="form-check-label flex-fill" for="_dm-stickyHeaderCheckbox">Hide sidebar button</label>
+                    <div class="form-check form-switch">
+                        <input id="_dm-sidebarHeaderCheckbox" class="form-check-input ms-0" type="checkbox" autocomplete="off">
+                    </div>
+                </div>
+
+
+                <!-- OPTION : Additional Offcanvas -->
+                <h6 class="mt-4 mb-2 py-1">Additional Offcanvas</h6>
+                <p>Select the offcanvas placement.</p>
+                <div class="text-nowrap">
+                    <button type="button" class="_dm-offcanvasBtn btn btn-sm btn-primary" value="offcanvas-top">Top</button>
+                    <button type="button" class="_dm-offcanvasBtn btn btn-sm btn-primary" value="offcanvas-end">Right</button>
+                    <button type="button" class="_dm-offcanvasBtn btn btn-sm btn-primary" value="offcanvas-bottom">Btm</button>
+                    <button type="button" class="_dm-offcanvasBtn btn btn-sm btn-primary" value="offcanvas-start">Left</button>
+                </div>
+
+                <!-- OPTION : Additional Offcanvas -->
+                <div class="d-flex">
+                    <div class="flex-shrink-0">
+                        <h6 class="mt-4 mb-2 py-1">Direction</h6>
+                    </div>
+                    <div class="flex-grow-1 ms-3 mt-3 mb-2 py-1">
+                        <div class="d-grid gap-2">
+                            <button type="button" id="_dm-rtlBtn" class="btn btn-sm btn-danger">Switch to RTL</button>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-lg-3 p-4 bg-body">
+
+                <h4 class="fw-bold pb-3 mb-2">Sidebars</h4>
+
+
+                <!-- OPTION : Sticky Navigation -->
+                <h6 class="mb-2 pb-1">Navigation</h6>
+                <div class="d-flex align-items-center pt-1 mb-2">
+                    <label class="form-check-label flex-fill" for="_dm-stickyNavCheckbox">Sticky navigation</label>
+                    <div class="form-check form-switch">
+                        <input id="_dm-stickyNavCheckbox" class="form-check-input ms-0" type="checkbox" autocomplete="off">
+                    </div>
+                </div>
+
+
+                <!-- OPTION : Navigation Profile Widget -->
+                <div class="d-flex align-items-center pt-1 mb-2">
+                    <label class="form-check-label flex-fill" for="_dm-profileWidgetCheckbox">Hide Widget Profile</label>
+                    <div class="form-check form-switch">
+                        <input id="_dm-profileWidgetCheckbox" class="form-check-input ms-0" type="checkbox" autocomplete="off" checked>
+                    </div>
+                </div>
+
+
+                <!-- OPTION : Mini navigation mode -->
+                <div class="d-flex align-items-center pt-3 mb-2">
+                    <label class="form-check-label flex-fill" for="_dm-miniNavRadio">Min / Collapsed Mode</label>
+                    <div class="form-check form-switch">
+                        <input id="_dm-miniNavRadio" class="form-check-input ms-0" type="radio" name="navigation-mode" autocomplete="off">
+                    </div>
+                </div>
+
+
+                <!-- OPTION : Maxi navigation mode -->
+                <div class="d-flex align-items-center pt-1 mb-2">
+                    <label class="form-check-label flex-fill" for="_dm-maxiNavRadio">Max / Expanded Mode</label>
+                    <div class="form-check form-switch">
+                        <input id="_dm-maxiNavRadio" class="form-check-input ms-0" type="radio" name="navigation-mode" autocomplete="off" checked>
+                    </div>
+                </div>
+
+
+                <!-- OPTION : Push navigation mode -->
+                <div class="d-flex align-items-center pt-1 mb-2">
+                    <label class="form-check-label flex-fill" for="_dm-pushNavRadio">Push Mode</label>
+                    <div class="form-check form-switch">
+                        <input id="_dm-pushNavRadio" class="form-check-input ms-0" type="radio" name="navigation-mode" autocomplete="off">
+                    </div>
+                </div>
+
+
+                <!-- OPTION : Slide on top navigation mode -->
+                <div class="d-flex align-items-center pt-1 mb-2">
+                    <label class="form-check-label flex-fill" for="_dm-slideNavRadio">Slide on top</label>
+                    <div class="form-check form-switch">
+                        <input id="_dm-slideNavRadio" class="form-check-input ms-0" type="radio" name="navigation-mode" autocomplete="off">
+                    </div>
+                </div>
+
+
+                <!-- OPTION : Slide on top navigation mode -->
+                <div class="d-flex align-items-center pt-1 mb-2">
+                    <label class="form-check-label flex-fill" for="_dm-revealNavRadio">Reveal Mode</label>
+                    <div class="form-check form-switch">
+                        <input id="_dm-revealNavRadio" class="form-check-input ms-0" type="radio" name="navigation-mode" autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-between gap-3 py-3">
+                    <button class="nav-toggler btn btn-primary btn-sm" type="button">
+                        Navigation
+                    </button>
+                    <button class="sidebar-toggler btn btn-primary btn-sm" type="button">
+                        Sidebar
+                    </button>
+                </div>
+
+
+                <h6 class="mt-3 mb-2 py-1">Sidebar</h6>
+
+
+                <!-- OPTION : Disable sidebar backdrop -->
+                <div class="d-flex align-items-center pt-1 mb-2">
+                    <label class="form-check-label flex-fill" for="_dm-disableBackdropCheckbox">Disable backdrop</label>
+                    <div class="form-check form-switch">
+                        <input id="_dm-disableBackdropCheckbox" class="form-check-input ms-0" type="checkbox" autocomplete="off">
+                    </div>
+                </div>
+
+
+                <!-- OPTION : Static position -->
+                <div class="d-flex align-items-center pt-1 mb-2">
+                    <label class="form-check-label flex-fill" for="_dm-staticSidebarCheckbox">Static position</label>
+                    <div class="form-check form-switch">
+                        <input id="_dm-staticSidebarCheckbox" class="form-check-input ms-0" type="checkbox" autocomplete="off">
+                    </div>
+                </div>
+
+
+                <!-- OPTION : Stuck sidebar -->
+                <div class="d-flex align-items-center pt-1 mb-2">
+                    <label class="form-check-label flex-fill" for="_dm-stuckSidebarCheckbox">Stuck Sidebar </label>
+                    <div class="form-check form-switch">
+                        <input id="_dm-stuckSidebarCheckbox" class="form-check-input ms-0" type="checkbox" autocomplete="off">
+                    </div>
+                </div>
+
+
+                <!-- OPTION : Unite Sidebar -->
+                <div class="d-flex align-items-center pt-1 mb-2">
+                    <label class="form-check-label flex-fill" for="_dm-uniteSidebarCheckbox">Unite Sidebar</label>
+                    <div class="form-check form-switch">
+                        <input id="_dm-uniteSidebarCheckbox" class="form-check-input ms-0" type="checkbox" autocomplete="off">
+                    </div>
+                </div>
+
+
+                <!-- OPTION : Pinned Sidebar -->
+                <div class="d-flex align-items-start pt-1 mb-2">
+                    <label class="form-check-label flex-fill" for="_dm-pinnedSidebarCheckbox">Pinned Sidebar</label>
+                    <div class="form-check form-switch">
+                        <input id="_dm-pinnedSidebarCheckbox" class="form-check-input ms-0" type="checkbox" autocomplete="off">
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-lg-6 p-4">
+                <h4 class="fw-bold pb-3 mb-2">Colors</h4>
+
+                <div class="d-flex mb-4 pb-4">
+                    <div class="d-flex flex-column">
+                        <h5 class="h6">Modes</h5>
+                        <div class="form-check form-check-alt form-switch">
+                            <input id="settingsThemeToggler" class="form-check-input mode-switcher" type="checkbox" role="switch">
+                            <label class="form-check-label ps-3 fw-bold d-none d-md-flex align-items-center " for="settingsThemeToggler">
+                                <i class="mode-switcher-icon icon-light demo-psi-sun fs-3"></i>
+                                <i class="mode-switcher-icon icon-dark d-none demo-psi-half-moon fs-5"></i>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="vr mx-4"></div>
+                    <div class="_dm-colorSchemesMode__colors">
+                        <h5 class="h6">Color Schemes</h5>
+                        <div id="dm_colorSchemesContainer" class="d-flex flex-wrap justify-content-center">
+                            <button class="_dm-colorSchemes _dm-box-xs _dm-bg-gray" type="button" data-color="gray"></button>
+                            <button class="_dm-colorSchemes _dm-box-xs _dm-bg-navy" type="button" data-color="navy"></button>
+                            <button class="_dm-colorSchemes _dm-box-xs _dm-bg-ocean" type="button" data-color="ocean"></button>
+                            <button class="_dm-colorSchemes _dm-box-xs _dm-bg-lime" type="button" data-color="lime"></button>
+
+                            <button class="_dm-colorSchemes _dm-box-xs _dm-bg-violet" type="button" data-color="violet"></button>
+                            <button class="_dm-colorSchemes _dm-box-xs _dm-bg-orange" type="button" data-color="orange"></button>
+                            <button class="_dm-colorSchemes _dm-box-xs _dm-bg-teal" type="button" data-color="teal"></button>
+                            <button class="_dm-colorSchemes _dm-box-xs _dm-bg-corn" type="button" data-color="corn"></button>
+
+                            <button class="_dm-colorSchemes _dm-box-xs _dm-bg-cherry" type="button" data-color="cherry"></button>
+                            <button class="_dm-colorSchemes _dm-box-xs _dm-bg-coffee" type="button" data-color="coffee"></button>
+                            <button class="_dm-colorSchemes _dm-box-xs _dm-bg-pear" type="button" data-color="pear"></button>
+                            <button class="_dm-colorSchemes _dm-box-xs _dm-bg-night" type="button" data-color="night"></button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div id="dm_colorModeContainer">
+                    <div class="row text-center mb-2">
+
+                        <!-- Expanded Header -->
+                        <div class="col-md-4">
+                            <h6 class="m-0">Expanded Header</h6>
+                            <div class="_dm-colorShcemesMode">
+
+                                <!-- Scheme Button -->
+                                <button type="button" class="_dm-colorModeBtn btn p-1 shadow-none" data-color-mode="tm--expanded-hd">
+                                    <img src="{% static "niftyv2/img/color-schemes/expanded-header.png" %}" alt="color scheme illusttration" loading="lazy">
+                                </button>
+
+                            </div>
+                        </div>
+
+
+                        <!-- Fair Header -->
+                        <div class="col-md-4">
+                            <h6 class="m-0">Fair Header</h6>
+                            <div class="_dm-colorShcemesMode">
+
+                                <!-- Scheme Button -->
+                                <button type="button" class="_dm-colorModeBtn btn p-1 shadow-none" data-color-mode="tm--fair-hd">
+                                    <img src="{% static "niftyv2/img/color-schemes/fair-header.png" %}" alt="color scheme illusttration" loading="lazy">
+                                </button>
+
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-4">
+                            <h6 class="m-0">Full Header</h6>
+
+                            <div class="_dm-colorShcemesMode">
+
+                                <!-- Scheme Button -->
+                                <button type="button" class="_dm-colorModeBtn btn p-1 shadow-none" data-color-mode="tm--full-hd">
+                                    <img src="{% static "niftyv2/img/color-schemes/full-header.png" %}" alt="color scheme illusttration" loading="lazy">
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row text-center mb-2">
+                        <div class="col-md-4">
+                            <h6 class="m-0">Primary Nav</h6>
+
+                            <div class="_dm-colorShcemesMode">
+
+                                <!-- Scheme Button -->
+                                <button type="button" class="_dm-colorModeBtn btn p-1 shadow-none" data-color-mode="tm--primary-mn">
+                                    <img src="{% static "niftyv2/img/color-schemes/navigation.png" %}" alt="color scheme illusttration" loading="lazy">
+                                </button>
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <h6 class="m-0">Brand</h6>
+
+                            <div class="_dm-colorShcemesMode">
+
+                                <!-- Scheme Button -->
+                                <button type="button" class="_dm-colorModeBtn btn p-1 shadow-none" data-color-mode="tm--primary-brand">
+                                    <img src="{% static "niftyv2/img/color-schemes/brand.png" %}" alt="color scheme illusttration" loading="lazy">
+                                </button>
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <h6 class="m-0">Tall Header</h6>
+                            <div class="_dm-colorShcemesMode">
+
+                                <!-- Scheme Button -->
+                                <button type="button" class="_dm-colorModeBtn btn p-1 shadow-none" data-color-mode="tm--tall-hd">
+                                    <img src="{% static "niftyv2/img/color-schemes/tall-header.png" %}" alt="color scheme illusttration" loading="lazy">
+                                </button>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <div class="pt-3">
+
+                    <h5 class="fw-bold mt-2">Miscellaneous</h5>
+
+                    <div class="d-flex gap-3 my-3">
+                        <label for="_dm-fontSizeRange" class="form-label flex-shrink-0 mb-0">Root Font sizes</label>
+                        <div class="position-relative flex-fill">
+                            <input type="range" class="form-range" min="9" max="19" step="1" value="{{ admin_font_size }}" id="_dm-fontSizeRange">
+                            <output id="_dm-fontSizeValue" class="range-bubble"></output>
+                        </div>
+                    </div>
+
+                    <h5 class="fw-bold mt-4">Scrollbars</h5>
+                    <p class="mb-2">Hides native scrollbars and creates custom styleable overlay scrollbars.</p>
+                    <div class="row">
+                        <div class="col-5">
+
+                            <!-- OPTION : Apply the OverlayScrollBar to the body. -->
+                            <div class="d-flex align-items-center pt-1 mb-2">
+                                <label class="form-check-label flex-fill" for="_dm-bodyScrollbarCheckbox">Body scrollbar</label>
+                                <div class="form-check form-switch">
+                                    <input id="_dm-bodyScrollbarCheckbox" class="form-check-input ms-0" type="checkbox" autocomplete="off">
+                                </div>
+                            </div>
+
+
+                            <!-- OPTION : Apply the OverlayScrollBar to content containing class .scrollable-content. -->
+                            <div class="d-flex align-items-center pt-1 mb-2">
+                                <label class="form-check-label flex-fill" for="_dm-sidebarsScrollbarCheckbox">Navigation and Sidebar</label>
+                                <div class="form-check form-switch">
+                                    <input id="_dm-sidebarsScrollbarCheckbox" class="form-check-input ms-0" type="checkbox" autocomplete="off">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-7">
+
+                            <div class="alert alert-warning mb-0" role="alert">
+                                Please consider the performance impact of using any scrollbar plugin.
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+
+
+    </div>
+</div>

@@ -1,0 +1,104 @@
+{% load i18n suit_menu static %}
+{% load url from suit_compat %}
+<nav id="mainnav-container" class="mainnav">
+    <div class="mainnav__inner">
+        <!-- Navigation menu -->
+        <div class="mainnav__top-content scrollable-content pb-5">
+            <!-- Profile Widget -->
+            <div id="_dm-mainnavProfile" class="mainnav__widget my-3 hv-outline-parent {{ admin_navbar_show_usermenu }}">
+                <!-- Profile picture  -->
+                <div class="mininav-toggle text-center py-2">
+                    <img class="mainnav__avatar img-md rounded-circle hv-oc" src="{{ user.profile.get_profile_photo }}" alt="{{ user.username }}">
+                </div>
+                <div class="mininav-content collapse d-mn-max">
+                    <span data-popper-arrow class="arrow"></span>
+                    <div class="d-grid">
+                        <!-- User name and position -->
+                        <button class="mainnav-widget-toggle d-block btn border-0 p-2" data-bs-toggle="collapse" data-bs-target="#usernav" aria-expanded="false" aria-controls="usernav">
+                            {% if  user.get_full_name %}
+                                <span class="dropdown-toggle d-flex justify-content-center align-items-center"><h5 class="mb-0 me-3">{{ user.get_full_name }}</h5></span>
+                            {% else %}
+                                <span class="dropdown-toggle d-flex justify-content-center align-items-center"><h5 class="mb-0 me-3">{{ user.username }}</h5></span>
+                            {% endif %}
+                            <small class="text-body-secondary">{{ user.email }}</small>
+                        </button>
+
+                        {% get_menu_user request as app_list %}
+                        <!-- Collapsed user menu -->
+                        <div id="usernav" class="nav flex-column collapse {% for app in app_list %}{{ app.is_active|yesno:'show,' }}{% endfor %}">
+                            {% for app in app_list %}
+                                {% if app.separator %}
+                                {% else %}
+                                    <a class="nav-link {{ app.is_active|yesno:'active,' }}" href="{{ app.url }}"{{ app.blank|yesno:' target=_blank,' }} >
+                                        <i class="{% firstof app.icon 'icon-chevron-right' %}  fs-5 me-2"></i>
+                                        <span class="ms-1">{% trans app.label|capfirst %}</span>
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End - Profile widget -->
+            <!-- Navigation Category -->
+            <div class="mainnav__categoriy py-3">
+                <ul class="mainnav__menu nav flex-column">
+                    {% get_menu request as app_list %}
+                    {% if app_list %}
+                        {% for app in app_list %}
+                            {% if app.separator %}
+                                <li class="nav-item">
+                                    <hr>
+                                </li>
+                            {% else %}
+                                <li class="nav-item {{ app.models|yesno:'has-sub,' }}">
+                                    <a class="mininav-toggle nav-link  collapsed {{ app.is_active|yesno:'active,' }}" href="{{ app.url }}"{{ app.blank|yesno:' target=_blank,' }}>
+                                        <i class="{% firstof app.icon 'icon-chevron-right' %} fs-5 me-2 "></i>
+                                        <span class="nav-label ms-1">{% trans app.label|capfirst %}</span>
+                                        {% if app.models %}<i class="arrow"></i>{% endif %}
+                                    </a>
+                                    {% if app.models %}
+                                        <ul class="mininav-content nav collapse">
+                                            <li data-popper-arrow class="arrow"></li>
+                                            {% for model in app.models %}
+                                                <li class="nav-item">
+                                                    <a class="nav-link {{ model.is_active|yesno:'active,' }}" href="{{ model.url }}"{{ model.blank|yesno:' target=_blank,' }}>{{ model.label }}</a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+            </div>
+            <!-- END : Navigation Category -->
+        </div>
+        <!-- End - Navigation menu -->
+        <!-- Bottom navigation menu -->
+        <div class="mainnav__bottom-content border-top pb-2">
+            <ul id="mainnav" class="mainnav__menu nav flex-column">
+                <li class="nav-item has-sub">
+                    <a href="#" class="nav-link mininav-toggle collapsed" aria-expanded="false">
+                        <i class="demo-pli-unlock fs-5 me-2"></i>
+                        <span class="nav-label ms-1">Logout</span>
+                    </a>
+                    <ul class="mininav-content nav flex-column collapse">
+                        <li data-popper-arrow="" class="arrow"></li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">This device only</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">All Devices</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Lock screen</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <!-- End - Bottom navigation menu -->
+    </div>
+</nav>

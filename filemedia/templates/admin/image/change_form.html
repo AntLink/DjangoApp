@@ -1,0 +1,219 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_modify suit_tags admin_urls %}
+{% load url from suit_compat %}
+
+{% block extrahead %}{{ block.super }}
+    {% url 'admin:jsi18n' as jsi18nurl %}
+    <script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
+    {{ media.js }}
+{% endblock %}
+
+{% block extrastyle %}{{ block.super }}{{ media.css }}{% endblock %}
+
+{% block extrajs %}
+    {# JavaScript for prepopulated fields slugbeel#}
+    <script type="text/javascript" src="{% static 'admin/filemedia/js/dropzone/dropzone.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'admin/filemedia/js/singleimage.js' %}"></script>
+    {% prepopulated_fields_js %}
+    {{ block.super }}
+
+    {#    {% if 'CONFIRM_UNSAVED_CHANGES'|suit_conf %}#}
+    {#        <!-- Warn on leaving unsaved form -->#}
+    {#        <script src="{% static 'suit/js/suit-form-confirm.js' %}"></script>#}
+    {#        <script type="text/javascript">#}
+    {#            confirmExitIfModified('{% firstof opts.model_name opts.module_name %}_form', '{% trans 'You have unsaved changes' %}.');#}
+    {#        </script>#}
+    {#    {% endif %}#}
+
+    {% if adminform.model_admin.suit_form_tabs %}
+        <script type="text/javascript">
+            (function ($) {
+                $(function () {
+                    $('#suit_form_tabs').suit_form_tabs();
+                });
+            }(Suit.$))
+        </script>
+    {% endif %}
+
+    {#        <script>#}
+    {#            (function ($) {#}
+    {#                $(function () {#}
+    {#                    $("#{{ opts.module_name }}_form").suit_form_debounce();#}
+    {#                });#}
+    {#            }(Suit.$))#}
+    {#        </script>#}
+
+{% endblock %}
+
+
+
+{% block content_title_value %}
+    {% trans 'Add' %} {{ opts.verbose_name }}
+{% endblock %}
+
+{% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
+
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+
+{% if not is_popup %}
+    {% block breadcrumbs %}
+        <ol class="breadcrumb">
+            {% if perms.admin.index_view %}
+                <li>
+                    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+                </li>
+            {% endif %}
+            <li>
+                <a href="{% url 'admin:app_list' app_label=opts.app_label %}">
+                    {% firstof opts.app_config.verbose_name app_label|capfirst|escape %}
+                </a>
+            </li>
+            <li>
+                {% if has_change_permission %}
+                    <a href="{% url opts|admin_urlname:'changelist' %}">
+                        {{ opts.verbose_name_plural|capfirst }}</a>
+                {% else %}
+                    {{ opts.verbose_name_plural|capfirst }}
+                {% endif %}
+            </li>
+            <li class="active">
+                {% if add %}{% trans 'Add' %} {{ opts.verbose_name }}{% else %}
+                    {{ original|truncatewords:"18" }}{% endif %}
+            </li>
+        </ol>
+    {% endblock %}
+{% endif %}
+
+{% block error-messages %}
+    {% if errors %}
+        <div class="mar-no alert alert-danger fade in" style="border-radius: 0;">
+            <button class="close" data-dismiss="alert" style="margin-top: 5px;"><i class="pci-cross pci-circle"></i></button>
+            {% trans 'Please correct the error below.' %}
+            {#            {% blocktrans count counter=errors|length %}#}
+            {#                Please correct the error below.#}
+            {#            {% plural %}#}
+            {#                Please correct the errors below.#}
+            {#            {% endblocktrans %}#}
+            {#            {{ adminform.form.non_field_errors }}#}
+        </div>
+    {% endif %}
+{% endblock error-messages %}
+
+
+{% block content %}
+    <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{% firstof opts.model_name opts.module_name %}_form" class="form-horizontal" novalidate>
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="panel">
+                    <div class="panel-heading">
+                        {% block form_top_panel %}
+                            <div class="panel-control">
+                                {% block suit_form_tabs %}
+                                    {% if adminform.model_admin.suit_form_tabs %}
+                                        <ul id="suit_form_tabs" class="nav nav-tabs nav-tabs-suit" data-tab-prefix="suit-tab">
+                                            {% for tab in adminform.model_admin.suit_form_tabs %}
+                                                <li><a href="#{{ tab.0 }}">{{ tab.1 }}</a></li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                {% endblock %}
+                            </div>
+                            <h3 class="panel-title">{{ opts.verbose_name|capfirst }}</h3>
+                        {% endblock %}
+                    </div>
+
+                    <div class="panel-body">
+
+                        <div class="tab-content tab-content-main">
+                            {% if is_popup %}
+                                <input type="hidden" name="_popup" value="1"/>
+                            {% endif %}
+
+                            {# render suit_form_includes at top position #}
+                            {% include 'nifty/includes/change_form_includes.html' with position='top' %}
+
+                            {% block field_sets %}
+                                {% for fieldset in adminform %}
+                                    {% include "admin/includes/fieldset.html" %}
+                                {% endfor %}
+                            {% endblock %}
+
+                            {% block after_field_sets %}{% endblock %}
+
+                            {# render suit_form_includes at middle position #}
+                            {% include 'nifty/includes/change_form_includes.html' with position='middle' %}
+
+                            {% block inline_field_sets %}
+                                {% for inline_admin_formset in inline_admin_formsets %}
+                                    {% include inline_admin_formset.opts.template %}
+                                {% endfor %}
+                            {% endblock %}
+
+                        </div>
+                    </div>
+
+
+                    {% block after_related_objects %}{% endblock %}
+
+                    {# render suit_form_includes at last position #}
+                    {% include 'nifty/includes/change_form_includes.html' with position='bottom' %}
+
+                    {#                    {% block admin_change_form_document_ready %}#}
+                    {#                        <script type="text/javascript">#}
+                    {#                            (function ($) {#}
+                    {#                                $(document).ready(function () {#}
+                    {#                                    $('.add-another').click(function (e) {#}
+                    {#                                        e.preventDefault();#}
+                    {#                                        showAddAnotherPopup(this);#}
+                    {#                                    });#}
+                    {#                                    $('.related-lookup').click(function (e) {#}
+                    {#                                        e.preventDefault();#}
+                    {#                                        showRelatedObjectLookupPopup(this);#}
+                    {#                                    });#}
+                    {#                                    {% if adminform and add %}#}
+                    {#                                        $('form#{% firstof opts.model_name opts.module_name %}_form :input[type!=button][type!=submit]:visible:enabled:first').focus()#}
+                    {#                                    {% endif %}#}
+                    {#                                });#}
+                    {#                            })(django.jQuery);#}
+                    {#                        </script>#}
+                    {#                    {% endblock %}#}
+
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-2"></div>
+                            <div class="col-lg-10">
+                                {% block submit_buttons_bottom %}
+                                    {% if has_change_permission %}
+                                        <button type="submit" class="btn btn-labeled btn-default" name="_save"><i class="btn-label fa fa-check-circle-o"></i>{% trans 'Save' %}</button>
+                                        <button type="submit" name="_continue" class="btn btn-labeled btn-default"><i class="btn-label fa fa-check-circle-o"></i>{% trans 'Save and continue editing' %}</button>
+                                    {% endif %}
+                                    {% if has_delete_permission %}
+                                        <a href="../delete/" class="btn btn-default btn-labeled"><i class="btn-label fa fa-trash-o"></i>{% trans "Delete" %}</a>
+                                    {% endif %}
+                                {% endblock %}
+                                {% block object-tools %}
+                                    {% if change %}
+                                        {% if not is_popup %}
+                                            {% block object-tools-items %}
+
+                                                {% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}
+                                                <a href="{% add_preserved_filters history_url %}" class="btn  btn-default btn-labeled"><i class="btn-label fa fa-bookmark-o"></i>{% trans "History" %}</a>
+
+                                            {% endblock %}
+
+                                        {% endif %}
+                                    {% endif %}
+                                {% endblock %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+{% endblock %}
+
+{# Empty centered sidebar as now we use sidebar in content block#}
+{% block sidebar_content %}{% endblock %}

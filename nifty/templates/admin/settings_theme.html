@@ -1,0 +1,435 @@
+{% extends "admin/base.html" %}
+{% load static suit_tags  i18n %}
+{% load url from suit_compat %}
+
+{% block extrastyle %}
+    {{ block.super }}
+{% endblock %}
+{% block extrahead %}
+    {{ media }}
+
+    {% if perms.admin.change_theme_ajax_setting %}<script type="text/javascript" src="{% static 'nifty/js/setting.js' %}"></script>{% endif %}
+     <script type="text/javascript" src="{% static 'nifty/js/demo/nifty-demo2.min.js' %}"></script>
+{% endblock %}
+{% block coltype %}colMS{% endblock %}
+
+{% block bodyclass %}dashboard{% endblock %}
+
+{% block breadcrumbs %}
+    {% if perms.auth.index_view %}
+        <ol class="breadcrumb">
+
+            <li class="breadcrumb-item">
+                <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+            </li>
+
+            <li class="breadcrumb-item active">{% trans 'Theme change for user' %} {{ user.username }}</li>
+        </ol>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="panel">
+        <div class="panel-heading">
+            <h3 class="panel-title">{% trans 'Theme Settings' %}</h3>
+        </div>
+        <div class="panel-body">
+            <div id="demo-nifty-settings" class="row">
+                <div class="col-lg-3">
+
+                    <p class="text-main text-bold text-uppercase">Layout</p>
+                    <p class="text-semibold text-uppercase text-xs text-muted">Boxed Layout</p>
+                    <hr class="new-section-xs">
+                    <div class="mar-btm">
+                        <div class="pull-right">
+                            <input id="demo-box-lay" class="toggle-switch" type="checkbox">
+                            <label for="demo-box-lay" class="setting-admin" data-value="admin_boxed_layout" data-content="{{ admin_boxed_layout }}"></label>
+                        </div>
+                        Boxed Layout
+                    </div>
+                    <div class="mar-btm">
+                        <div class="pull-right">
+                            <input id="demo-box-img" class="toggle-switch" type="checkbox" disabled="">
+                            <label for="demo-box-img"></label>
+                        </div>
+                        Background Images <i id="demo-set-tooltip" class="demo-psi-information icon-lg" data-title="You must enable the BOXED LAYOUT to use this feature."></i>
+                    </div>
+
+                    <hr class="new-section-xs bord-no">
+                    <p class="text-semibold text-uppercase text-xs text-muted">Animations</p>
+                    <hr class="new-section-xs">
+                    <div class="mar-btm">
+                        <div class="pull-right">
+                            <input id="demo-anim" class="toggle-switch" type="checkbox" checked="">
+                            <label for="demo-anim" class="setting-admin" data-value="admin_enable_theme_animation" data-content="{{ admin_enable_theme_animation }}"></label>
+                        </div>
+                        Enable Animations
+                    </div>
+                    <div class="mar-btm clearfix">
+                        <div class="select pull-right">
+                            <select id="demo-ease" data-value="admin_theme_animation" data-content="{{ admin_theme_animation }}">
+                                <option value="effect" {% if  admin_theme_animation == "effect" %}selected{% endif %}>ease (Default)</option>
+                                <option value="easeInQuart" {% if  admin_theme_animation == "easeInQuart" %}selected{% endif %}>easeInQuart</option>
+                                <option value="easeOutQuart" {% if  admin_theme_animation == "easeOutQuart" %}selected{% endif %}>easeOutQuart</option>
+                                <option value="easeInBack" {% if  admin_theme_animation == "easeInBack" %}selected{% endif %}>easeInBack</option>
+                                <option value="easeOutBack" {% if  admin_theme_animation == "easeOutBack" %}selected{% endif %}>easeOutBack</option>
+                                <option value="easeInOutBack" {% if  admin_theme_animation == "easeInOutBack" %}selected{% endif %}>easeInOutBack</option>
+                                <option value="steps" {% if  admin_theme_animation == "steps" %}selected{% endif %}>Steps</option>
+                                <option value="jumping" {% if  admin_theme_animation == "rubber" %}selected{% endif %}>Jumping</option>
+                                <option value="rubber" {% if  admin_theme_animation == "rubber" %}selected{% endif %}>Rubber</option>
+                            </select>
+                        </div>
+                        <p style="margin-top: 6px">Transitions</p>
+                    </div>
+
+                    <hr class="new-section-xs bord-no">
+
+                    <p class="text-semibold text-uppercase text-xs text-muted">Header / Navbar</p>
+                    <hr class="new-section-xs">
+                    <div class="mar-btm">
+                        <div class="pull-right">
+                            <input id="demo-navbar-fixed" class="toggle-switch" type="checkbox">
+                            <label for="demo-navbar-fixed" class="setting-admin" data-value="admin_navbar_fixed" data-content="{{ admin_navbar_fixed }}"></label>
+                        </div>
+                        Fixed Position
+
+                    </div>
+                    <div class="mar-btm">
+                        <div class="pull-right">
+                            <input id="demo-navbar-menu" class="toggle-switch" type="checkbox">
+                            <label for="demo-navbar-menu" class="setting-admin" data-value="admin_navbar_show_menu" data-content="{{ admin_navbar_show_menu }}"></label>
+                        </div>
+                        Show Menu
+                    </div>
+
+                    <div class="mar-btm">
+                        <div class="pull-right">
+                            <input id="demo-navbar-usermenu" class="toggle-switch" type="checkbox">
+                            <label for="demo-navbar-usermenu" class="setting-admin" data-value="admin_navbar_show_usermenu" data-content="{{ admin_navbar_show_usermenu }}"></label>
+                        </div>
+                        Show User Menu
+                    </div>
+
+                    <hr class="new-section-xs bord-no">
+
+                    <p class="text-semibold text-uppercase text-xs text-muted">Footer</p>
+                    <hr class="new-section-xs">
+                    <div class="pad-btm">
+                        <div class="pull-right">
+                            <input id="demo-footer-fixed" class="toggle-switch" type="checkbox">
+                            <label for="demo-footer-fixed" class="setting-admin" data-value="admin_footer_fixed" data-content="{{ admin_footer_fixed }}"></label>
+                        </div>
+                        Fixed Position
+                    </div>
+                </div>
+                <div class="col-lg-9">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <p class="text-bold text-uppercase text-main">Sidebars</p>
+                            <p class="text-semibold text-uppercase text-xs text-muted">Navigation</p>
+                            <hr class="new-section-xs">
+                            <div class="mar-btm">
+                                <div class="pull-right">
+                                    <input id="demo-nav-fixed" class="toggle-switch" type="checkbox">
+                                    <label for="demo-nav-fixed" class="setting-admin" data-value="admin_mainnav_fixed" data-content="{{ admin_mainnav_fixed }}"></label>
+                                </div>
+                                Fixed Position
+                            </div>
+                            <div class="mar-btm">
+                                <div class="pull-right">
+                                    <input id="demo-nav-profile" class="toggle-switch" type="checkbox" checked="">
+                                    <label for="demo-nav-profile" class="setting-admin" data-value="admin_mainnav_profile" data-content="{{ admin_mainnav_profile }}"></label>
+                                </div>
+                                Widget Profil
+                            </div>
+                            <div class="mar-btm">
+                                <div class="pull-right">
+                                    <input id="demo-nav-shortcut" class="toggle-switch" type="checkbox" checked="">
+                                    <label for="demo-nav-shortcut" class="setting-admin" data-value="admin_mainnav_shortcut" data-content="{{ admin_mainnav_shortcut }}"></label>
+                                </div>
+                                Shortcut Buttons
+                            </div>
+                            <div class="mar-btm">
+                                <div class="pull-right">
+                                    <input id="demo-nav-coll" class="toggle-switch" type="checkbox">
+                                    <label for="demo-nav-coll" class="setting-admin" data-value="admin_colpase_menu" data-content="{{ admin_colpase_menu }}"></label>
+                                </div>
+                                Collapsed Mode
+                            </div>
+
+                            <div class="mar-btm">
+                                <div class="pull-right">
+                                    <input id="demo-nav-menu" class="toggle-switch" type="checkbox">
+                                    <label for="demo-nav-menu" class="setting-admin" data-value="admin_nav_show_menu" data-content="{{ admin_nav_show_menu }}"></label>
+                                </div>
+                                Show Menu
+                            </div>
+
+                            <div class="clearfix">
+                                <div class="pad-btm pull-right">
+                                    <div class="select">
+                                        <select id="demo-nav-offcanvas" data-value="admin_mainnav_offcanvas" data-content="{{ admin_mainnav_offcanvas }}">
+                                            <option value="none" {% if admin_mainnav_offcanvas == 'none' %} selected="" {% endif %}>-- Select Mode --</option>
+                                            <option value="push" {% if admin_mainnav_offcanvas == 'push' %} selected="" {% endif %}>Push</option>
+                                            <option value="slide" {% if admin_mainnav_offcanvas == 'slide' %} selected="" {% endif %}>Slide in on top</option>
+                                            <option value="reveal" {% if admin_mainnav_offcanvas == 'reveal' %} selected="" {% endif %}>Reveal</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <p style="margin-top: 6px">Off-Canvas</p>
+                            </div>
+
+                            <p class="text-semibold text-uppercase text-xs text-muted">Aside</p>
+                            <hr class="new-section-xs">
+                            <div class="mar-btm">
+                                <div class="pull-right">
+                                    <input id="demo-asd-hide" class="toggle-switch" type="checkbox">
+                                    <label for="demo-asd-hide" class="setting-admin" data-value="admin_hide_aside" data-content="{{ admin_hide_aside }}"></label>
+                                </div>
+                                Hide in Menu
+                            </div>
+                            <div class="mar-btm">
+                                <div class="pull-right">
+                                    <input id="demo-asd-vis" class="toggle-switch" type="checkbox">
+                                    <label for="demo-asd-vis" class="setting-admin" data-value="admin_visible_aside" data-content="{{ admin_visible_aside }}"></label>
+                                </div>
+                                Visible
+                            </div>
+                            <div class="mar-btm">
+                                <div class="pull-right">
+                                    <input id="demo-asd-fixed" class="toggle-switch" type="checkbox">
+                                    <label for="demo-asd-fixed" class="setting-admin" data-value="admin_fixed_aside" data-content="{{ admin_fixed_aside }}"></label>
+                                </div>
+                                Fixed Position
+                            </div>
+                            <div class="mar-btm">
+                                <div class="pull-right">
+                                    <input id="demo-asd-float" class="toggle-switch" type="checkbox">
+                                    <label for="demo-asd-float" class="setting-admin" data-value="admin_float_aside" data-content="{{ admin_float_aside }}"></label>
+                                </div>
+                                Floating
+                            </div>
+                            <div class="mar-btm">
+                                <div class="pull-right">
+                                    <input id="demo-asd-align" class="toggle-switch" type="checkbox">
+                                    <label for="demo-asd-align" class="setting-admin" data-value="admin_left_aside" data-content="{{ admin_left_aside }}"></label>
+                                </div>
+                                Left Side
+                            </div>
+                            <div>
+                                <div class="pull-right">
+                                    <input id="demo-asd-themes" class="toggle-switch" type="checkbox">
+                                    <label for="demo-asd-themes" class="setting-admin" data-value="admin_dark_aside" data-content="{{ admin_dark_aside }}"></label>
+                                </div>
+                                Dark Version
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div id="demo-theme">
+                                <p class="text-main text-bold text-uppercase text-left">Color Schemes</p>
+                                <p class="text-semibold text-uppercase text-xs text-muted">Color Theme</p>
+                                <hr class="new-section-xs">
+                                <div class="clearfix demo-full-theme">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="media v-middle">
+                                                <div class="media-left demo-single-theme">
+                                                    <a href="javascript:" class="demo-theme demo-theme-light add-tooltip {% if admin_color_theme == 'type-full/theme-light-full.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-full/theme-light-full.min.css" data-theme="theme-light-full" data-type="full" data-title="Light"></a>
+                                                </div>
+                                                <div class="media-body">
+                                                    <p class="text-bold text-main mar-no text-uppercase text-sm">Light</p>
+                                                    <small class="text-muted text-xs">Completely Light theme</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="media v-middle">
+                                                <div class="media-left demo-single-theme">
+                                                    <a href="javascript:" class="demo-theme demo-theme-dark add-tooltip {% if admin_color_theme == 'type-full/theme-dark-full.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-full/theme-dark-full.min.css" data-theme="theme-dark-full" data-type="full" data-title="Dark"></a>
+                                                </div>
+                                                <div class="media-body">
+                                                    <p class="text-bold text-main mar-no text-uppercase text-sm">Dark</p>
+                                                    <small class="text-muted text-xs">Completely Dark theme</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="new-section-xs">
+                                <div class="clearfix text-center demo-srow-scheme pad-ver row">
+                                    <div class="col-md-3">
+                                        <p class="text-semibold text-uppercase text-xs text-muted">Modern</p>
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <img src="{% static 'nifty/img/color-schemes-e.png' %}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="demo-justify-theme">
+                                            <a href="javascript:" class="demo-theme demo-theme-gray add-tooltip {% if admin_color_theme == 'type-e/theme-gray.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-gray.min.css" data-theme="theme-gray" data-type="e" data-title="(E). Gray"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-navy add-tooltip {% if admin_color_theme == 'type-e/theme-navy.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-navy.min.css" data-theme="theme-navy" data-type="e" data-title="(E). Navy Blue"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-ocean add-tooltip {% if admin_color_theme == 'type-e/theme-ocean.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-ocean.min.css" data-theme="theme-ocean" data-type="e" data-title="(E). Ocean"></a>
+
+                                            <a href="javascript:" class="demo-theme demo-theme-lime add-tooltip {% if admin_color_theme == 'type-e/theme-lime.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-lime.min.css" data-theme="theme-lime" data-type="e" data-title="(E). Lime"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-purple add-tooltip {% if admin_color_theme == 'type-e/theme-purple.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-purple.min.css" data-theme="theme-purple" data-type="e" data-title="(E). Purple"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-dust add-tooltip {% if admin_color_theme == 'type-e/theme-dust.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-dust.min.css" data-theme="theme-dust" data-type="e" data-title="(E). Dust"></a>
+
+                                            <a href="javascript:" class="demo-theme demo-theme-mint add-tooltip {% if admin_color_theme == 'type-e/theme-mint.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-mint.min.css" data-theme="theme-mint" data-type="e" data-title="(E). Mint"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-yellow add-tooltip {% if admin_color_theme == 'type-e/theme-yellow.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-yellow.min.css" data-theme="theme-yellow" data-type="e" data-title="(E). Yellow"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-well-red add-tooltip {% if admin_color_theme == 'type-e/theme-well-red.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-well-red.min.css" data-theme="theme-well-red" data-type="e" data-title="(E). Well Red"></a>
+
+                                            <a href="javascript:" class="demo-theme demo-theme-coffee add-tooltip {% if admin_color_theme == 'type-e/theme-coffee.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-coffee.min.css" data-theme="theme-coffee" data-type="e" data-title="(E). Coffee"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-prickly-pear add-tooltip {% if admin_color_theme == 'type-e/theme-prickly-pear.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-prickly-pear.min.css" data-theme="theme-prickly-pear" data-type="e" data-title="(E). Prickly pear"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-dark add-tooltip {% if admin_color_theme == 'type-e/theme-dark.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-e/theme-dark.min.css" data-theme="theme-dark" data-type="e" data-title="(E). Dark"></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="new-section-xs">
+                                <div class="clearfix text-center row">
+                                    <div class="col-md-3 pad-ver">
+                                        <p class="text-semibold text-uppercase text-xs text-muted">Header</p>
+                                        <div class="mar-btm">
+                                            <img src="{% static 'nifty/img/color-schemes-a.png' %}" class="img-responsive">
+                                        </div>
+                                        <div class="demo-justify-theme">
+                                            <a href="javascript:" class="demo-theme demo-theme-gray add-tooltip {% if admin_color_theme == 'type-a/theme-gray.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-gray.min.css" data-theme="theme-gray" data-type="a" data-title="(A). Gray"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-navy add-tooltip {% if admin_color_theme == 'type-a/theme-navy.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-navy.min.css" data-theme="theme-navy" data-type="a" data-title="(A). Navy Blue"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-ocean add-tooltip {% if admin_color_theme == 'type-a/theme-ocean.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-ocean.min.css" data-theme="theme-ocean" data-type="a" data-title="(A). Ocean"></a>
+                                        </div>
+                                        <div class="demo-justify-theme">
+                                            <a href="javascript:" class="demo-theme demo-theme-lime add-tooltip {% if admin_color_theme == 'type-a/theme-lime.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-lime.min.css" data-theme="theme-lime" data-type="a" data-title="(A). Lime"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-purple add-tooltip {% if admin_color_theme == 'type-a/theme-purple.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-purple.min.css" data-theme="theme-purple" data-type="a" data-title="(A). Purple"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-dust add-tooltip {% if admin_color_theme == 'type-a/theme-dust.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-dust.min.css" data-theme="theme-dust" data-type="a" data-title="(A). Dust"></a>
+                                        </div>
+                                        <div class="demo-justify-theme">
+                                            <a href="javascript:" class="demo-theme demo-theme-mint add-tooltip {% if admin_color_theme == 'type-a/theme-mint.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-mint.min.css" data-theme="theme-mint" data-type="a" data-title="(A). Mint"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-yellow add-tooltip {% if admin_color_theme == 'type-a/theme-yellow.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-yellow.min.css" data-theme="theme-yellow" data-type="a" data-title="(A). Yellow"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-well-red add-tooltip {% if admin_color_theme == 'type-a/theme-well-red.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-well-red.min.css" data-theme="theme-well-red" data-type="a" data-title="(A). Well Red"></a>
+                                        </div>
+                                        <div class="demo-justify-theme">
+                                            <a href="javascript:" class="demo-theme demo-theme-coffee add-tooltip {% if admin_color_theme == 'type-a/theme-coffee.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-coffee.min.css" data-theme="theme-coffee" data-type="a" data-title="(A). Coffee"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-prickly-pear add-tooltip {% if admin_color_theme == 'type-a/theme-prickly-pear.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-prickly-pear.min.css" data-theme="theme-prickly-pear" data-type="a" data-title="(A). Prickly pear"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-dark add-tooltip {% if admin_color_theme == 'type-a/theme-dark.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-a/theme-dark.min.css" data-theme="theme-dark" data-type="a" data-title="(A). Dark"></a>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 pad-ver">
+                                        <p class="text-semibold text-uppercase text-xs text-muted">Brand</p>
+                                        <div class="mar-btm">
+                                            <img src="{% static 'nifty/img/color-schemes-b.png' %}" class="img-responsive">
+                                        </div>
+                                        <div class="demo-justify-theme">
+                                            <a href="javascript:" class="demo-theme demo-theme-gray add-tooltip {% if admin_color_theme == 'type-b/theme-gray.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-gray.min.css" data-theme="theme-gray" data-type="b" data-title="(B). Gray"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-navy add-tooltip {% if admin_color_theme == 'type-b/theme-navy.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-navy.min.css" data-theme="theme-navy" data-type="b" data-title="(B). Navy Blue"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-ocean add-tooltip {% if admin_color_theme == 'type-b/theme-ocean.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-ocean.min.css" data-theme="theme-ocean" data-type="b" data-title="(B). Ocean"></a>
+                                        </div>
+                                        <div class="demo-justify-theme">
+                                            <a href="javascript:" class="demo-theme demo-theme-lime add-tooltip {% if admin_color_theme == 'type-b/theme-lime.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-lime.min.css" data-theme="theme-lime" data-type="b" data-title="(B). Lime"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-purple add-tooltip {% if admin_color_theme == 'type-b/theme-purple.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-purple.min.css" data-theme="theme-purple" data-type="b" data-title="(B). Purple"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-dust add-tooltip {% if admin_color_theme == 'type-b/theme-dust.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-dust.min.css" data-theme="theme-dust" data-type="b" data-title="(B). Dust"></a>
+                                        </div>
+                                        <div class="demo-justify-theme">
+                                            <a href="javascript:" class="demo-theme demo-theme-mint add-tooltip {% if admin_color_theme == 'type-b/theme-mint.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-mint.min.css" data-theme="theme-mint" data-type="b" data-title="(B). Mint"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-yellow add-tooltip {% if admin_color_theme == 'type-b/theme-yellow.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-yellow.min.css" data-theme="theme-yellow" data-type="b" data-title="(B). Yellow"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-well-red add-tooltip {% if admin_color_theme == 'type-b/theme-well-red.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-well-red.min.css" data-theme="theme-well-red" data-type="b" data-title="(B). Well red"></a>
+                                        </div>
+                                        <div class="demo-justify-theme">
+                                            <a href="javascript:" class="demo-theme demo-theme-coffee add-tooltip {% if admin_color_theme == 'type-b/theme-coffee.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-coffee.min.css" data-theme="theme-coffee" data-type="b" data-title="(B). Coofee"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-prickly-pear add-tooltip {% if admin_color_theme == 'type-b/theme-prickly-pear.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-prickly-pear.min.css" data-theme="theme-prickly-pear" data-type="b" data-title="(B). Prickly pear"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-dark add-tooltip {% if admin_color_theme == 'type-b/theme-dark.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-b/theme-dark.min.css" data-theme="theme-dark" data-type="b" data-title="(B). Dark"></a>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 pad-ver">
+                                        <p class="text-semibold text-uppercase text-xs text-muted">Navigation</p>
+                                        <div class="mar-btm">
+                                            <img src="{% static 'nifty/img/color-schemes-c.png' %}" class="img-responsive">
+                                        </div>
+                                        <div class="demo-justify-theme">
+                                            <a href="javascript:" class="demo-theme demo-theme-gray add-tooltip {% if admin_color_theme == 'type-c/theme-gray.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-gray.min.css" data-theme="theme-gray" data-type="c" data-title="(C). Gray"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-navy add-tooltip {% if admin_color_theme == 'type-c/theme-navy.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-navy.min.css" data-theme="theme-navy" data-type="c" data-title="(C). Navy Blue"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-ocean add-tooltip {% if admin_color_theme == 'type-c/theme-ocean.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-ocean.min.css" data-theme="theme-ocean" data-type="c" data-title="(C). Ocean"></a>
+                                        </div>
+                                        <div class="demo-justify-theme">
+                                            <a href="javascript:" class="demo-theme demo-theme-lime add-tooltip {% if admin_color_theme == 'type-c/theme-lime.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-lime.min.css" data-theme="theme-lime" data-type="c" data-title="(C). Lime"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-purple add-tooltip {% if admin_color_theme == 'type-c/theme-purple.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-purple.min.css" data-theme="theme-purple" data-type="c" data-title="(C). Purple"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-dust add-tooltip {% if admin_color_theme == 'type-c/theme-dust.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-dust.min.css" data-theme="theme-dust" data-type="c" data-title="(C). Dust"></a>
+                                        </div>
+                                        <div class="demo-justify-theme">
+                                            <a href="javascript:" class="demo-theme demo-theme-mint add-tooltip {% if admin_color_theme == 'type-c/theme-mint.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-mint.min.css" data-theme="theme-mint" data-type="c" data-title="(C). Mint"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-yellow add-tooltip {% if admin_color_theme == 'type-c/theme-yellow.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-yellow.min.css" data-theme="theme-yellow" data-type="c" data-title="(C). Yellow"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-well-red add-tooltip {% if admin_color_theme == 'type-c/theme-well-red.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-well-red.min.css" data-theme="theme-well-red" data-type="c" data-title="(C). Well Red"></a>
+                                        </div>
+                                        <div class="demo-justify-theme">
+                                            <a href="javascript:" class="demo-theme demo-theme-coffee add-tooltip {% if admin_color_theme == 'type-c/theme-coffee.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-coffee.min.css" data-theme="theme-coffee" data-type="c" data-title="(C). Coffee"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-prickly-pear add-tooltip {% if admin_color_theme == 'type-c/theme-prickly-pear.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-prickly-pear.min.css" data-theme="theme-prickly-pear" data-type="c" data-title="(C). Prickly pear"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-dark add-tooltip {% if admin_color_theme == 'type-c/theme-dark.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-c/theme-dark.min.css" data-theme="theme-dark" data-type="c" data-title="(C). Dark"></a>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 pad-ver">
+                                        <p class="text-semibold text-uppercase text-xs text-muted">Full Top Bar</p>
+                                        <div class="mar-btm">
+                                            <img src="{% static 'nifty/img/color-schemes-d.png' %}" class="img-responsive">
+                                        </div>
+                                        <div class="demo-justify-theme">
+                                            <a href="javascript:" class="demo-theme demo-theme-gray add-tooltip {% if admin_color_theme == 'type-d/theme-gray.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-gray.min.css" data-theme="theme-gray" data-type="d" data-title="(D). Gray"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-navy add-tooltip {% if admin_color_theme == 'type-d/theme-navy.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-navy.min.css" data-theme="theme-navy" data-type="d" data-title="(D). Navy Blue"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-ocean add-tooltip {% if admin_color_theme == 'type-d/theme-ocean.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-ocean.min.css" data-theme="theme-ocean" data-type="d" data-title="(D). Ocean"></a>
+                                        </div>
+                                        <div class="demo-justify-theme">
+                                            <a href="javascript:" class="demo-theme demo-theme-lime add-tooltip {% if admin_color_theme == 'type-d/theme-lime.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-lime.min.css" data-theme="theme-lime" data-type="d" data-title="(D). Lime"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-purple add-tooltip {% if admin_color_theme == 'type-d/theme-purple.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-purple.min.css" data-theme="theme-purple" data-type="d" data-title="(D). Purple"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-dust add-tooltip {% if admin_color_theme == 'type-d/theme-dust.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-dust.min.css" data-theme="theme-dust" data-type="d" data-title="(D). Dust"></a>
+                                        </div>
+                                        <div class="demo-justify-theme">
+                                            <a href="javascript:" class="demo-theme demo-theme-mint add-tooltip {% if admin_color_theme == 'type-d/theme-mint.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-mint.min.css" data-theme="theme-mint" data-type="d" data-title="(D). Mint"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-yellow add-tooltip {% if admin_color_theme == 'type-d/theme-yellow.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-yellow.min.css" data-theme="theme-yellow" data-type="d" data-title="(D). Yellow"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-well-red add-tooltip {% if admin_color_theme == 'type-d/theme-well-red.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-well-red.min.css" data-theme="theme-well-red" data-type="d" data-title="(D). Well Red"></a>
+                                        </div>
+                                        <div class="demo-justify-theme">
+                                            <a href="javascript:" class="demo-theme demo-theme-coffee add-tooltip {% if admin_color_theme == 'type-d/theme-coffee.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-coffee.min.css" data-theme="theme-coffee" data-type="d" data-title="(D). Coffee"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-prickly-pear add-tooltip {% if admin_color_theme == 'type-d/theme-prickly-pear.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-prickly-pear.min.css" data-theme="theme-prickly-pear" data-type="d" data-title="(D). Prickly pear"></a>
+                                            <a href="javascript:" class="demo-theme demo-theme-dark add-tooltip {% if admin_color_theme == 'type-d/theme-dark.min.css' %}active{% endif %} setting-admin" data-value="admin_color_theme" data-content="type-d/theme-dark.min.css" data-theme="theme-dark" data-type="d" data-title="(D). Dark"></a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div id="demo-bg-boxed" class="demo-bg-boxed">
+                        <div class="demo-bg-boxed-content">
+                            <p class="text-bold text-uppercase text-main text-lg mar-no">Background Images</p>
+                            <p class="text-sm text-muted">Add an image to replace the solid background color</p>
+                            <hr class="new-section-sm bord-no">
+                            <div class="row">
+                                <div class="col-lg-4 text-justify">
+                                    <p class="text-bold text-uppercase text-main">Blurred</p>
+                                    <div id="demo-blurred-bg" class="text-justify">
+                                        <!--Blurred Backgrounds-->
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 text-justify">
+                                    <p class="text-bold text-uppercase text-main">Polygon &amp; Geometric</p>
+                                    <div id="demo-polygon-bg" class="text-justify">
+                                        <!--Polygon Backgrounds-->
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 text-justify">
+                                    <p class="text-bold text-uppercase text-main">Abstract</p>
+                                    <div id="demo-abstract-bg" class="text-justify">
+                                        <!--Abstract Backgrounds-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="demo-bg-boxed-footer">
+                            <button id="demo-close-boxed-img" class="btn btn-primary">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

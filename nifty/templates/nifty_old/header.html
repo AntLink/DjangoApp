@@ -1,0 +1,184 @@
+{% load static suit_tags suit_menu i18n %}
+{% load url from suit_compat %}
+{% load i18n_switcher %}
+<!-- Start Header Navbar-->
+{% if not is_popup %}
+
+    <header id="navbar">
+    <div id="progress-hide" hidden class="progress progress-striped active" style="background-color:white; margin-bottom: 0px; border-radius: 0px;"><div id="progress-bar" class="progress-bar progress-bar-success"></div></div>
+        <div id="navbar-container" class="boxed">
+            <!--Brand logo & name-->
+            <div class="navbar-header">
+                <a href="{% url 'admin:index' %}" class="navbar-brand">
+                    <img src="{{ admin_site_logo }}" class="brand-icon" alt="{{ admin_brand_title }}">
+                    <div class="brand-title" >
+                        <span style="font-size: 15px !important;" class="brand-text">{% block branding %}{{ admin_brand_title }}{% endblock %}</span>
+                    </div>
+                </a>
+            </div>
+            <!--End brand logo & name-->
+            <!--Navbar Dropdown-->
+            <div class="navbar-content clearfix">
+
+                <ul class="nav navbar-top-links pull-left">
+                    <!--Navigation toogle button-->
+                    <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+                    <li class="tgl-menu-btn">
+                        <a id="mainnav-colpase" class="mainnav-toggle setting-admin" href="javascript:" data-value="admin_colpase_menu" data-content="{{ admin_colpase_menu }}">
+                            <i class="demo-pli-list-view" style="margin-top: -2.5px"></i>
+                        </a>
+                    </li>
+
+                </ul>
+
+                <ul class="nav navbar-top-links pull-left" id="nav-menu" {% if not admin_navbar_show_menu %} style="display: none" {% endif %}>
+                    {% get_menu_header request as header_menu_list %}
+                    {% if header_menu_list %}
+                        {% for app in header_menu_list %}
+                            {% if app.separator %}
+                                <li class="list-divider"></li>
+                            {% else %}
+                                <li class="{{ app.is_active|yesno:'active,' }} {% if app.models %}dropdown{% endif %}">
+                                    <a href="{{ app.url }}"{{ app.blank|yesno:' target=_blank,' }} {% if app.models %}data-toggle="dropdown" class="dropdown-toggle text-right"{% endif %}>
+                                        <i class="{% firstof app.icon 'icon-chevron-right' %}" style="margin-top: -2.5px"></i>
+                                        <span class="menu-title">&nbsp;{% trans app.label|capfirst %}</span>
+                                        {% if app.models %}<i class="arrow"></i>{% endif %}
+                                    </a>
+                                    {% if app.models %}
+                                        <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right panel-default with-arrow">
+                                            <ul class="head-list">
+                                                {% for model in app.models %}
+                                                    <li class="{{ model.is_active|yesno:'active,' }}">
+                                                        <a href="{{ model.url }}"{{ model.blank|yesno:' target=_blank,' }}>{{ model.label }}</a>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    {% endif %}
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+
+                <ul class="nav navbar-top-links">
+                    {% block header_time %}
+                        {#                                    <div class="header-content header-content-first">#}
+                        {#                                        <div class="header-column icon">#}
+                        {#                                            <i class="icon-time"></i>#}
+                        {#                                        </div>#}
+                        {#                                        <div class="header-column">#}
+                        {#                                            <span class="date"> {% suit_date %}</span><br>#}
+                        {#                                            <span class="time" id="clock">{% suit_time %}</span>#}
+                        {#                                        </div>#}
+                        {#                                    </div>#}
+                    {% endblock %}
+
+                    {% block header_content %}
+                        {#                                    <!--<div class="header-content">#}
+                        {#                                      <div class="header-column icon">#}
+                        {#                                        <i class="icon-comment"></i>#}
+                        {#                                      </div>#}
+                        {#                                      <div class="header-column">#}
+                        {#                                        <a href="" class="grey"><b>2</b> new messages</a>#}
+                        {#                                      </div>#}
+                        {#                                    </div>-->#}
+                    {% endblock %}
+
+
+
+                    <!--User dropdown-->
+                    {% if user.is_active and user.is_staff %}
+                        {% block userlinks %}
+
+                            {#                                        {% url 'django-admindocs-docroot' as docsroot %}#}
+                            {#                                        {% if docsroot %}#}
+                            {#                                            <li>#}
+                            {#                                                <a href="{{ docsroot }}">#}
+                            {#                                                    {% trans 'Documentation' %}#}
+                            {#                                                </a>#}
+                            {#                                            </li>#}
+                            {#                                        {% endif %}#}
+
+                            <li id="dropdown-user" class="dropdown" {% if not admin_navbar_show_usermenu %}style="display: none"{% endif %}>
+                                {% block welcome-msg %}
+                                    <a href="javascript:" data-toggle="dropdown" class="dropdown-toggle text-right">
+                                                <span class="ic-user pull-right">
+                                                    <i class="demo-pli-male" style="margin-top: -2.5px"></i>
+                                                </span>
+
+                                        <div class="username hidden-xs">
+                                            {% trans 'Welcome,' %}
+                                            {% filter force_escape %}
+                                                {% firstof user.first_name user.username %}
+                                            {% endfilter %}
+                                        </div>
+                                    </a>
+                                {% endblock %}
+
+
+                                <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right panel-default with-arrow">
+                                    <!-- User dropdown menu -->
+                                    <ul class="head-list">
+                                        {% get_menu_user_header request as user_menu_list %}
+                                        {% if user_menu_list %}
+                                            {% for menu in user_menu_list %}
+                                                <li>
+                                                {% if menu.logout %}
+                                                        <form action="{{ menu.url }}" method="post" id="login-form" novalidate>
+                                                        {% csrf_token %}
+                                                            <button type="submit" style="border: 0;background: none; padding: 10px;color: #e02a2a">
+                                                                <i class="{% firstof menu.icon %} icon-lg icon-fw" style="margin-top: -5px"></i>
+                                                                {% trans menu.label|capfirst %}
+                                                            </button>
+                                                        </form>
+                                                    {% else %}
+                                                        <a href="{{ menu.url }}" class="{{ menu.is_active|yesno:'active,' }}">
+                                                            <i class="{% firstof menu.icon %} icon-lg icon-fw" style="margin-top: -5px"></i>
+                                                            {% trans menu.label|capfirst %}
+                                                        </a>
+                                                {% endif %}
+                                                </li>
+                                            {% endfor %}
+                                        {% endif %}
+
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+                            <!--End user dropdown-->
+                        {% endblock %}
+                    {% endif %}
+                    <ul class="nav navbar-top-links">
+                        <li id="dropdown-user" class="dropdown">
+                            <a href="javascript:" data-toggle="dropdown" class="dropdown-toggle text-right" aria-expanded="false">
+                                <span class="ic-user pull-right"><i class="fa fa-flag" style="margin-top: -2.5px"></i></span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right panel-default with-arrow" style="">
+                                <!-- User dropdown menu -->
+                                <ul class="head-list">
+                                    <li>
+                                        <a href="{{ request|switch_i18n:'en' }}">English</a>
+                                    </li>
+
+                                    <li>
+                                        <a href="{{ request|switch_i18n:'id' }}">Indonesia</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                    </ul>
+                    <li id="aside-menu" class="pull-right" {% if admin_hide_aside %} style="display: none" {% endif %}>
+                        <a href="javascript:" class="aside-toggle setting-admin" data-value="admin_visible_aside" data-content="{{ admin_visible_aside }}">
+                            <i class="demo-pli-dot-vertical" style="margin-top: -2.5px"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <!--End Navbar Dropdown-->
+        </div>
+    </header>
+{% endif %}
+<!-- END Header Navbar-->

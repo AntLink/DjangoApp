@@ -1,0 +1,268 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-02-28 16:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: .\nifty\static\admin\js\SelectFilter2.js:54
+#, javascript-format
+msgid "Available %s"
+msgstr ""
+
+#: .\nifty\static\admin\js\SelectFilter2.js:61
+#, javascript-format
+msgid ""
+"This is the list of available %s. You may choose some by selecting them in "
+"the box below and then clicking the \"Choose\" arrow between the two boxes."
+msgstr ""
+
+#: .\nifty\static\admin\js\SelectFilter2.js:77
+#, javascript-format
+msgid "Type into this box to filter down the list of available %s."
+msgstr ""
+
+#: .\nifty\static\admin\js\SelectFilter2.js:82
+msgid "Filter"
+msgstr ""
+
+#: .\nifty\static\admin\js\SelectFilter2.js:87
+msgid "Choose all"
+msgstr ""
+
+#: .\nifty\static\admin\js\SelectFilter2.js:87
+#, javascript-format
+msgid "Click to choose all %s at once."
+msgstr ""
+
+#: .\nifty\static\admin\js\SelectFilter2.js:93
+msgid "Choose"
+msgstr ""
+
+#: .\nifty\static\admin\js\SelectFilter2.js:98
+msgid "Remove"
+msgstr ""
+
+#: .\nifty\static\admin\js\SelectFilter2.js:109
+#, javascript-format
+msgid "Chosen %s"
+msgstr ""
+
+#: .\nifty\static\admin\js\SelectFilter2.js:116
+#, javascript-format
+msgid ""
+"This is the list of chosen %s. You may remove some by selecting them in the "
+"box below and then clicking the \"Remove\" arrow between the two boxes."
+msgstr ""
+
+#: .\nifty\static\admin\js\SelectFilter2.js:127
+msgid "Remove all"
+msgstr ""
+
+#: .\nifty\static\admin\js\SelectFilter2.js:127
+#, javascript-format
+msgid "Click to remove all chosen %s at once."
+msgstr ""
+
+#: .\nifty\static\admin\js\actions.js:48
+#: .\nifty\static\admin\js\actions.min.js:2
+msgid "%(sel)s of %(cnt)s selected"
+msgid_plural "%(sel)s of %(cnt)s selected"
+msgstr[0] ""
+msgstr[1] ""
+
+#: .\nifty\static\admin\js\actions.js:117
+#: .\nifty\static\admin\js\actions.min.js:5
+msgid ""
+"You have unsaved changes on individual editable fields. If you run an "
+"action, your unsaved changes will be lost."
+msgstr ""
+
+#: .\nifty\static\admin\js\actions.js:129
+#: .\nifty\static\admin\js\actions.min.js:5
+msgid ""
+"You have selected an action, but you haven't saved your changes to "
+"individual fields yet. Please click OK to save. You'll need to re-run the "
+"action."
+msgstr ""
+
+#: .\nifty\static\admin\js\actions.js:131
+#: .\nifty\static\admin\js\actions.min.js:6
+msgid ""
+"You have selected an action, and you haven't made any changes on individual "
+"fields. You're probably looking for the Go button rather than the Save "
+"button."
+msgstr ""
+
+#: .\nifty\static\admin\js\admin\DateTimeShortcuts.js:13
+#: .\nifty\static\admin\js\admin\DateTimeShortcuts.js:118
+msgid "Now"
+msgstr ""
+
+#: .\nifty\static\admin\js\admin\DateTimeShortcuts.js:14
+msgid "Midnight"
+msgstr ""
+
+#: .\nifty\static\admin\js\admin\DateTimeShortcuts.js:15
+msgid "6 a.m."
+msgstr ""
+
+#: .\nifty\static\admin\js\admin\DateTimeShortcuts.js:16
+msgid "Noon"
+msgstr ""
+
+#: .\nifty\static\admin\js\admin\DateTimeShortcuts.js:17
+msgid "6 p.m."
+msgstr ""
+
+#: .\nifty\static\admin\js\admin\DateTimeShortcuts.js:83
+#, javascript-format
+msgid "Note: You are %s hour ahead of server time."
+msgid_plural "Note: You are %s hours ahead of server time."
+msgstr[0] ""
+msgstr[1] ""
+
+#: .\nifty\static\admin\js\admin\DateTimeShortcuts.js:91
+#, javascript-format
+msgid "Note: You are %s hour behind server time."
+msgid_plural "Note: You are %s hours behind server time."
+msgstr[0] ""
+msgstr[1] ""
+
+#: .\nifty\static\admin\js\admin\DateTimeShortcuts.js:136
+msgid "Choose a Time"
+msgstr ""
+
+#: .\nifty\static\admin\js\admin\DateTimeShortcuts.js:166
+msgid "Choose a time"
+msgstr ""
+
+#: .\nifty\static\admin\js\admin\DateTimeShortcuts.js:183
+#: .\nifty\static\admin\js\admin\DateTimeShortcuts.js:343
+msgid "Cancel"
+msgstr ""
+
+#: .\nifty\static\admin\js\admin\DateTimeShortcuts.js:248
+#: .\nifty\static\admin\js\admin\DateTimeShortcuts.js:328
+msgid "Today"
+msgstr ""
+
+#: .\nifty\static\admin\js\admin\DateTimeShortcuts.js:265
+msgid "Choose a Date"
+msgstr ""
+
+#: .\nifty\static\admin\js\admin\DateTimeShortcuts.js:322
+msgid "Yesterday"
+msgstr ""
+
+#: .\nifty\static\admin\js\admin\DateTimeShortcuts.js:334
+msgid "Tomorrow"
+msgstr ""
+
+#: .\nifty\static\admin\js\calendar.js:12
+msgid "January"
+msgstr ""
+
+#: .\nifty\static\admin\js\calendar.js:13
+msgid "February"
+msgstr ""
+
+#: .\nifty\static\admin\js\calendar.js:14
+msgid "March"
+msgstr ""
+
+#: .\nifty\static\admin\js\calendar.js:15
+msgid "April"
+msgstr ""
+
+#: .\nifty\static\admin\js\calendar.js:16
+msgid "May"
+msgstr ""
+
+#: .\nifty\static\admin\js\calendar.js:17
+msgid "June"
+msgstr ""
+
+#: .\nifty\static\admin\js\calendar.js:18
+msgid "July"
+msgstr ""
+
+#: .\nifty\static\admin\js\calendar.js:19
+msgid "August"
+msgstr ""
+
+#: .\nifty\static\admin\js\calendar.js:20
+msgid "September"
+msgstr ""
+
+#: .\nifty\static\admin\js\calendar.js:21
+msgid "October"
+msgstr ""
+
+#: .\nifty\static\admin\js\calendar.js:22
+msgid "November"
+msgstr ""
+
+#: .\nifty\static\admin\js\calendar.js:23
+msgid "December"
+msgstr ""
+
+#: .\nifty\static\admin\js\calendar.js:26
+msgctxt "one letter Sunday"
+msgid "S"
+msgstr ""
+
+#: .\nifty\static\admin\js\calendar.js:27
+msgctxt "one letter Monday"
+msgid "M"
+msgstr ""
+
+#: .\nifty\static\admin\js\calendar.js:28
+msgctxt "one letter Tuesday"
+msgid "T"
+msgstr ""
+
+#: .\nifty\static\admin\js\calendar.js:29
+msgctxt "one letter Wednesday"
+msgid "W"
+msgstr ""
+
+#: .\nifty\static\admin\js\calendar.js:30
+msgctxt "one letter Thursday"
+msgid "T"
+msgstr ""
+
+#: .\nifty\static\admin\js\calendar.js:31
+msgctxt "one letter Friday"
+msgid "F"
+msgstr ""
+
+#: .\nifty\static\admin\js\calendar.js:32
+msgctxt "one letter Saturday"
+msgid "S"
+msgstr ""
+
+#: .\nifty\static\admin\js\collapse.js:10
+#: .\nifty\static\admin\js\collapse.js:21
+#: .\nifty\static\admin\js\collapse.min.js:4
+#: .\nifty\static\admin\js\collapse.min.js:5
+msgid "Show"
+msgstr ""
+
+#: .\nifty\static\admin\js\collapse.js:18
+#: .\nifty\static\admin\js\collapse.min.js:4
+msgid "Hide"
+msgstr ""

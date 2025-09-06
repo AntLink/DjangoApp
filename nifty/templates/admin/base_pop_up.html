@@ -1,0 +1,115 @@
+{% load static suit_tags  i18n %}
+{% load url from suit_compat %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ title }} | {{ 'ADMIN_NAME'|suit_conf }}{% endblock %}</title>
+    {#<link href="{% static 'nifty/img/favicon.png' %}" rel="shortcut icon">#}
+    <!--Open Sans Font [ OPTIONAL ]-->
+    <link type="text/css" href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet'>
+    <!--Bootstrap Stylesheet [ REQUIRED ]-->
+    <link type="text/css" href="{% static 'nifty/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!--Nifty Stylesheet [ REQUIRED ]-->
+    <link type="text/css" href="{% static 'nifty/css/nifty.min.css' %}" rel="stylesheet">
+    <!--Nifty Premium Icon [ DEMONSTRATION ]-->
+    <link type="text/css" href="{% static 'nifty/css/demo/nifty-demo-icons.min.css' %}" rel="stylesheet">
+    <!--Demo [ DEMONSTRATION ]-->
+    <link type="text/css" href="{% static 'nifty/css/demo/nifty-demo.min.css' %}" rel="stylesheet">
+    <!--Font Awesome [ OPTIONAL ]-->
+    <link type="text/css" href="{% static 'nifty/plugins/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'nifty/plugins/bootstrap-select/bootstrap-select.min.css' %}" rel="stylesheet">
+    <!--Font Choosen [ OPTIONAL ]-->
+    <link type="text/css" href="{% static 'nifty/plugins/chosen/chosen.min.css' %}" rel="stylesheet">
+    <!--Custom [ OPTIONAL ]-->
+    <link type="text/css" href="{% static 'nifty/css/forms.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'nifty/css/style.css' %}" rel="stylesheet">
+    {% block extrastyle %}{% endblock %}
+    {% if LANGUAGE_BIDI %}
+        <link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}"/>{% endif %}
+
+
+    <script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static "admin/" %}{% endfilter %}";</script>
+
+    <!--Page Load Progress Bar [ OPTIONAL ]-->
+    <link href="{% static 'nifty/plugins/pace/pace.min.css' %}" rel="stylesheet">
+    <script src="{% static 'nifty/plugins/pace/pace.min.js' %}"></script>
+    <!--jQuery [ REQUIRED ]-->
+    {% block extrahead %}{% endblock %}
+    <script src="{% static 'nifty/js/jquery-2.2.4.min.js' %}"></script>
+    <script type="text/javascript">var Suit = {$: $.noConflict()};
+    if (!$) $ = Suit.$; </script>
+    <!--BootstrapJS [ RECOMMENDED ]-->
+    <script src="{% static 'nifty/js/bootstrap.min.js' %}"></script>
+    <!--Nifty Admin [ RECOMMENDED ]-->
+    <script src="{% static 'nifty/js/nifty.min.js' %}"></script>
+    <script src="{% static 'nifty/js/demo/nifty-demo.min.js' %}"></script>
+    <script src="{% static 'nifty/plugins/bootstrap-select/bootstrap-select.min.js' %}"></script>
+    <script src="{% static 'nifty/plugins/chosen/chosen.jquery.min.js' %}"></script>
+    <script src="{% static 'suit/js/suit.js' %}"></script>
+
+
+    {% if 'SHOW_REQUIRED_ASTERISK'|suit_conf %}
+        <style type="text/css">
+            .required:after {
+                content: '*';
+                margin: 0 0 0 5px;
+                position: absolute;
+                color: #ccc;
+            }
+        </style>
+    {% endif %}
+
+    {% block blockbots %}
+        <meta name="robots" content="NONE,NOARCHIVE"/>
+    {% endblock %}
+</head>
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">
+<!-- Container -->
+{% block container %}
+    <div id="container" class="effect aside-float aside-bright {{ admin_navbar_fixed }} {{ admin_mainnav_fixed }} {{ admin_colpase_menu }} ">
+
+
+
+        <div class="boxed {{ is_popup|yesno:'one-column,two-columns' }}">
+            <!--CONTENT CONTAINER-->
+            {% block content-center %}
+                    <!--Page content-->
+                    <div id="page-content" class="no-padding-top {% block coltype %}colM{% endblock %}">
+                        {% block content %}
+                            {{ content }}
+                        {% endblock %}
+                    </div>
+                    <!--End page content-->
+                </div>
+            {% endblock %}
+
+
+    </div>
+{% endblock %}
+
+
+
+{% block extrajs %}{% endblock %}
+<script>
+    $('.selectpicker').selectpicker();
+{#        $('.chosen-select').selectpicker();#}
+{#        $('.chosen-select-pass').selectpicker();#}
+    document.body.innerHTML.replace('2000', 'hi');
+    {#    $('.input-group.date').datepicker({autoclose: true, format: 'dd-mm-yy'});#}
+    $('.form-checkbox > #action-toggle').on('click', function () {
+        if ($(this).attr('checked') == 'checked') {
+            $(this).removeAttr('checked');
+            $('.action-select').parent().removeClass('active');
+            $('.action-select').removeAttr('checked');
+        } else {
+            $('.action-select').parent().addClass('active');
+            $('.action-select').attr({'checked': 'checked'});
+            $(this).attr({'checked': 'checked'});
+        }
+        console.log('tes');
+    });
+</script>
+</body>
+</html>

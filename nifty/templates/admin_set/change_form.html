@@ -1,0 +1,191 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_modify suit_tags admin_urls %}
+{% load url from suit_compat %}
+
+{% block extrahead %}{{ block.super }}
+    {% url 'admin:jsi18n' as jsi18nurl %}
+    <script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
+    {{ form.media }}
+{% endblock %}
+
+
+{% block extrajs %}
+    {{ block.super }}
+{% endblock %}
+{% block extrastyle %}
+    {{ block.super }}
+{% endblock %}
+{% block content_title_value %}
+    {% trans 'Add' %} {{ opts.verbose_name }}
+{% endblock %}
+{% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        {% if perms.auth.index_view %}
+            <li class="breadcrumb-item">
+                <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+            </li>
+        {% endif %}
+        <li class="breadcrumb-item">
+            <a href="{% url 'admin:app_list' app_label=opts.app_label %}">
+                {% firstof opts.app_config.verbose_name app_label|capfirst|escape %}
+            </a>
+        </li>
+        {#        {% if opts.app_label == 'nifty' %}#}
+        {#            <li>#}
+        {#                <a href="{% url 'admin:app_list' app_label='admin' %}">#}
+        {#                    {% firstof opts.app_config.verbose_name app_label|capfirst|escape %}#}
+        {#                </a>#}
+        {#            </li>#}
+        {#        {% endif %}#}
+        <li class="breadcrumb-item active">
+            {% if has_change_permission %}
+                <a href="{% url opts|admin_urlname:'changelist' %}">
+                    {{ opts.verbose_name_plural|capfirst }}</a>
+            {% else %}
+                {{ opts.verbose_name_plural|capfirst }}
+            {% endif %}
+        </li>
+    </ol>
+{% endblock %}
+{% block error-messages %}
+    {% if form.errors %}
+        <div class="alert alert-callout alert-danger" style="border-radius: 0;">
+            {% blocktrans count counter=form.errors.items|length %}Please correctthe error below.{% plural %} Please correct the errors below.{% endblocktrans %}
+        </div>
+    {% endif %}
+{% endblock error-messages %}
+{% block content %}
+    <form action="{{ form_url }}" method="post" id="{% firstof opts.model_name opts.module_name %}_form" class="needs-validation {% if form.errors %}was-validated{% endif %}" novalidate>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">{% trans "Settings" %}</h3>
+            </div>
+            <div class="card-body">
+                {% csrf_token %}
+                <fieldset class="module aligned wide">
+                    <div class="row mb-3 form-row{{ form.admin_site_title.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_admin_site_title" class="col-sm-1 col-form-label required">{{ form.admin_site_title.label }}:</label>
+                        <div class="col-sm-11">
+                            {% if perms.admin.view_admin  and not perms.admin.change_admin %}
+                                <p class="readonly">{{ form.admin_site_title.value }}</p>
+                            {% else %}
+                                {{ form.admin_site_title|add_class:"form-control" }}
+                                <span class="text-danger">{{ form.admin_site_title.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+
+
+                    </div>
+                    <div class="row mb-3 form-row{{ form.admin_brand_title.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_admin_brand_title" class="col-sm-1 col-form-label required">{{ form.admin_brand_title.label }}:</label>
+
+                        <div class="col-sm-11">
+                            {% if perms.admin.view_admin  and not perms.admin.change_admin %}
+                                <p class="readonly">{{ form.admin_brand_title.value }}</p>
+                            {% else %}
+                                {{ form.admin_brand_title|add_class:"form-control" }}
+                                <span class="text-danger">{{ form.admin_brand_title.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row mb-3 form-row{{ form.admin_site_favicon.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_admin_site_favicon" class="col-sm-1 col-form-label required">{{ form.admin_site_favicon.label }}:</label>
+
+                        <div class="col-sm-11">
+                            {% if perms.admin.view_admin  and not perms.admin.change_admin %}
+                                <p class="readonly">{{ form.admin_site_favicon.value }}</p>
+                            {% else %}
+                                {{ form.admin_site_favicon|add_class:"form-control" }}
+                                <span class="text-danger">{{ form.admin_site_favicon.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row mb-3 form-row{{ form.admin_site_logo.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_admin_site_logo" class="col-sm-1 col-form-label required">{{ form.admin_site_logo.label }}:</label>
+
+                        <div class="col-sm-11">
+                            {% if perms.admin.view_admin  and not perms.admin.change_admin %}
+                                <p class="readonly">{{ form.admin_site_logo.value }}</p>
+                            {% else %}
+                                {{ form.admin_site_logo|add_class:"form-control" }}
+                                <span class="text-danger">{{ form.admin_site_logo.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row mb-3 form-row{{ form.admin_site_copyright.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_admin_site_copyright" class="col-sm-1 col-form-label required">{{ form.admin_site_copyright.label }}:</label>
+
+                        <div class="col-sm-11">
+                            {% if perms.admin.view_admin  and not perms.admin.change_admin %}
+                                <p class="readonly">{{ form.admin_site_copyright.value }}</p>
+                            {% else %}
+                                {{ form.admin_site_copyright|add_class:"form-control" }}
+                                <span class="text-danger">{{ form.admin_site_copyright.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.admin_email_address.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_admin_email_address" class="col-sm-1 col-form-label required">{{ form.admin_email_address.label }}:</label>
+
+                        <div class="col-sm-11">
+                            {% if perms.admin.view_admin  and not perms.admin.change_admin %}
+                                <p class="readonly">{{ form.admin_email_address.value }}</p>
+                            {% else %}
+                                {{ form.admin_email_address|add_class:"form-control" }}
+                                <span class="text-danger">{{ form.admin_email_address.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.admin_phone.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_admin_phone" class="col-sm-1 col-form-label required">{{ form.admin_phone.label }}:</label>
+
+                        <div class="col-sm-11">
+                            {% if perms.admin.view_admin  and not perms.admin.change_admin %}
+                                <p class="readonly">{{ form.admin_phone.value }}</p>
+                            {% else %}
+                                {{ form.admin_phone|add_class:"form-control" }}
+                                <span class="text-danger">{{ form.admin_phone.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.admin_address.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_admin_address" class="col-sm-1 col-form-label required">{{ form.admin_address.label }}:</label>
+
+                        <div class="col-sm-11">
+                            {% if perms.admin.view_admin  and not perms.admin.change_admin %}
+                                <p class="readonly">{{ form.admin_address.value }}</p>
+                            {% else %}
+                                {{ form.admin_address|add_class:"form-control" }}
+                                <span class="text-danger">{{ form.admin_address.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="card-footer">
+
+                {% if perms.admin.change_admin %}
+                    <button class="btn btn-primary" type="submit"><i class="btn-label fa fa-check-circle-o"></i>{% trans 'Save change' %}</button>
+                {% endif %}
+
+            </div>
+        </div>
+
+    </form>
+{% endblock %}
+{# Empty centered sidebar as now we use sidebar in content block#}
+{% block sidebar_content %}{% endblock %}

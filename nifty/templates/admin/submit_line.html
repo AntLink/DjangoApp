@@ -1,0 +1,17 @@
+{% load i18n static admin_modify suit_tags admin_urls %}
+{% load url from suit_compat %}
+{% if show_save and has_change_permission %}
+    <button type="submit" class="btn btn-primary" name="_save" {% if is_popup %}id="save-popup"{% endif %}><i class="demo-psi-add fs-5 me-2"></i>{% trans 'Save' %}</button>
+{% endif %}
+{% if show_save_and_continue %}
+    <button type="submit" name="_continue" class="btn btn-primary"><i class="demo-psi-add fs-5 me-2"></i>{% trans 'Save and continue editing' %}</button>
+{% endif %}
+{% if show_save_as_new %}
+    <button type="submit" name="_saveasnew" class="btn btn-primary"><i class="demo-psi-add fs-5 me-2"></i>{% trans 'Save as new' %}</button>
+{% endif %}
+{% if show_save_and_add_another %}
+    <button type="submit" name="_addanother" class="btn  btn-primary"><i class="demo-psi-add fs-5 me-2"></i>{% trans 'Save and add another' %}</button>
+{% endif %}
+{% if show_delete_link %}
+    <a href="../delete/" class="btn btn-danger"><i class="demo-psi-trash fs-5 me-2" {% if is_popup %}id="delete-popup"{% endif %}></i>{% trans "Delete" %}</a>
+{% endif %}

@@ -1,0 +1,371 @@
+{% load static suit_tags suit_menu i18n %}
+{% load url from suit_compat %}
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="{{ admin_color_modes }}" data-scheme="{{ admin_color_theme }}" style="font-size: {{ admin_font_size }}px;">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
+    <meta name="description" content="{{ admin_site_title }}">
+    <title>{% block title %}{{ title }} | {{ admin_site_title }}{% endblock %}</title>
+    <!-- STYLESHEETS -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Fonts [ OPTIONAL ] -->
+    <link type="text/css" href="{% static 'niftyv2/css/fonts.css' %}" rel="stylesheet">
+
+    <!-- Bootstrap CSS [ REQUIRED ] -->
+    <link type="text/css" href="{% static 'niftyv2/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Nifty CSS [ REQUIRED ] -->
+    <link type="text/css" href="{% static 'niftyv2/css/nifty.min.css' %}" rel="stylesheet">
+    {% block extrastyle %}{% endblock %}
+    {% if LANGUAGE_BIDI %}
+        <link type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" rel="stylesheet">
+    {% endif %}
+    <script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static "admin/" %}{% endfilter %}";</script>
+    {#    <script src="{% static 'nifty/js/jquery.min.js' %}"></script>#}
+    <!-- Extra head -->
+    {% block extrahead %}{% endblock %}
+    <script type="text/javascript">
+        var settings_link = "{% url 'admin:ajax_theme_settings' %}";
+        var settings_update = "{% url 'admin:ajax_change_settings' %}";
+        var csrf_token = "{{ csrf_token }}";
+
+        function ajaxPost({url, data, csrfToken, success, error}) {
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": csrfToken,
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                body: new URLSearchParams({
+                    'csrfmiddlewaretoken': csrfToken,
+                    ...data
+                })
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error("Network response was not ok");
+                    return response.json();
+                })
+                .then(json => {
+                    if (typeof success === "function") {
+                        success(json);
+                    }
+                })
+                .catch(err => {
+                    console.error("AJAX Error:", err);
+                    if (typeof error === "function") {
+                        error(err);
+                    }
+                });
+        }
+
+        function updateSettings({val, content}) {
+            console.log(val);
+            ajaxPost({
+                url: settings_update,
+                csrfToken: csrf_token,
+                data: {
+                    val: val,
+                    content: content
+                },
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function (err) {
+                    console.log("Request error:", err);
+                }
+            });
+        }
+
+    </script>
+    {#    <script src="{% static 'niftyv2/js/suit.js' %}"></script>#}
+    {% if 'SHOW_REQUIRED_ASTERISK'|suit_conf %}
+        <style type="text/css">
+            label.required:after {
+                content: '*';
+                margin: 1px 0 0 5px;
+                position: absolute;
+                font-size: 15px;
+                color: #c83e3e;
+            }
+
+            .root {
+            {#--nf-sidebar-unite-bg: #005f7a00;#}
+            }
+        </style>
+    {% endif %}
+    {% block blockbots %}
+        <meta name="robots" content="NONE,NOARCHIVE"/>
+    {% endblock %}
+    <!-- Favicons [ OPTIONAL ] -->
+    <link href="{{ admin_site_favicon }}" rel="shortcut icon">
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    [ REQUIRED ]
+    You must include this category in your project.
+
+
+    [ OPTIONAL ]
+    This is an optional plugin. You may choose to include it in your project.
+
+
+    [ DEMO ]
+    Used for demonstration purposes only. This category should NOT be included in your project.
+
+
+    [ SAMPLE ]
+    Here's a sample script that explains how to initialize plugins and/or components: This category should NOT be included in your project.
+
+
+    Detailed information and more samples can be found in the documentation.
+
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+
+</head>
+
+<body class="out-quart {{ admin_boxed_layout }} effect {{ admin_theme_animation }}" style="background-image: url('{{ admin_boxed_bg }}');">
+
+{% block container %}
+    <!-- PAGE CONTAINER -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <div id="root" class="root {% if admin_sidebar_mode == "" %}{{ admin_colpase_menu }}{% else %}{{ admin_sidebar_mode }}{% endif %} {{ admin_layout_color_mode }}  {{ admin_navbar_fixed }} {{ admin_navbar_fixed }} {{ admin_header_fixed }} {{ admin_sidebar_show }} {{ admin_pinned_sidebar }} {{ admin_unite_sidebar }} {{ admin_stuck_sidebar }} {{ admin_static_sidebar }} {{ admin_bd_sidebar }} {{ admin_sdh_btn }} ">
+
+        <!-- CONTENTS -->
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <section id="content" class="content">
+            {#            <div class="alert alert-callout alert-info" role="alert">#}
+            {#                A simple info alert with <a href="index.html#" class="alert-link">an example link</a>. Give it a click if you like.#}
+            {#            </div>#}
+            {% block messages %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-callout alert-{% firstof message.tags 'info' %}" style="border-radius: 0;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endblock messages %}
+            {% block error-messages %}{% endblock error-messages %}
+            <div class="content__header content__boxed overlapping">
+
+                <div class="content__wrap">
+                    <nav aria-label="breadcrumb">
+                        <!--Breadcrumb-->
+                        {% block breadcrumbs %}
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{% url 'admin:index' %}">{% trans 'Home' %}</a></li>
+                                {% if title %}
+                                    <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
+                                {% endif %}
+                            </ol>
+                        {% endblock %}
+                        <!--End breadcrumb-->
+                    </nav>
+                    <!--Page Title-->
+                    <div id="page-title">
+                        <div class="row">
+                            <div class="col-md-6 d-flex gap-1 align-items-center mb-3">
+                                {% block pretitle %}{% endblock %}
+                                {% block content_title %}
+                                    {% if title %}
+                                        <h3 class="page-header text-overflow">{{ title }}</h3>
+                                    {% endif %}
+                                {% endblock %}
+                            </div>
+                            <div class="col-md-6 d-flex gap-1 align-items-center justify-content-md-end mb-3">
+                                {% block searchbox %}{% endblock %}
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <!--End page title-->
+                </div>
+            </div>
+            <div class="content__boxed">
+                <div class="content__wrap">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+
+            </div>
+            <!-- FOOTER -->
+            <footer class="mt-auto">
+                <div class="content__boxed">
+                    <div class="content__wrap py-3 py-md-1 d-flex flex-column flex-md-row align-items-md-center">
+                        <div class="text-nowrap mb-4 mb-md-0">Copyright &copy; 2025 <a href="index.html#" class="ms-1 btn-link fw-bold">My Company</a></div>
+                        <nav class="nav flex-column gap-1 flex-md-row gap-md-3 ms-md-auto">
+                            <a class="nav-link link-offset-3 link-underline-hover px-0" href="index.html#">Policy Privacy</a>
+                            <a class="nav-link link-offset-3 link-underline-hover px-0" href="index.html#">Terms and conditions</a>
+                            <a class="nav-link link-offset-3 link-underline-hover px-0" href="index.html#">Contact Us</a>
+                        </nav>
+                    </div>
+                </div>
+            </footer>
+            <!-- END - FOOTER -->
+        </section>
+
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <!-- END - CONTENTS -->
+
+
+        <!-- HEADER -->
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        {% include 'niftyv2/header.html' %}
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <!-- END - HEADER -->
+
+
+        <!-- MAIN NAVIGATION -->
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        {% include 'niftyv2/navigation.html' %}
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <!-- END - MAIN NAVIGATION -->
+
+
+        <!-- SIDEBAR -->
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        {% include 'niftyv2/sidebar.html' %}
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <!-- END - SIDEBAR -->
+
+
+    </div>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- END - PAGE CONTAINER -->
+
+
+    <!-- SCROLL TO TOP BUTTON -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <div class="scroll-container">
+        <a href="#root" class="scroll-page ratio ratio-1x1" aria-label="Scroll button"></a>
+    </div>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- END - SCROLL TO TOP BUTTON -->
+
+
+    <!-- BOXED LAYOUT : BACKGROUND IMAGES CONTENT [ DEMO ] -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <div id="_dm-boxedBgContent" class="_dm-boxbg offcanvas offcanvas-bottom" data-bs-scroll="true" tabindex="-1">
+        <div class="offcanvas-body px-4">
+
+            <!-- Content Header -->
+            <div class="offcanvas-header border-bottom p-0 pb-3">
+                <div>
+                    <h4 class="offcanvas-title">Background Images</h4>
+                    <span class="text-body-secondary">Add an image to replace the solid background color</span>
+                </div>
+                <button type="button" class="btn-close btn-lg text-reset shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <!-- End - Content header -->
+
+
+            <!-- Collection Of Images -->
+            {% include 'niftyv2/boxed_baground.html' %}
+            <!-- End - Collection Of Images -->
+
+
+        </div>
+    </div>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- END - BOXED LAYOUT : BACKGROUND IMAGES CONTENT [ DEMO ] -->
+
+
+    <!-- SETTINGS CONTAINER [ DEMO ] -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    {% include "niftyv2/theme_settings.html" %}
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- END - SETTINGS CONTAINER [ DEMO ] -->
+
+
+    <!-- OFFCANVAS [ DEMO ] -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <div id="_dm-offcanvas" class="offcanvas" tabindex="-1">
+
+        <!-- Offcanvas header -->
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">Offcanvas Header</h5>
+            <button type="button" class="btn-close btn-lg text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+
+        <!-- Offcanvas content -->
+        <div class="offcanvas-body">
+            <h5>Content Here</h5>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente eos nihil earum aliquam quod in dolor, aspernatur obcaecati et at. Dicta, ipsum aut, fugit nam dolore porro non est totam sapiente animi recusandae obcaecati dolorum, rem ullam cumque. Illum quidem reiciendis autem neque excepturi odit est accusantium, facilis provident molestias, dicta obcaecati itaque ducimus fuga iure in distinctio voluptate nesciunt dignissimos rem error a. Expedita officiis nam dolore dolores ea. Soluta repellendus delectus culpa quo. Ea tenetur impedit error quod exercitationem ut ad provident quisquam omnis! Nostrum quasi ex delectus vero, facilis aut recusandae deleniti beatae. Qui velit commodi inventore.</p>
+        </div>
+
+    </div>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- END - OFFCANVAS [ DEMO ] -->
+
+
+    <!-- JAVASCRIPTS -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+
+    <!-- Bootstrap JS [ OPTIONAL ] -->
+    <script src="{% static 'niftyv2/js/bootstrap.min.js' %}"></script>
+    <!-- Nifty JS [ OPTIONAL ] -->
+    {#    <script src="{% static 'niftyv2/js/nifty.min.js' %}"></script>#}
+    <script src="{% static 'niftyv2/js/niftyv2.js' %}"></script>
+
+    <!-- Plugin scripts [ OPTIONAL ] -->
+    <script src="{% static 'niftyv2/pages/tooltip-popover.js' %}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const btn = document.getElementById("_dm-settingsToggler");
+            const container = document.querySelector("._dm-settings-container__content.row");
+
+            let isDragging = false;
+            let offsetY = 0;
+
+            // 🔹 Baca posisi dari localStorage (kalau ada)
+            const savedY = localStorage.getItem("settingsBtnY");
+            if (savedY) {
+                btn.style.top = savedY + "px";
+            }
+
+            btn.addEventListener("mousedown", function (e) {
+                isDragging = true;
+                offsetY = e.clientY - btn.getBoundingClientRect().top;
+                btn.style.cursor = "grabbing";
+            });
+
+            document.addEventListener("mousemove", function (e) {
+                if (!isDragging) return;
+
+                // 🔹 ambil batas container
+                const containerRect = container.getBoundingClientRect();
+                const btnHeight = btn.offsetHeight;
+
+                let newY = e.clientY - offsetY - containerRect.top;
+
+                // batasi dalam container
+                const minY = 0;
+                const maxY = containerRect.height - btnHeight;
+
+                if (newY < minY) newY = minY;
+                if (newY > maxY) newY = maxY;
+
+                btn.style.position = "absolute"; // pastikan absolute di dalam container
+                btn.style.top = newY + "px";
+            });
+
+            document.addEventListener("mouseup", function () {
+                if (isDragging) {
+                    // simpan posisi relatif ke container
+                    const currentY = btn.offsetTop;
+                    localStorage.setItem("settingsBtnY", currentY);
+                }
+                isDragging = false;
+                btn.style.cursor = "grab";
+            });
+        });
+    </script>
+{% endblock %}
+{% block extrbody %}{% endblock %}
+</body>
+
+</html>

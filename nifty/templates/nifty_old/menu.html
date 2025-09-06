@@ -1,0 +1,94 @@
+{#{% load sitetree %}#}
+{% load i18n suit_menu static %}
+{% load url from suit_compat %}
+<style>
+    {##profile-nav a{display:block;color:inherit;padding:12px 18px}#profile-nav a strong{font-weight:600}#profile-nav a .badge,#profile-nav a .label{line-height:1.15em}#profile-nav>li>a:active,#profile-nav>li>a:hover{color:#25476a}#profile-nav>li>a.hover{color:#25476a;background-color:#fff}#profile-nav>.active-link>a,#profile-nav>.active-link>a:hover,#profile-nav>.active-sub>a,#profile-nav>.active-sub>a:hover{color:#fff;font-weight:600;background-color:#25476a;margin:0 5px;padding-left:13px;padding-right:13px;border-radius:3px}#profile-nav>.active-link>a i,#profile-nav>.active-link>a:hover i{color:#fff}#profile-nav ul .active-link a,#profile-nav>.active-sub .active-sub>a,#profile-nav>.active-sub .active-sub>a:hover,.menu-popover .sub-menu ul .active-link a{font-weight:700;color:#25476a}#profile-nav>.active-sub .active-sub>a:hover>.arrow:before,#profile-nav>.active-sub .active-sub>a>.arrow:before{border-width:.15em .15em 0 0}#profile-nav .active:not(.active-sub)>a{color:#25476a}#profile-nav>.active{background-color:#fafafa}#profile-nav>.active .active{background-color:#f5f5f5}#profile-nav ul .list-header{padding:10px 20px 12px 55px}#profile-nav ul ul a{padding:10px 20px 12px 65px}#profile-nav i{font-size:15px;padding:0 10px 0 0;vertical-align:middle}#profile-nav .hide-lg{display:none}#profile-nav ul a,.menu-popover .sub-menu ul a{padding:10px 20px 12px 53px}#profile-nav ul a:hover,#profile-nav ul ul a:hover,.menu-popover .sub-menu ul a:hover,.menu-popover .sub-menu ul ul a:hover{color:#25476a}#}
+</style>
+<!--Profile Widget-->
+<!--================================-->
+<div id="mainnav-profile" class="mainnav-profile {{ admin_mainnav_profile }}" data-value="admin_mainnav_profile" data-content="{{ admin_mainnav_profile }}">
+    <div class="profile-wrap text-center">
+        <div class="pad-btm">
+            <img class="img-circle img-md" src="{{ user.profile.get_profile_photo }}" alt="{{ user.username }}">
+        </div>
+        <a href="#profile-nav" class="box-block" data-toggle="collapse" aria-expanded="false">
+            <span class="pull-right dropdown-toggle"><i class="dropdown-caret"></i></span>
+            {% if  user.get_full_name %}
+                <p class="mnp-name">{{ user.get_full_name }}</p>
+            {% else %}
+                <p class="mnp-name">{{ user.username }}</p>
+            {% endif %}
+            <span class="mnp-desc">{{ user.email }}</span>
+        </a>
+    </div>
+
+
+    {% get_menu_user request as app_list %}
+    <ul id="profile-nav" class="collapse {% for app in app_list %}{{ app.is_active|yesno:'in,' }}{% endfor %} list-group bg-trans">
+        {% if app_list %}
+            {% for app in app_list %}
+                {% if app.separator %}
+                    <li class="list-divider"></li>
+                {% else %}
+                    <li class="{{ app.is_active|yesno:'active-sub active,' }}" style="display: block">
+                        <a href="{{ app.url }}"{{ app.blank|yesno:' target=_blank,' }} >
+                            <i class="{% firstof app.icon 'icon-chevron-right' %}" style="margin-top: -4px"></i>
+                            <span class="menu-title">{% trans app.label|capfirst %}</span>
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </ul>
+</div>
+
+
+<!--Shortcut buttons-->
+<!--================================-->
+<div id="mainnav-shortcut" class="{{ admin_mainnav_shortcut }}">
+    <ul class="list-unstyled shortcut-wrap">
+        {% get_menu_shortcut request as app_list %}
+        {% if app_list %}
+            {% for app in app_list %}
+                <li class="col-xs-3" data-content="{{ app.label }}">
+                    <a class="shortcut-grid" href="{{ app.url }}">
+                        <div class="icon-wrap icon-wrap-sm icon-circle {{ app.style }}">
+                            <i class="{{ app.icon }}"></i>
+                        </div>
+                    </a>
+                </li>
+            {% endfor %}
+        {% endif %}
+    </ul>
+</div>
+<!--================================-->
+<!--End shortcut buttons-->
+
+
+<ul id="mainnav-menu" class="list-group {% if admin_mainnav_profile == 'hidden' and admin_mainnav_shortcut == 'hidden' %}mar-top{% endif %}" {% if not admin_nav_show_menu %}style="display: none"{% endif %}>
+    {% get_menu request as app_list %}
+    {% if app_list %}
+        {% for app in app_list %}
+            {% if app.separator %}
+                <li class="list-divider"></li>
+            {% else %}
+                <li class="{{ app.is_active|yesno:'active-sub active,' }}">
+                    <a href="{{ app.url }}"{{ app.blank|yesno:' target=_blank,' }}>
+                        <i class="{% firstof app.icon 'icon-chevron-right' %}" style="margin-top: -4px"></i>
+                        <span class="menu-title">{% trans app.label|capfirst %}</span>
+                        {% if app.models %}<i class="arrow"></i>{% endif %}
+                    </a>
+                    {% if app.models %}
+                        <ul class="collapse">
+                            {% for model in app.models %}
+                                <li{{ model.is_active|yesno:' class=active-link,' }}>
+                                    <a href="{{ model.url }}"{{ model.blank|yesno:' target=_blank,' }}>{{ model.label }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </li>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</ul>

@@ -1,0 +1,71 @@
+{% load suit_tags %}
+
+<fieldset class="module aligned{% if fieldset.name %} with-legend{% else %} first{% endif %} {{ fieldset.classes }}">
+    {% if fieldset.name %}
+        <h4 class="text-thin">
+            {{ fieldset.name }}
+            {% if fieldset.description %}
+                <span class="description">{{ fieldset.description|safe }}</span>
+            {% endif %}
+        </h4>
+        <hr>
+    {% endif %}
+
+    {% for line in fieldset %}
+        {% if line.fields|length == 1 %}
+            <div class="form-group form-row
+                {% if line.errors %}{{ singlefield|yesno:'has-error,first-error' }} errors{% endif %}
+                {% for field in line %}
+                    {% if field.field.name %} field-{{ field.field.name }}{% endif %}
+                    {{ field.field.field.widget.attrs.rowclass }}
+                {% endfor %}
+                {{ singlefield|yesno:',multi-field-row' }}">
+
+                {% for field in line %}
+                    {% with field.field|widget_type as widget_type %}
+                        {# First field label #}
+                        {% if forloop.first %}
+                            {{ field.label_tag }}
+                        {% endif %}
+
+                        {% if not field.is_readonly and field.errors %}
+                            <div class="inline error errors">
+                        {% endif %}
+
+                        {% if field.is_readonly %}
+                            <p class="readonly" style="margin-top: 7px; margin-left: -15px">
+                                {{ field|field_contents_foreign_linked|linebreaksbr }}
+                            </p>
+                        {% else %}
+                            {% if widget_type == 'admintextinputwidget' or widget_type == 'admintextareawidget' %}
+                                {{ field.field|add_class:"form-control" }}
+                            {% elif widget_type == 'select' %}
+                                {{ field.field|add_class:'selectpicker width-100' }}
+                            {% else %}
+                                {{ field.field }}
+                            {% endif %}
+                        {% endif %}
+
+                        {% for error in field.field.errors %}
+                            <span class="help-block">{{ error }}</span>
+                        {% endfor %}
+
+                        {% if field.errors and not singlefield and not field.is_readonly %}
+                            <span class="help-block">{{ field.errors|striptags }}</span>
+                        {% endif %}
+
+                        {% if field.field.help_text %}
+                            <span class="{% if line.errors or field.errors or not singlefield %}help-block{% else %}text-muted{% endif %}">
+                                {{ field.field.help_text|safe }}
+                            </span>
+                        {% endif %}
+
+                        {% if not field.is_readonly and field.errors %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endfor %}
+</fieldset>

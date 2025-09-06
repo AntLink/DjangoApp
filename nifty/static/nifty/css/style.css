@@ -1,0 +1,65 @@
+.dropdown-menu-right.dropdown-menu.with-arrow:after {
+    margin: -6px 13px 0 0 !important;
+}
+
+.dropdown-menu-right.dropdown-menu.with-arrow:before {
+    margin: -6px 13px 0 0 !important;
+}
+
+#page-content {
+    padding-top: 5px;
+}
+
+#changelist-search input {
+    background: #ffffff;
+}
+
+/*.related-widget-wrapper > .bootstrap-select {*/
+/*margin-right: 10px;*/
+/*}*/
+
+.related-widget-wrapper > .selector {
+    margin-top: 12px;
+}
+
+.text-muted > ul {
+    padding-left: 0;
+    list-style: none;
+}
+
+.help-block > ul {
+    padding-left: 0;
+    list-style: none;
+}
+
+.dz-preview > .file-control > label {
+    margin-left: 6px !important;
+    position: absolute;
+    margin-top: 6px !important;
+}
+
+.perpage {
+    width: 100px !important;
+}
+
+.width-100 {
+    width: 100% !important;
+}
+
+.table-responsive {
+    min-height: .01%;
+    overflow-x: inherit !important;
+}
+
+.action-width {
+    width: 40px !important;
+    border-radius: 3px !important;
+}
+
+.action-width > button > .bs-caret > .caret {
+    right: 16px !important;
+}
+
+.readonly{
+    margin-top: 8px !important;
+}

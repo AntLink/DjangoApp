@@ -1,0 +1,1299 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-02-16 21:26+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: .\nifty\apps.py:9 .\nifty\apps.py:10
+msgid "Nifty"
+msgstr ""
+
+#: .\nifty\config.py:30
+msgid "Dashboard"
+msgstr "Beranda"
+
+#: .\nifty\config.py:39 .\nifty\config.py:61 .\nifty\config.py:74
+msgid "My Profile"
+msgstr "Profil Pengguna"
+
+#: .\nifty\config.py:40 .\nifty\config.py:62
+#: .\nifty\templates\admin\settings_theme.html:34 .\nifty\views.py:287
+msgid "Theme Settings"
+msgstr "Pengaturan Tema"
+
+#: .\nifty\config.py:41 .\nifty\config.py:63
+#: .\nifty\templates\registration\password_change_done.html:12
+#: .\nifty\templates\registration\password_change_done.html:21
+msgid "Change Password"
+msgstr "Ubah Kata Sandi"
+
+#: .\nifty\config.py:49 .\nifty\templates\admin\app_index.html:11
+#: .\nifty\templates\admin\auth\user\change_form.html:61
+#: .\nifty\templates\admin\auth\user\change_password.html:22
+#: .\nifty\templates\admin\base.html:95
+#: .\nifty\templates\admin\change_form.html:61
+#: .\nifty\templates\admin\change_list.html:50
+#: .\nifty\templates\admin\delete_confirmation.html:9
+#: .\nifty\templates\admin\delete_selected_confirmation.html:9
+#: .\nifty\templates\admin\object_history.html:9
+#: .\nifty\templates\admin\settings_theme.html:23
+#: .\nifty\templates\admin_doc\bookmarklets.html:6
+#: .\nifty\templates\admin_doc\index.html:6
+#: .\nifty\templates\admin_doc\missing_docutils.html:6
+#: .\nifty\templates\admin_doc\model_detail.html:20
+#: .\nifty\templates\admin_doc\model_index.html:8
+#: .\nifty\templates\admin_doc\template_detail.html:6
+#: .\nifty\templates\admin_doc\template_filter_index.html:7
+#: .\nifty\templates\admin_doc\template_tag_index.html:7
+#: .\nifty\templates\admin_doc\view_detail.html:6
+#: .\nifty\templates\admin_doc\view_index.html:7
+#: .\nifty\templates\admin_set\change_form.html:28
+#: .\nifty\templates\registration\logged_out.html:6
+#: .\nifty\templates\registration\password_change_done.html:9
+#: .\nifty\templates\registration\password_change_form.html:8
+#: .\nifty\templates\reversion\recover_form.html:8
+#: .\nifty\templates\reversion\recover_list.html:8
+#: .\nifty\templates\reversion\revision_form.html:8
+#: .\nifty\templates\site_set\change_form.html:28
+msgid "Home"
+msgstr "Beranda"
+
+#: .\nifty\config.py:65
+msgid "Logout"
+msgstr "Keluar"
+
+#: .\nifty\config.py:75
+msgid "Messages"
+msgstr ""
+
+#: .\nifty\config.py:76
+#, fuzzy
+#| msgid "setting"
+msgid "Settings"
+msgstr "pengaturan"
+
+#: .\nifty\config.py:77 .\nifty\templates\admin_doc\bookmarklets.html:7
+#: .\nifty\templates\admin_doc\index.html:7
+#: .\nifty\templates\admin_doc\index.html:10
+#: .\nifty\templates\admin_doc\index.html:11
+#: .\nifty\templates\admin_doc\missing_docutils.html:7
+#: .\nifty\templates\admin_doc\missing_docutils.html:12
+#: .\nifty\templates\admin_doc\model_detail.html:21
+#: .\nifty\templates\admin_doc\model_index.html:9
+#: .\nifty\templates\admin_doc\template_detail.html:7
+#: .\nifty\templates\admin_doc\template_filter_index.html:8
+#: .\nifty\templates\admin_doc\template_tag_index.html:8
+#: .\nifty\templates\admin_doc\view_detail.html:7
+#: .\nifty\templates\admin_doc\view_index.html:8
+msgid "Documentation"
+msgstr "Dokumentasi"
+
+#: .\nifty\data.py:11 .\nifty\data.py:99 .\nifty\forms.py:136
+#: .\nifty\forms.py:224
+msgid "Title"
+msgstr "Judul"
+
+#: .\nifty\data.py:21 .\nifty\forms.py:141
+msgid "Brand Title"
+msgstr "Judul Brand"
+
+#: .\nifty\data.py:31 .\nifty\forms.py:146
+msgid "Favicon"
+msgstr ""
+
+#: .\nifty\data.py:42 .\nifty\forms.py:151
+msgid "Logo"
+msgstr ""
+
+#: .\nifty\data.py:53 .\nifty\forms.py:156
+msgid "Copyright"
+msgstr ""
+
+#: .\nifty\data.py:64 .\nifty\forms.py:66
+msgid "Email"
+msgstr ""
+
+#: .\nifty\data.py:74 .\nifty\forms.py:167
+msgid "Phone"
+msgstr "Telepon"
+
+#: .\nifty\data.py:84 .\nifty\forms.py:75 .\nifty\forms.py:173
+msgid "Address"
+msgstr "Alamat"
+
+#: .\nifty\data.py:109 .\nifty\templates\admin_doc\index.html:16
+#: .\nifty\templates\admin_doc\template_tag_index.html:9
+msgid "Tags"
+msgstr "Tag"
+
+#: .\nifty\data.py:119 .\nifty\forms.py:234
+msgid "Language"
+msgstr "Bahasa"
+
+#: .\nifty\data.py:129 .\nifty\forms.py:239
+msgid "Email Address"
+msgstr "Alamat Email"
+
+#: .\nifty\data.py:139
+msgid "Timezone"
+msgstr ""
+
+#: .\nifty\data.py:149 .\nifty\forms.py:249
+msgid "Date Format"
+msgstr "Format Tanggal"
+
+#: .\nifty\data.py:159 .\nifty\forms.py:254
+msgid "Keyword"
+msgstr "Kata Kunci"
+
+#: .\nifty\data.py:169 .\nifty\forms.py:259 .\nifty\models.py:11
+msgid "Author"
+msgstr "Pencipta"
+
+#: .\nifty\data.py:179 .\nifty\forms.py:265
+#: .\nifty\templates\admin_doc\model_detail.html:46
+msgid "Description"
+msgstr "Keterangan"
+
+#: .\nifty\data.py:189
+msgid "Facebook"
+msgstr ""
+
+#: .\nifty\data.py:199
+msgid "Twitter"
+msgstr ""
+
+#: .\nifty\data.py:209
+msgid "Google Pluse"
+msgstr ""
+
+#: .\nifty\data.py:219 .\nifty\forms.py:285
+msgid "Instagram"
+msgstr ""
+
+#: .\nifty\data.py:232
+msgid "Navigation Collapsed Mode"
+msgstr ""
+
+#: .\nifty\data.py:241
+msgid "Navbar Fixed Position"
+msgstr ""
+
+#: .\nifty\data.py:250
+msgid "Navbar Show Menu"
+msgstr ""
+
+#: .\nifty\data.py:259
+msgid "Navbar Show User Menu"
+msgstr ""
+
+#: .\nifty\data.py:268
+msgid "Navigation Show Menu"
+msgstr ""
+
+#: .\nifty\data.py:277
+msgid "Navigation Fixed Position"
+msgstr ""
+
+#: .\nifty\data.py:286
+msgid "Footer Fixed Position"
+msgstr ""
+
+#: .\nifty\data.py:295
+msgid "Navigation Off Canvas"
+msgstr ""
+
+#: .\nifty\data.py:304
+msgid "Navigation Widget Profil"
+msgstr ""
+
+#: .\nifty\data.py:313
+msgid "Navigation Shortcut Buttons"
+msgstr ""
+
+#: .\nifty\data.py:322
+msgid "Theme Animations"
+msgstr ""
+
+#: .\nifty\data.py:331
+msgid "Enable Theme Animations"
+msgstr ""
+
+#: .\nifty\data.py:340
+msgid "Hide Aside In Menu"
+msgstr ""
+
+#: .\nifty\data.py:349
+msgid "Visible Aside"
+msgstr ""
+
+#: .\nifty\data.py:358
+msgid "Aside Fixed Position"
+msgstr ""
+
+#: .\nifty\data.py:367
+msgid "Aside Fload"
+msgstr ""
+
+#: .\nifty\data.py:376
+msgid "Aside Left Position"
+msgstr ""
+
+#: .\nifty\data.py:385
+msgid "Aside Dark Version"
+msgstr ""
+
+#: .\nifty\data.py:394
+msgid "Color Theme"
+msgstr ""
+
+#: .\nifty\data.py:403
+msgid "Admin Boxed Layout"
+msgstr ""
+
+#: .\nifty\data.py:412
+msgid "Admin Boxed Background"
+msgstr ""
+
+#: .\nifty\forms.py:43
+msgid "Photo profile"
+msgstr "Photo Profil"
+
+#: .\nifty\forms.py:44
+msgid "Double click to change your profile photo"
+msgstr ""
+
+#: .\nifty\forms.py:49
+msgid "First name"
+msgstr "Nama depan"
+
+#: .\nifty\forms.py:53
+msgid "Last name"
+msgstr "Nama belakang"
+
+#: .\nifty\forms.py:58
+msgid "Male"
+msgstr "Pria"
+
+#: .\nifty\forms.py:58
+msgid "Female"
+msgstr "Perempuan"
+
+#: .\nifty\forms.py:61
+msgid "Gender"
+msgstr "Jenis Kelamin"
+
+#: .\nifty\forms.py:70
+msgid "Phone number"
+msgstr "Nomor telepon"
+
+#: .\nifty\forms.py:80
+msgid "Place of birth"
+msgstr ""
+
+#: .\nifty\forms.py:85
+msgid "Birth date"
+msgstr "Tanggal lahir"
+
+#: .\nifty\forms.py:89 .\nifty\forms.py:270
+msgid "Facebook link"
+msgstr ""
+
+#: .\nifty\forms.py:93 .\nifty\forms.py:275
+msgid "Twitter link"
+msgstr ""
+
+#: .\nifty\forms.py:97
+msgid "Google plus link"
+msgstr ""
+
+#: .\nifty\forms.py:101
+msgid "Instagram link"
+msgstr ""
+
+#: .\nifty\forms.py:111
+msgid "Action:"
+msgstr "Aksi"
+
+#: .\nifty\forms.py:162
+msgid "Email address"
+msgstr "Alamat email"
+
+#: .\nifty\forms.py:229
+msgid "Tag"
+msgstr ""
+
+#: .\nifty\forms.py:244
+msgid "Timezon"
+msgstr "Zona waktu"
+
+#: .\nifty\forms.py:280
+msgid "Googlr plus link"
+msgstr ""
+
+#: .\nifty\logentry.py:44 .\nifty\templates\admin\object_history.html:63
+#: .\nifty\templates\nifty\aside.html:61
+msgid "Created"
+msgstr "Dibuat"
+
+#: .\nifty\logentry.py:45 .\nifty\templates\admin\object_history.html:64
+#: .\nifty\templates\nifty\aside.html:63
+msgid "Updated"
+msgstr "Diubah"
+
+#: .\nifty\logentry.py:46 .\nifty\templates\admin\object_history.html:65
+#: .\nifty\templates\nifty\aside.html:59
+msgid "Deleted"
+msgstr "Dihapus"
+
+#: .\nifty\logentry.py:56
+msgid "Model"
+msgstr ""
+
+#: .\nifty\logentry.py:79
+msgid "Field Changed"
+msgstr "Bidang Berubah"
+
+#: .\nifty\logentry.py:85 .\nifty\templates\admin\edit_inline\tabular.html:18
+#: .\nifty\templates\admin\edit_inline\tabular.html:68
+#: .\nifty\templates\admin\home_index.html:127
+#: .\nifty\templatetags\suit_list.py:382
+msgid "Change"
+msgstr "Ubah"
+
+#: .\nifty\logentry.py:89
+msgid "Action time"
+msgstr "Waktu aksi"
+
+#: .\nifty\models.py:19
+msgid "setting"
+msgstr "pengaturan"
+
+#: .\nifty\models.py:23
+msgid "Can get theme settings (ajax)"
+msgstr "Bisa menampilkan pengaturan tema (ajax)"
+
+#: .\nifty\models.py:24
+msgid "Can change theme settings (ajax)"
+msgstr "Bisa mengubah pengaturan tema"
+
+#: .\nifty\models.py:25
+msgid "Can change user password"
+msgstr "Bisa mengubah kata sandi pengguna"
+
+#: .\nifty\models.py:26
+msgid "Can change user profile"
+msgstr "Bisa mengubah profil pengguna"
+
+#: .\nifty\models.py:27
+msgid "Can change user admin theme setting"
+msgstr "Bisa mengubah pengaturan tema admin pengguna"
+
+#: .\nifty\models.py:28
+msgid "Can view home index"
+msgstr "Bisa menampilkan halaman beranda"
+
+#: .\nifty\models.py:40 .\nifty\models.py:41
+msgid "admin setting"
+msgstr "pengaturan admin"
+
+#: .\nifty\models.py:49 .\nifty\models.py:50
+msgid "site setting"
+msgstr "pengaturan situs"
+
+#: .\nifty\settings.py:54
+msgid "Admin setting changed successfully."
+msgstr "Pengaturan admin berhasil diubah."
+
+#: .\nifty\settings.py:70
+msgid "Admin Setting"
+msgstr "Pengaturan admin"
+
+#: .\nifty\settings.py:116
+msgid "Site setting changed successfully."
+msgstr "Pengaturan situs berhasil diubah."
+
+#: .\nifty\settings.py:132
+msgid "Site Setting"
+msgstr "Pengaturan situs"
+
+#: .\nifty\templates\403.html:4
+msgid "forbidden"
+msgstr "Tidak diizinkan"
+
+#: .\nifty\templates\403.html:6 .\nifty\templates\404.html:6
+#: .\nifty\templates\500.html:6 .\nifty\templates\nifty\error_base.html:76
+msgid "error"
+msgstr ""
+
+#: .\nifty\templates\403.html:9
+msgid "We're sorry, but the requested action is forbidden"
+msgstr "Kami minta maaf, permintaan yang diminta tidak di izinkan"
+
+#: .\nifty\templates\404.html:4
+msgid "Page not found"
+msgstr "Halaman tidak ditemukan"
+
+#: .\nifty\templates\404.html:9
+msgid "We're sorry, but the requested page could not be found."
+msgstr "Kami minta maaf, tetapi halaman yang diminta tidak dapat ditemukan."
+
+#: .\nifty\templates\500.html:4
+msgid "Server Error"
+msgstr ""
+
+#: .\nifty\templates\500.html:9
+msgid ""
+"There's been an error. It's been reported to the site administrators via e-"
+"mail and should be fixed shortly. Thanks for your patience."
+msgstr ""
+"Ada kesalahan. Sudah dilaporkan ke administrator situs melalui e-mailan "
+"harus segera diperbaiki. Terima kasih atas kesabaran Anda."
+
+#: .\nifty\templates\admin\actions.html:7
+msgid "Select all"
+msgstr "Pilih Semua"
+
+#: .\nifty\templates\admin\actions.html:20
+msgid "Run"
+msgstr "Jalankan"
+
+#: .\nifty\templates\admin\actions.html:21
+msgid "OK"
+msgstr ""
+
+#: .\nifty\templates\admin\app_index.html:16
+#: .\nifty\templates\admin\change_list.html:76
+#: .\nifty\templates\admin\change_list.html:207
+#, python-format
+msgid "%(name)s"
+msgstr ""
+
+#: .\nifty\templates\admin\auth\user\change_form.html:49
+#: .\nifty\templates\admin\auth\user\change_form.html:78
+#: .\nifty\templates\admin\change_form.html:49
+#: .\nifty\templates\admin\change_form.html:78
+#: .\nifty\templates\admin\change_list.html:76
+#: .\nifty\templates\admin\change_list.html:77
+#: .\nifty\templates\admin\change_list.html:207
+#: .\nifty\templates\admin\home_index.html:131
+#: .\nifty\templates\admin_set\change_form.html:19
+#: .\nifty\templates\site_set\change_form.html:19
+msgid "Add"
+msgstr "Tambah"
+
+#: .\nifty\templates\admin\auth\user\change_form.html:89
+#: .\nifty\templates\admin\auth\user\profile.html:32
+#: .\nifty\templates\admin\change_form.html:89
+msgid "Please correct the error below."
+msgstr "Harap perbaiki kesalahan di bawah ini."
+
+#: .\nifty\templates\admin\auth\user\change_form.html:190
+#: .\nifty\templates\admin\auth\user\change_form.html:193
+#: .\nifty\templates\admin\change_form.html:190
+#: .\nifty\templates\admin\change_form.html:193
+#: .\nifty\templates\admin\object_history.html:28
+#: .\nifty\templates\admin\object_history.html:39
+#: .\nifty\templates\reversion\revision_form.html:16
+msgid "History"
+msgstr "Riwayat"
+
+#: .\nifty\templates\admin\auth\user\change_form.html:197
+#: .\nifty\templates\admin\change_form.html:197
+#: .\nifty\templates\admin\edit_inline\stacked.html:15
+msgid "View on site"
+msgstr "Lihat di situs"
+
+#: .\nifty\templates\admin\auth\user\change_password.html:38
+#: .\nifty\templates\admin\auth\user\change_password.html:88
+#: .\nifty\templates\registration\password_change_form.html:62
+msgid "Change password"
+msgstr "Ubah kata sandi"
+
+#: .\nifty\templates\admin\auth\user\change_password.html:48
+#: .\nifty\templates\admin_set\change_form.html:51
+#: .\nifty\templates\site_set\change_form.html:51
+msgid "Please correctthe error below."
+msgid_plural " Please correct the errors below."
+msgstr[0] ""
+msgstr[1] ""
+
+#: .\nifty\templates\admin\auth\user\change_password.html:51
+#, python-format
+msgid "Enter a new password for the user <strong>%(username)s</strong>."
+msgstr "Masukkan kata sandi baru untuk pengguna <strong>%(username)s</strong>."
+
+#: .\nifty\templates\admin\auth\user\change_password.html:55
+#: .\nifty\templates\registration\password_change_form.html:14
+#: .\nifty\templates\registration\password_change_form.html:21
+msgid "Password change"
+msgstr "Perubahan kata sandi"
+
+#: .\nifty\templates\admin\auth\user\change_password.html:64
+#: .\nifty\templates\admin\auth\user\change_password.html:75
+#: .\nifty\templates\registration\password_change_form.html:27
+msgid "Old password"
+msgstr "Kata sandi lama"
+
+#: .\nifty\templates\admin\auth\user\change_password.html:81
+msgid "Enter the same password as above, for verification."
+msgstr "Masukkan kata sandi yang sama seperti di atas, untuk verifikasi."
+
+#: .\nifty\templates\admin\auth\user\profile.html:42
+msgid "Profile change"
+msgstr "Simpan perubahan"
+
+#: .\nifty\templates\admin\auth\user\profile.html:197
+msgid "Save Change"
+msgstr "Simpan perubahan"
+
+#: .\nifty\templates\admin\change_list.html:95
+msgid "Please correct the error below. "
+msgid_plural " Please correct the errors below."
+msgstr[0] ""
+msgstr[1] ""
+
+#: .\nifty\templates\admin\change_list.html:115
+#: .\nifty\templates\admin\change_list.html:120
+#: .\nifty\templates\admin\change_list.html:164
+#: .\nifty\templates\admin\change_list.html:169
+msgid "Previous"
+msgstr "Sebelumnya"
+
+#: .\nifty\templates\admin\change_list.html:127
+#: .\nifty\templates\admin\change_list.html:132
+#: .\nifty\templates\admin\change_list.html:176
+#: .\nifty\templates\admin\change_list.html:181
+msgid "Next"
+msgstr "Selanjutnya"
+
+#: .\nifty\templates\admin\change_list.html:141
+#: .\nifty\templates\admin\change_list.html:189
+#: .\nifty\templates\admin\pagination.html:7
+msgid "Showing"
+msgstr "Menampilkan"
+
+#: .\nifty\templates\admin\change_list.html:141
+#: .\nifty\templates\admin\change_list.html:189
+msgid "of"
+msgstr "dari"
+
+#: .\nifty\templates\admin\change_list.html:199
+msgid "Nothing found"
+msgstr "Tidak ada yang ditemukan"
+
+#: .\nifty\templates\admin\change_list.html:201
+msgid "Reset search and filters"
+msgstr "Setel ulang penelusuran dan filter"
+
+#: .\nifty\templates\admin\change_list.html:204
+#, python-format
+msgid "%(name_plural)s are not created yet"
+msgstr "%(name_plural)s belum di buat"
+
+#: .\nifty\templates\admin\delete_confirmation.html:27
+#: .\nifty\templates\admin\delete_confirmation.html:59
+#: .\nifty\templates\admin\page_submit_line.html:9
+#: .\nifty\templates\admin\submit_line.html:16
+msgid "Delete"
+msgstr "Hapus"
+
+#: .\nifty\templates\admin\delete_confirmation.html:37
+#, python-format
+msgid ""
+"Deleting the %(object_name)s '%(escaped_object)s' would result in deleting "
+"related objects, but your account doesn't have permission to delete the "
+"following types of objects:"
+msgstr ""
+
+#: .\nifty\templates\admin\delete_confirmation.html:47
+#, python-format
+msgid ""
+"Deleting the %(object_name)s '%(escaped_object)s' would require deleting the "
+"following protected related objects:"
+msgstr ""
+
+#: .\nifty\templates\admin\delete_confirmation.html:62
+#, python-format
+msgid ""
+"Are you sure you want to delete the %(object_name)s \"%(escaped_object)s\"? "
+"All of the following related items will be deleted:"
+msgstr ""
+
+#: .\nifty\templates\admin\delete_confirmation.html:70
+#: .\nifty\templates\admin\delete_selected_confirmation.html:70
+msgid "Yes, I'm sure"
+msgstr "Ya, Saya yakin"
+
+#: .\nifty\templates\admin\delete_confirmation.html:72
+#: .\nifty\templates\admin\delete_confirmation.html:74
+#: .\nifty\templates\admin\delete_selected_confirmation.html:73
+#: .\nifty\templates\admin\delete_selected_confirmation.html:75
+msgid "No, take me back"
+msgstr "Tidak, Bawa saya kembali"
+
+#: .\nifty\templates\admin\delete_selected_confirmation.html:22
+msgid "Delete multiple objects"
+msgstr ""
+
+#: .\nifty\templates\admin\delete_selected_confirmation.html:31
+#, python-format
+msgid ""
+"Deleting the selected %(objects_name)s would result in deleting related "
+"objects, but your account doesn't have permission to delete the following "
+"types of objects:"
+msgstr ""
+
+#: .\nifty\templates\admin\delete_selected_confirmation.html:40
+#, python-format
+msgid ""
+"Deleting the selected %(objects_name)s would require deleting the following "
+"protected related objects:"
+msgstr ""
+
+#: .\nifty\templates\admin\delete_selected_confirmation.html:57
+msgid "Confirm deletion"
+msgstr "Konfirmasi penghapusan"
+
+#: .\nifty\templates\admin\delete_selected_confirmation.html:60
+#, python-format
+msgid ""
+"Are you sure you want to delete the selected %(objects_name)s? All of the "
+"following objects and their related items will be deleted:"
+msgstr ""
+
+#: .\nifty\templates\admin\edit_inline\stacked.html:73
+#: .\nifty\templates\admin\edit_inline\tabular.html:128
+#, python-format
+msgid "Add another %(verbose_name)s"
+msgstr ""
+
+#: .\nifty\templates\admin\edit_inline\stacked.html:76
+#: .\nifty\templates\admin\edit_inline\tabular.html:131
+msgid "Remove"
+msgstr "Hapus"
+
+#: .\nifty\templates\admin\edit_inline\tabular.html:19
+msgid "Delete?"
+msgstr "Hapus?"
+
+#: .\nifty\templates\admin\home_index.html:112
+#, python-format
+msgid "Models available in the %(name)s application."
+msgstr ""
+
+#: .\nifty\templates\admin\home_index.html:115
+#: .\nifty\templates\admin\home_index.html:220
+msgid "App"
+msgstr ""
+
+#: .\nifty\templates\admin\home_index.html:116
+#: .\nifty\templates\admin\home_index.html:222
+#: .\nifty\templates\admin\object_history.html:50
+msgid "Action"
+msgstr "Aksi"
+
+#: .\nifty\templates\admin\home_index.html:148
+#: .\nifty\templates\admin\index.html:30
+msgid "You don't have permission to edit anything."
+msgstr "Anda tidak memiliki izin untuk mengedit apa pun."
+
+#: .\nifty\templates\admin\home_index.html:208
+msgid "Aktifitas Pengguna"
+msgstr ""
+
+#: .\nifty\templates\admin\home_index.html:214
+msgid "None available"
+msgstr ""
+
+#: .\nifty\templates\admin\home_index.html:221
+msgid "Item"
+msgstr ""
+
+#: .\nifty\templates\admin\home_index.html:239
+msgid "Unknown content"
+msgstr ""
+
+#: .\nifty\templates\admin\home_index.html:254
+msgid "added"
+msgstr "ditambahkan"
+
+#: .\nifty\templates\admin\home_index.html:257
+msgid "changed"
+msgstr "diubah"
+
+#: .\nifty\templates\admin\home_index.html:260
+msgid "deleted"
+msgstr "dihapus"
+
+#: .\nifty\templates\admin\index.html:23
+msgid "Go"
+msgstr ""
+
+#: .\nifty\templates\admin\login.html:44
+msgid "Sign In to your account"
+msgstr "Masuk ke akun Anda"
+
+#: .\nifty\templates\admin\login.html:68
+msgid "Forgotten your password or username?"
+msgstr "Masuk ke akun Anda Lupa kata sandi atau nama pengguna Anda?"
+
+#: .\nifty\templates\admin\login.html:74
+msgid "Sign In"
+msgstr "Masuk"
+
+#: .\nifty\templates\admin\object_history.html:48
+#: .\nifty\templates\reversion\object_history.html:15
+#: .\nifty\templates\reversion\recover_list.html:27
+msgid "Date/time"
+msgstr ""
+
+#: .\nifty\templates\admin\object_history.html:49
+#: .\nifty\templates\reversion\object_history.html:16
+msgid "User"
+msgstr ""
+
+#: .\nifty\templates\admin\object_history.html:51
+#: .\nifty\templates\admin_doc\model_detail.html:44
+msgid "Field"
+msgstr ""
+
+#: .\nifty\templates\admin\object_history.html:76
+#: .\nifty\templates\reversion\object_history.html:36
+msgid ""
+"This object doesn't have a change history. It probably wasn't added via this "
+"admin site."
+msgstr ""
+
+#: .\nifty\templates\admin\page_submit_line.html:3
+#: .\nifty\templates\admin\pagination.html:28
+#: .\nifty\templates\admin\submit_line.html:4
+msgid "Save"
+msgstr "Simpan"
+
+#: .\nifty\templates\admin\page_submit_line.html:4
+#: .\nifty\templates\admin\submit_line.html:7
+msgid "Save and continue editing"
+msgstr "Simpan dan lanjutkan untuk diubah"
+
+#: .\nifty\templates\admin\page_submit_line.html:5
+#: .\nifty\templates\admin\submit_line.html:10
+msgid "Save as new"
+msgstr "Simpan"
+
+#: .\nifty\templates\admin\page_submit_line.html:6
+#: .\nifty\templates\admin\submit_line.html:13
+msgid "Save and add another"
+msgstr "Simpan dan tambahkan yang lain"
+
+#: .\nifty\templates\admin\page_submit_line.html:15
+#, python-format
+msgid "Delete %(language)s translation"
+msgstr ""
+
+#: .\nifty\templates\admin\pagination.html:14
+msgid "Show all"
+msgstr "Tampilkan semua"
+
+#: .\nifty\templates\admin\search_form.html:33
+msgid "Filter"
+msgstr ""
+
+#: .\nifty\templates\admin\search_form.html:40
+#, python-format
+msgid "%(counter)s result "
+msgid_plural " %(counter)s results "
+msgstr[0] ""
+msgstr[1] ""
+
+#: .\nifty\templates\admin\search_form.html:43
+#, python-format
+msgid "%(full_result_count)s total "
+msgstr ""
+
+#: .\nifty\templates\admin\searchbox_form.html:6
+msgid "Search"
+msgstr "Cari"
+
+#: .\nifty\templates\admin\settings_theme.html:26
+msgid "Theme change for user"
+msgstr "Pengaturan tema untuk pengguna"
+
+#: .\nifty\templates\admin\widgets\related_widget_wrapper.html:10
+#, python-format
+msgid "Change selected %(model)s"
+msgstr "Ubah %(model)s yang dipilih"
+
+#: .\nifty\templates\admin\widgets\related_widget_wrapper.html:15
+#, python-format
+msgid "Add another %(model)s"
+msgstr "Tambahkan %(model)s yang lain "
+
+#: .\nifty\templates\admin\widgets\related_widget_wrapper.html:20
+#, python-format
+msgid "Delete selected %(model)s"
+msgstr "Hapus %(model)s yang dipilih"
+
+#: .\nifty\templates\admin_doc\bookmarklets.html:8
+#: .\nifty\templates\admin_doc\index.html:32
+msgid "Bookmarklets"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\bookmarklets.html:11
+#: .\nifty\templates\admin_doc\bookmarklets.html:14
+msgid "Documentation bookmarklets"
+msgstr "Dokumentasi bookmarklets"
+
+#: .\nifty\templates\admin_doc\bookmarklets.html:20
+msgid ""
+"\n"
+"                <p class=\"help\">To install bookmarklets, drag the link to "
+"your bookmarks\n"
+"                    toolbar, or right-click the link and add it to your "
+"bookmarks. Now you can\n"
+"                    select the bookmarklet from any page in the site. Note "
+"that some of these\n"
+"                    bookmarklets require you to be viewing the site from a "
+"computer designated\n"
+"                    as \"internal\" (talk to your system administrator if "
+"you aren't sure if\n"
+"                    your computer is \"internal\").</p>\n"
+"            "
+msgstr ""
+
+#: .\nifty\templates\admin_doc\bookmarklets.html:30
+msgid "Documentation for this page"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\bookmarklets.html:33
+msgid ""
+"Jumps you from any page to the documentation for the view that generates "
+"that page."
+msgstr ""
+
+#: .\nifty\templates\admin_doc\bookmarklets.html:36
+msgid "Show object ID"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\bookmarklets.html:39
+msgid ""
+"Shows the content-type and unique ID for pages that represent a single "
+"object."
+msgstr ""
+
+#: .\nifty\templates\admin_doc\bookmarklets.html:42
+msgid "Edit this object (current window)"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\bookmarklets.html:45
+msgid "Jumps to the admin page for pages that represent a single object."
+msgstr ""
+
+#: .\nifty\templates\admin_doc\bookmarklets.html:48
+msgid "Edit this object (new window)"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\bookmarklets.html:51
+msgid "As above, but opens the admin page in a new window."
+msgstr ""
+
+#: .\nifty\templates\admin_doc\index.html:18
+msgid "List of all the template tags and their functions."
+msgstr ""
+
+#: .\nifty\templates\admin_doc\index.html:20
+#: .\nifty\templates\admin_doc\template_filter_index.html:9
+msgid "Filters"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\index.html:22
+msgid ""
+"Filters are actions which can be applied to variables in a template to alter "
+"the output."
+msgstr ""
+
+#: .\nifty\templates\admin_doc\index.html:24
+#: .\nifty\templates\admin_doc\model_detail.html:22
+#: .\nifty\templates\admin_doc\model_index.html:10
+#: .\nifty\templates\admin_doc\model_index.html:14
+msgid "Models"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\index.html:26
+msgid ""
+"Models are descriptions of all the objects in the system and their "
+"associated fields. Each model has a list of fields which can be accessed as "
+"template variables"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\index.html:28
+#: .\nifty\templates\admin_doc\view_detail.html:8
+#: .\nifty\templates\admin_doc\view_index.html:9
+#: .\nifty\templates\admin_doc\view_index.html:12
+msgid "Views"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\index.html:30
+msgid ""
+"Each page on the public site is generated by a view. The view defines which "
+"template is used to generate the page and which objects are available to "
+"that template."
+msgstr ""
+
+#: .\nifty\templates\admin_doc\index.html:34
+msgid "Tools for your browser to quickly access admin functionality."
+msgstr ""
+
+#: .\nifty\templates\admin_doc\missing_docutils.html:10
+msgid "Please install docutils"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\missing_docutils.html:16
+#, python-format
+msgid ""
+"The admin documentation system requires Python's\n"
+"                <a href=\"%(link)s\">docutils</a> library."
+msgstr ""
+
+#: .\nifty\templates\admin_doc\missing_docutils.html:19
+#, python-format
+msgid ""
+"Please ask your administrators to install\n"
+"                <a href=\"%(link)s\">docutils</a>."
+msgstr ""
+
+#: .\nifty\templates\admin_doc\model_detail.html:27
+#, python-format
+msgid "Model: %(name)s"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\model_detail.html:45
+msgid "Type"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\model_detail.html:63
+msgid "Back to Model Documentation"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\model_index.html:16
+msgid "Model documentation"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\model_index.html:41
+msgid "Model groups"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\template_detail.html:8
+msgid "Templates"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\template_detail.html:13
+#, python-format
+msgid "Template: %(name)s"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\template_detail.html:16
+#, python-format
+msgid "Template: \"%(name)s\""
+msgstr ""
+
+#: .\nifty\templates\admin_doc\template_detail.html:18
+#, python-format
+msgid "Search path for template \"%(name)s\":"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\template_detail.html:22
+msgid "(does not exist)"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\template_detail.html:26
+msgid "Back to Documentation"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\template_filter_index.html:12
+msgid "Template filters"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\template_filter_index.html:15
+msgid "Template filter documentation"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\template_filter_index.html:23
+#: .\nifty\templates\admin_doc\template_filter_index.html:43
+msgid "Built-in filters"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\template_filter_index.html:25
+#, python-format
+msgid ""
+"To use these\n"
+"                            filters, put <code>%(code)s</code> in your "
+"template before using the\n"
+"                            filter."
+msgstr ""
+
+#: .\nifty\templates\admin_doc\template_tag_index.html:12
+msgid "Template tags"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\template_tag_index.html:15
+msgid "Template tag documentation"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\template_tag_index.html:22
+#: .\nifty\templates\admin_doc\template_tag_index.html:42
+msgid "Built-in tags"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\template_tag_index.html:24
+#, python-format
+msgid ""
+"To use these\n"
+"                            tags,\n"
+"                            put <code>%(code)s</code> in your template "
+"before using the tag."
+msgstr ""
+
+#: .\nifty\templates\admin_doc\view_detail.html:12
+#, python-format
+msgid "View: %(name)s"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\view_detail.html:23
+msgid "Context:"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\view_detail.html:28
+msgid "Templates:"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\view_detail.html:33
+msgid "Back to Views Documentation"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\view_index.html:14
+msgid "View documentation"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\view_index.html:23
+#, python-format
+msgid ""
+"Views by namespace\n"
+"                                %(name)s"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\view_index.html:26
+msgid "Views by empty namespace"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\view_index.html:36
+#, python-format
+msgid ""
+"\n"
+"                                    View function: <code>%(full_name)s</"
+"code>. Name: <code>%(url_name)s</code>.\n"
+"                                "
+msgstr ""
+
+#: .\nifty\templates\admin_doc\view_index.html:47
+msgid "Jump to namespace"
+msgstr ""
+
+#: .\nifty\templates\admin_doc\view_index.html:52
+msgid "Empty namespace"
+msgstr ""
+
+#: .\nifty\templates\admin_set\change_form.html:180
+#: .\nifty\templates\site_set\change_form.html:257
+msgid "Save change"
+msgstr "Simpan perubahan"
+
+#: .\nifty\templates\nifty\aside.html:37
+msgid "Users log entries"
+msgstr ""
+
+#: .\nifty\templates\nifty\aside.html:48
+msgid "Fields"
+msgstr ""
+
+#: .\nifty\templates\nifty\error_base.html:87
+msgid "Close window"
+msgstr ""
+
+#: .\nifty\templates\nifty\error_base.html:90
+msgid "Go back"
+msgstr ""
+
+#: .\nifty\templates\nifty\error_base.html:93
+msgid "Go to admin home"
+msgstr ""
+
+#: .\nifty\templates\nifty\header.html:108
+msgid "Welcome,"
+msgstr "Selamat datang,"
+
+#: .\nifty\templates\registration\logged_out.html:9
+msgid "Thanks for spending some quality time with the Web site today."
+msgstr ""
+
+#: .\nifty\templates\registration\logged_out.html:12
+msgid "Log in again"
+msgstr ""
+
+#: .\nifty\templates\registration\password_change_done.html:13
+msgid "Password change successful for user"
+msgstr "Perubahan kata sandi berhasil untuk pengguna"
+
+#: .\nifty\templates\registration\password_change_done.html:19
+msgid "Password change successful,"
+msgstr "Kata sandi berhasil diubah,"
+
+#: .\nifty\templates\registration\password_change_done.html:20
+msgid "Beck to"
+msgstr "Kembali ke"
+
+#: .\nifty\templates\registration\password_change_form.html:10
+msgid "Password change for user"
+msgstr "Ganti kata sandi untuk pengguna"
+
+#: .\nifty\templates\registration\password_change_form.html:17
+msgid ""
+"Please enter your old password, for security's sake, and then enter your new "
+"password twice so we can verify you typed it in correctly."
+msgstr ""
+"Harap masukkan kata sandi lama Anda, demi keamanan, lalu masukkan kata sandi "
+"baru Anda dua kalisehingga kami dapat memverifikasi bahwa Anda mengetiknya "
+"dengan benar."
+
+#: .\nifty\templates\registration\password_change_form.html:37
+msgid "New password"
+msgstr ""
+
+#: .\nifty\templates\registration\password_change_form.html:48
+msgid "Password (again)"
+msgstr ""
+
+#: .\nifty\templates\reversion\change_list.html:8
+#: .\nifty\templates\reversion\recover_form.html:14
+#: .\nifty\templates\reversion\recover_list.html:14
+#, python-format
+msgid "Recover deleted %(name)s"
+msgstr ""
+
+#: .\nifty\templates\reversion\object_history.html:8
+msgid ""
+"Choose a date from the list below to revert to a previous version of this "
+"object."
+msgstr ""
+
+#: .\nifty\templates\reversion\object_history.html:17
+msgid "Comment"
+msgstr ""
+
+#: .\nifty\templates\reversion\recover_form.html:25
+msgid "Press the save button below to recover this version of the object."
+msgstr ""
+
+#: .\nifty\templates\reversion\recover_list.html:21
+msgid ""
+"Choose a date from the list below to recover a deleted version of an object."
+msgstr ""
+
+#: .\nifty\templates\reversion\recover_list.html:41
+msgid "There are no deleted objects to recover."
+msgstr ""
+
+#: .\nifty\templates\reversion\revision_form.html:18
+#, python-format
+msgid "Revert %(verbose_name)s"
+msgstr ""
+
+#: .\nifty\templates\reversion\revision_form.html:27
+msgid "Press the save button below to revert to this version of the object."
+msgstr ""
+
+#: .\nifty\views.py:198
+msgid ""
+"Can't change your profile. Your permission is denied, please contact the "
+"Administrator."
+msgstr ""
+
+#: .\nifty\views.py:227
+msgid "User profile changed successfully."
+msgstr "Profil pengguna berhasil diubah."
+
+#: .\nifty\views.py:239
+msgid "User Profile"
+msgstr "Profil Pengguna"
+
+#: .\nifty\views.py:296 .\nifty\views.py:311
+msgid "Page not fount"
+msgstr ""
+
+#: .\nifty\views.py:301
+msgid ""
+"Can't get theme settings. You'r permission is denied, please contact the "
+"Administrator."
+msgstr ""
+
+#: .\nifty\views.py:316
+msgid ""
+"Can't update theme settings. You'r permission is denied, please contact the "
+"Administrator."
+msgstr ""
+
+#~ msgid "logentry"
+#~ msgstr "entry pencatatan"
+
+#~ msgid "image"
+#~ msgstr "gambar"
+
+#~ msgid "Can delete log entry"
+#~ msgstr "Bisa menghapus entri pencatatan"
+
+#~ msgid "Can add log entry"
+#~ msgstr "Bisa menambahkan entri pencatatan"
+
+#~ msgid "Can change log entry"
+#~ msgstr "Bisa mengubah entri pencatatan"
+
+#~ msgid "Can view log entry"
+#~ msgstr "Bisa menampilkan entry pencatatan"
+
+#~ msgid "Can delete admin setting"
+#~ msgstr "Bisa menghapus pengaturan admin"
+
+#~ msgid "Can add admin setting"
+#~ msgstr "Bisa menambahkan pengaturan admin"
+
+#~ msgid "Can change admin setting"
+#~ msgstr "Bisa mengubah pengaturan admin"
+
+#~ msgid "Can view admin setting"
+#~ msgstr "Bisa menampilkan pengaturan admin"
+
+#~ msgid "Can delete site setting"
+#~ msgstr "Bisa menghapus pengaturan situs"
+
+#~ msgid "Can add site setting"
+#~ msgstr "Bisa menambahkan pengaturan situs"
+
+#~ msgid "Can change site setting"
+#~ msgstr "Bisa mengubah pengaturan situs"
+
+#~ msgid "Can view site setting"
+#~ msgstr "Bisa menampilkan pengaturan situs"

@@ -1,0 +1,223 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_list admin_urls suit_list suit_tags %}
+{% load url from suit_compat %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    {#  <link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}" />#}
+    {% if cl.formset %}
+        {#    <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />#}
+    {% endif %}
+    {% if cl.formset or action_form %}
+        {% url 'admin:jsi18n' as jsi18nurl %}
+        <script type="text/javascript" src="{{ jsi18nurl|default:'../../jsi18n/' }}"></script>
+    {% endif %}
+    {{ media.css }}
+    {% if not actions_on_top and not actions_on_bottom %}
+        <style>
+            {#      #changelist table thead th:first-child {width: inherit}#}
+        </style>
+    {% endif %}
+{% endblock %}
+
+{% block searchbox %}
+    {% searchbox_form cl %}
+{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    {{ media.js }}
+    {% if action_form %}
+        {% if actions_on_top or actions_on_bottom %}
+            {#        <script type="text/javascript">#}
+            {#            (function ($) {#}
+            {#                $(document).ready(function ($) {#}
+            {#                    $("tr input.action-select").actions();#}
+            {#                });#}
+            {#            })(django.jQuery);#}
+            {#        </script>#}
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block bodyclass %}change-list{% endblock %}
+
+{% if not is_popup %}
+    {#    {% block breadcrumbs %}#}
+    {#        <ol class="breadcrumb">#}
+    {#            {% if perms.admin.index_view %}#}
+    {#                <li>#}
+    {#                    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>#}
+    {#                </li>#}
+    {#            {% endif %}#}
+    {#            <li>#}
+    {#                <a href="{% url 'admin:app_list' app_label=cl.opts.app_label %}">{% trans cl.opts.app_config.verbose_name %}</a>#}
+    {#            </li>#}
+    {#            <li class="active">{{ cl.opts.verbose_name_plural|capfirst }}</li>#}
+    {#        </ol>#}
+    {#    {% endblock %}#}
+{% endif %}
+
+{% block coltype %}flex{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-6">
+            {% block search %}
+                {% if cl.full_result_count %}
+                    {% search_form cl %}
+                {% endif %}
+            {% endblock %}
+        </div>
+        <div class="col-md-6 d-flex gap-1 align-items-center justify-content-md-end mb-3">
+            {% block object-tools %}
+                {% if has_add_permission %}
+                    {% block object-tools-items %}
+                        <a href="{% url cl.opts|admin_urlname:'add' %}{% if is_popup %}?_popup=1{% endif %}" class="btn btn-primary hstack gap-3 " title="{% trans 'Add' %} {% blocktrans with cl.opts.verbose_name as name %}{{ name }}{% endblocktrans %}">
+                            <i class="demo-psi-add fs-5 "></i><span class="vr"></span>{% trans 'Add' %}
+                        </a>
+{#                        <button class="btn btn-outline-light hstack gap-2">#}
+{#                            <i class="demo-psi-add fs-5"></i>#}
+{#                            <span class="vr"></span>#}
+{#                            Add New#}
+{#                        </button>#}
+                    {% endblock %}
+                {% endif %}
+            {% endblock %}
+        </div>
+    </div>
+    {#{% if cl.formset %}<div>{{ cl.formset.management_form }}</div>{% endif %}#}
+    <div class="row mar-top">
+        <div class="col-sm-12">
+            {% block date_hierarchy %}
+                {% if cl.date_hierarchy %}
+                    {% date_hierarchy cl %}
+                {% endif %}
+            {% endblock %}
+
+            {% if cl.formset.errors %}
+                <div class="alert alert-error errornote">
+                    {% blocktrans count cl.formset.errors|length as counter %}Please correct the error below. {% plural %} Please correct the errors below.{% endblocktrans %}
+                </div>
+                {{ cl.formset.non_form_errors }}
+            {% endif %}
+            {% block result_list %}
+                {% if cl.result_count %}
+                    <form id="changelist-form" action="" method="POST" {% if cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %} class="form-inline">
+                        {% csrf_token %}
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="row row-cols-md-auto g-3 align-items-center">
+                                    {% if action_form and cl.full_result_count %}
+                                        {% admin_actions %}
+                                    {% endif %}
+                                    {% if cl.result_count %}
+                                        {% get_request request 'p' as pagenum %}
+                                        {% page cl pagenum as page %}
+                                        <div class="btn-group btn-group">
+                                            {% if page.has_previous %}
+                                                <a class="btn btn-outline-light add-tooltip" title="{% trans 'Previous' %}" href="?p={{ page.previous_page_number }}">
+                                                    <i class="demo-psi-arrow-left"></i>
+                                                </a>
+                                            {% endif %}
+                                            {% if pagenum == '1' %}
+                                                <a class="btn btn-outline-light add-tooltip" title="{% trans 'Previous' %}" href="?p=0">
+                                                    <i class="demo-psi-arrow-left"></i>
+                                                </a>
+                                            {% endif %}
+
+                                            {% if page.has_next %}
+                                                {% if pagenum == '0' or not pagenum %}
+                                                    <a class="btn btn-outline-light add-tooltip" title="{% trans 'Next' %}" href="?p=1">
+                                                        <i class="demo-psi-arrow-right"></i>
+                                                    </a>
+                                                {% else %}
+                                                    {% if page.next_page_number != page.paginator.num_pages %}
+                                                        <a class="btn btn-outline-light add-tooltip" title="{% trans 'Next' %}" href="?p={{ page.next_page_number }}">
+                                                            <i class="demo-psi-arrow-right"></i>
+                                                        </a>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                    <span class="text-main text-bold pull-right" style="margin-top: 18px">{% trans 'Showing' %}&nbsp;{% paginator_info cl %} {% trans 'of' %} {{ cl.result_count }} {% if cl.result_count == 1 %}{{ cl.opts.verbose_name_plural|capfirst }}{% else %}{{ cl.opts.verbose_name_plural|capfirst }}{% endif %}</span>
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    {% result_list_with_context cl %}
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="row row-cols-md-auto g-3 align-items-center">
+                                    {% if action_form and cl.full_result_count %}
+                                        {% admin_actions %}
+                                    {% endif %}
+                                    {% if cl.result_count %}
+                                        {% get_request request 'p' as pagenum %}
+                                        {% page cl pagenum as page %}
+                                        <div class="btn-group btn-group">
+                                            {% if page.has_previous %}
+                                                <a class="btn btn-outline-light add-tooltip" title="{% trans 'Previous' %}" href="?p={{ page.previous_page_number }}">
+                                                    <i class="demo-psi-arrow-left"></i>
+                                                </a>
+                                            {% endif %}
+                                            {% if pagenum == '1' %}
+                                                <a class="btn btn-outline-light add-tooltip" title="{% trans 'Previous' %}" href="?p=0">
+                                                    <i class="demo-psi-arrow-left"></i>
+                                                </a>
+                                            {% endif %}
+
+                                            {% if page.has_next %}
+                                                {% if pagenum == '0' or not pagenum %}
+                                                    <a class="btn btn-outline-light add-tooltip" title="{% trans 'Next' %}" href="?p=1">
+                                                        <i class="demo-psi-arrow-right"></i>
+                                                    </a>
+                                                {% else %}
+                                                    {% if page.next_page_number != page.paginator.num_pages %}
+                                                        <a class="btn btn-outline-light add-tooltip" title="{% trans 'Next' %}" href="?p={{ page.next_page_number }}">
+                                                            <i class="demo-psi-arrow-right"></i>
+                                                        </a>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                    <span class="text-main text-bold pull-right" style="margin-top: 18px">{% trans 'Showing' %}&nbsp;{% paginator_info cl %} {% trans 'of' %} {{ cl.result_count }} {% if cl.result_count == 1 %}{{ cl.opts.verbose_name_plural|capfirst }}{% else %}{{ cl.opts.verbose_name_plural|capfirst }}{% endif %}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                {% else %}
+                    {% suit_bc_value 1.5 'pop' 1.6 '_popup' as POPUP_VAR %}
+                    <div class="alert alert-primary">
+                        {% if cl.full_result_count %}
+                            <h4>{% trans 'Nothing found' %}!</h4>
+                            <a href="?{% if cl.is_popup %}{{ POPUP_VAR }}=1{% endif %}">
+                                <strong>{% trans 'Reset search and filters' %}</strong>
+                            </a>
+                        {% else %}
+                            {% blocktrans with cl.opts.verbose_name_plural|capfirst as name_plural %}{{ name_plural }} are not created yet{% endblocktrans %}.
+                            {% if has_add_permission %}
+                                <a href="{% url cl.opts|admin_urlname:'add' %}{% if is_popup %}?{{ POPUP_VAR }}=1{% endif %}">
+                                    <strong>{% trans 'Add' %} {% blocktrans with cl.opts.verbose_name as name %}{{ name }}{% endblocktrans %}</strong>
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endblock %}
+        </div>
+    </div>
+    {#    {% block pagination %}#}
+    {#        {% if cl.result_count %}#}
+    {#            <div class="row mar-btm">#}
+    {#                <div class="col-sm-12">#}
+    {#                    {% pagination cl %}#}
+    {#                </div>#}
+    {#            </div>#}
+    {#        {% endif %}#}
+    {#    {% endblock %}#}
+{% endblock %}

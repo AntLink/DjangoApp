@@ -1,0 +1,147 @@
+.selector {
+    /*background: #f9f9f9;*/
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    position: relative;
+    overflow: auto;
+}
+
+.selector h2 {
+    font-size: 13px;
+    margin: 10px 15px;
+}
+
+.selector .selector-available {
+    float: left;
+}
+
+.selector .selector-available,
+.selector .selector-chosen {
+    width: 46.8%;
+}
+
+.selector .selector-chooser {
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    float: left;
+    height: 100%;
+    left: 46.8%;
+    list-style: none;
+    margin: 0;
+    padding: 9.5em 10px 0 10px;
+    position: absolute;
+    text-align: center;
+
+}
+
+.selector .selector-chosen {
+    float: right;
+}
+
+.selector .selector-chosen select {
+    height: 19.92em !important;
+}
+
+.selector select {
+    border-top: 1px solid #eee;
+    border-left: 0 none;
+    border-right: 0 none;
+    border-bottom: 1px solid #eee;
+    border-radius: 0 ;
+    -moz-border-radius: 0 ;
+    -webkit-border-radius: 0 ;
+    height: 17.2em;
+    padding: 5px 15px;
+    width: 100%;
+    overflow-y: auto;
+}
+.selector select:focus{
+   border-bottom: 1px solid #eee;
+   border-top: 1px solid #eee;
+
+}
+
+.selector select option {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.selector .selector-filter {
+    background: #fff;
+    /*border-bottom: 1px solid #eee;*/
+    margin: 0;
+    position: relative;
+}
+
+.selector .selector-filter input {
+    border-top: 1px solid #ddd;
+    border-bottom: 0 none;
+    border-right: 0 none;
+    border-left: 0 none;
+    border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    padding: 5px 5px 0 15px;
+    width: 100%;
+}
+
+.selector .selector-filter label {
+    left: 15px;
+    position: absolute;
+    top: 2px;
+}
+
+.selector .selector-clearall,
+.selector .selector-chooseall {
+    display: block;
+    margin: 10px;
+    text-align: center;
+}
+
+.selector.stacked .selector-available,
+.selector.stacked .selector-chooser,
+.selector.stacked .selector-chosen {
+    float: none;
+    width: 100%;
+}
+
+.selector.stacked .selector-chooser {
+    border: 0;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+    position: initial;
+}
+
+.selector.stacked .selector-chooser > li {
+    display: inline-block;
+    text-align: center;
+    width: 50%;
+}
+
+
+@media (max-width: 992px) {
+    .selector .selector-available,
+    .selector .selector-chooser,
+    .selector .selector-chosen {
+        float: none;
+        width: 100%;
+    }
+
+    .selector .selector-chooser {
+        border: 0;
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        left: 0;
+        padding: 10px;
+        position: relative;
+    }
+
+    .selector .selector-chooser > li {
+        display: inline-block;
+        text-align: center;
+        width: 50%;
+    }
+}

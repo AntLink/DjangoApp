@@ -1,0 +1,40 @@
+{% load i18n static suit_tags admin_modify admin_urls %}
+{% load url from suit_compat %}
+
+<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{% firstof opts.model_name opts.module_name %}_form" novalidate>
+    {% csrf_token %}
+    <div class="panel">
+        <div class="panel-heading">
+            {% block form_top_panel %}
+                <div class="panel-control">
+                    {% block suit_form_tabs %}
+                        {% if adminform.model_admin.suit_form_tabs %}
+                            <ul id="suit_form_tabs" class="nav nav-tabs nav-tabs-suit" data-tab-prefix="suit-tab">
+                                {% for tab in adminform.model_admin.suit_form_tabs %}
+                                    <li><a href="#{{ tab.0 }}">{{ tab.1 }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    {% endblock %}
+                </div>
+                <h3 class="panel-title">{{ opts.verbose_name|capfirst }}</h3>
+            {% endblock %}
+        </div>
+
+        <div class="panel-body">
+            {% block field_sets %}
+                {% for fieldset in adminform %}
+                    {% include "admin/tags/fieldset.html" %}
+                {% endfor %}
+            {% endblock %}
+        </div>
+
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-lg-12">
+                    <button type="submit" class="btn btn-labeled btn-default" name="_save"><i class="btn-label fa fa-check-circle-o"></i>{% trans 'Save' %}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

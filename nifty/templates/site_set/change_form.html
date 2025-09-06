@@ -1,0 +1,262 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_modify suit_tags admin_urls %}
+{% load url from suit_compat %}
+
+{% block extrahead %}
+    {{ block.super }}
+    {% url 'admin:jsi18n' as jsi18nurl %}
+    <script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
+    {{ media.js }}
+{% endblock %}
+
+{% block extrastyle %}{{ block.super }}{{ media.css }}{% endblock %}
+
+{% block extrajs %}{% endblock %}
+
+{% block content_title_value %}
+    {% trans 'Add' %} {{ opts.verbose_name }}
+{% endblock %}
+{% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        {% if perms.auth.index_view %}
+            <li class="breadcrumb-item">
+                <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+            </li>
+        {% endif %}
+        <li class="breadcrumb-item">
+            <a href="{% url 'admin:app_list' app_label=opts.app_label %}">
+                {% firstof opts.app_config.verbose_name app_label|capfirst|escape %}
+            </a>
+        </li>
+        {#        {% if opts.app_label == 'nifty' %}#}
+        {#            <li>#}
+        {#                <a href="{% url 'admin:app_list' app_label='admin' %}">#}
+        {#                    {% firstof opts.app_config.verbose_name app_label|capfirst|escape %}#}
+        {#                </a>#}
+        {#            </li>#}
+        {#        {% endif %}#}
+        <li class="breadcrumb-item active">
+            {% if has_change_permission %}
+                <a href="{% url opts|admin_urlname:'changelist' %}">
+                    {{ opts.verbose_name_plural|capfirst }}</a>
+            {% else %}
+                {{ opts.verbose_name_plural|capfirst }}
+            {% endif %}
+        </li>
+    </ol>
+{% endblock %}
+{% block error-messages %}
+    {% if form.errors %}
+        <div class="alert alert-callout alert-danger" style="border-radius: 0;">
+            {% blocktrans count counter=form.errors.items|length %}Please correctthe error below.{% plural %} Please correct the errors below.{% endblocktrans %}
+        </div>
+    {% endif %}
+{% endblock error-messages %}
+{% block content %}
+    <form action="{{ form_url }}" method="post" id="{% firstof opts.model_name opts.module_name %}_form" class="needs-validation {% if form.errors %}was-validated{% endif %}" novalidate>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">{% trans 'Settings' %}</h3>
+            </div>
+            <div class="card-body">
+                {% csrf_token %}
+                <fieldset class="module aligned wide">
+                    <div class="row mb-3 form-row{{ form.site_title.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_site_title" class="col-sm-1 col-form-label required">{{ form.site_title.label }}:</label>
+
+                        <div class="col-sm-11">
+                            {% if perms.admin.view_site  and not perms.admin.change_site %}
+                                <p class="readonly">{{ form.site_title.value }}</p>
+                            {% else %}
+                                {{ form.site_title|add_class:"form-control" }}
+                                <span class="text-danger">{{ form.site_title.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.site_tag.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_site_tag" class="col-sm-1 col-form-label required">{{ form.site_tag.label }}:</label>
+
+                        <div class="col-sm-11">
+                            {% if perms.admin.view_site  and not perms.admin.change_site %}
+                                <p class="readonly">{{ form.site_tag.value }}</p>
+                            {% else %}
+                                {{ form.site_tag|add_class:"form-control" }}
+                                <span class="text-danger">{{ form.site_tag.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.site_language.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_site_language" class="col-sm-1 col-form-label required">{{ form.site_language.label }}:</label>
+
+                        <div class="col-sm-11">
+                            {% if perms.admin.view_site  and not perms.admin.change_site %}
+                                <p class="readonly">{{ form.site_language.value }}</p>
+                            {% else %}
+                                {{ form.site_language|add_class:"form-control" }}
+                                <span class="text-danger">{{ form.site_language.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.site_email_address.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_site_email_address" class="col-sm-1 col-form-label required">{{ form.site_email_address.label }}:</label>
+
+                        <div class="col-sm-11">
+                            {% if perms.admin.view_site  and not perms.admin.change_site %}
+                                <p class="readonly">{{ form.site_email_address.value }}</p>
+                            {% else %}
+                                {{ form.site_email_address|add_class:"form-control" }}
+                                <span class="text-danger">{{ form.site_email_address.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.site_timezon.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_site_timezon" class="col-sm-1 col-form-label required">{{ form.site_timezon.label }}:</label>
+
+                        <div class="col-sm-10">
+                            {% if perms.admin.view_site  and not perms.admin.change_site %}
+                                <p class="readonly">{{ form.site_timezon.value }}</p>
+                            {% else %}
+                                {{ form.site_timezon|add_class:"form-control" }}
+                                <span class="text-danger">{{ form.site_timezon.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.site_date_format.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_site_date_format" class="col-sm-1 col-form-label required">{{ form.site_date_format.label }}:</label>
+
+                        <div class="col-sm-11">
+                            {% if perms.admin.view_site  and not perms.admin.change_site %}
+                                <p class="readonly">{{ form.site_date_format.value }}</p>
+                            {% else %}
+                                {{ form.site_date_format|add_class:"form-control" }}
+                                <span class="text-danger">{{ form.site_date_format.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.site_keyword.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_site_keyword" class="col-sm-1 col-form-label required">{{ form.site_keyword.label }}:</label>
+
+                        <div class="col-sm-11">
+                            {% if perms.admin.view_site  and not perms.admin.change_site %}
+                                <p class="readonly">{{ form.site_keyword.value }}</p>
+                            {% else %}
+                                {{ form.site_keyword|add_class:"form-control" }}
+                                <span class="text-danger">{{ form.site_keyword.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.site_author.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_site_author" class="col-sm-1 col-form-label required">{{ form.site_author.label }}:</label>
+
+                        <div class="col-sm-11">
+                            {% if perms.admin.view_site  and not perms.admin.change_site %}
+                                <p class="readonly">{{ form.site_author.value }}</p>
+                            {% else %}
+                                {{ form.site_author|add_class:"form-control" }}
+                                <span class="text-danger">{{ form.site_author.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.site_description.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_site_description" class="col-sm-1 col-form-label required">{{ form.site_description.label }}:</label>
+
+                        <div class="col-sm-11">
+                            {% if perms.admin.view_site  and not perms.admin.change_site %}
+                                <p class="readonly">{{ form.site_description.value }}</p>
+                            {% else %}
+                                {{ form.site_description|add_class:"form-control" }}
+                                <span class="text-danger">{{ form.site_description.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.facebook_page.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_facebook_page" class="col-sm-1 col-form-label required">{{ form.facebook_page.label }}:</label>
+
+                        <div class="col-sm-11">
+                            {% if perms.admin.view_site  and not perms.admin.change_site %}
+                                <p class="readonly">{{ form.facebook_page.value }}</p>
+                            {% else %}
+                                {{ form.facebook_page|add_class:"form-control" }}
+                                <span class="text-danger">{{ form.facebook_page.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.twitter_page.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_twitter_page" class="col-sm-1 col-form-label required">{{ form.twitter_page.label }}:</label>
+
+                        <div class="col-sm-11">
+                            {% if perms.admin.view_site  and not perms.admin.change_site %}
+                                <p class="readonly">{{ form.twitter_page.value }}</p>
+                            {% else %}
+                                {{ form.twitter_page|add_class:"form-control" }}
+                                <span class="text-danger">{{ form.twitter_page.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.google_plus_page.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_google_plus_page" class="col-sm-1 col-form-label required">{{ form.google_plus_page.label }}:</label>
+
+                        <div class="col-sm-11">
+                            {% if perms.admin.view_site  and not perms.admin.change_site %}
+                                <p class="readonly">{{ form.google_plus_page.value }}</p>
+                            {% else %}
+                                {{ form.google_plus_page|add_class:"form-control" }}
+                                <span class="text-danger">{{ form.google_plus_page.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.instagram_page.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_instagram_page" class="col-sm-1 col-form-label required">{{ form.instagram_page.label }}:</label>
+
+                        <div class="col-sm-11">
+                            {% if perms.admin.view_site  and not perms.admin.change_site %}
+                                <p class="readonly">{{ form.instagram_page.value }}</p>
+                            {% else %}
+                                {{ form.instagram_page|add_class:"form-control" }}
+                                <span class="text-danger">{{ form.instagram_page.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </fieldset>
+            </div>
+
+            <div class="card-footer">
+                {% if perms.admin.change_site %}
+                    <button class="btn btn-primary" type="submit"><i class="btn-label fa fa-check-circle-o"></i>{% trans 'Save change' %}</button>
+                {% endif %}
+            </div>
+        </div>
+
+    </form>
+{% endblock %}
+{# Empty centered sidebar as now we use sidebar in content block#}
+{% block sidebar_content %}{% endblock %}

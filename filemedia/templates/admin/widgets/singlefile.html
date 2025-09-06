@@ -1,0 +1,41 @@
+{#{% load i18n admin_static admin_modify suit_tags admin_urls %}#}
+{#{% string_to_json_obj widget.value as wd %}#}
+{#<input id="id_img_{{ widget.name }}" type="{{ widget.type }}" name="{{ widget.name }}"{% if wd.value != None %} value="{{ wd.value|stringformat:'s' }}"{% endif %}>#}
+{#<div data-objectid="{{ wd.id }}" data-page="1" id="img-{{ widget.name }}" {% include "django/forms/widgets/attrs.html" %}>#}
+{#    <div id="dropzone-preview-{{ widget.name }}"></div>#}
+{#    <div id="dropzone-get-{{ widget.name }}">#}
+{#        <img style="width: 15%" class="img-responsive img-rounded" {% if wd.value != None %} src="{{ wd.value|stringformat:'s' }}" {% else %}src="{% static '/static/filemedia/img/no-thumb/td_100x70.png' %}"{% endif %}>#}
+{#    </div>#}
+{#</div>#}
+
+
+{% load i18n static admin_modify suit_tags admin_urls %}
+{% if widget.value != None %}
+    {% string_to_json_obj widget.value as wd %}
+    {% if wd %}
+        <input id="id_img_{{ widget.name }}" type="{{ widget.type }}" name="{{ widget.name }}"{% if wd.value != None %} value="{{ wd.value|stringformat:'s' }}"{% endif %}>
+        <div data-objectid="{{ wd.id }}" data-page="1" id="img-{{ widget.name }}" {% include "django/forms/widgets/attrs.html" %}>
+            <div id="dropzone-preview-{{ widget.name }}"></div>
+            <div id="dropzone-get-{{ widget.name }}">
+                <img style="width: 15%" class="img-responsive img-rounded" src="{% static '/admin/filemedia/img/no-thumb/td_100x100.png' %}">
+            </div>
+        </div>
+    {% else %}
+        <input id="id_img_{{ widget.name }}" type="{{ widget.type }}" name="{{ widget.name }}"{% if widget.value != None %} value="{{ widget.value|stringformat:'s' }}"{% endif %}>
+        <div data-objectid="" data-page="1" id="img-{{ widget.name }}" {% include "django/forms/widgets/attrs.html" %}>
+            <div id="dropzone-preview-{{ widget.name }}"></div>
+            <div id="dropzone-get-{{ widget.name }}">
+                <img style="width: 15%" class="img-responsive img-rounded" src="{% static '/admin/filemedia/img/no-thumb/td_100x100.png' %}">
+            </div>
+        </div>
+    {% endif %}
+{% else %}
+    <input id="id_img_{{ widget.name }}" type="{{ widget.type }}" name="{{ widget.name }}"{% if widget.value != None %} value="{{ widget.value|stringformat:'s' }}"{% endif %}>
+    <div data-objectid="" data-page="1" id="img-{{ widget.name }}" {% include "django/forms/widgets/attrs.html" %}>
+        <div id="dropzone-preview-{{ widget.name }}"></div>
+        <div id="dropzone-get-{{ widget.name }}">
+            <img style="width: 15%" class="img-responsive img-rounded" src="{% static '/admin/filemedia/img/no-thumb/td_100x100.png' %}">
+        </div>
+    </div>
+{% endif %}
+

@@ -1,0 +1,82 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls suit_tags %}
+{% load url from suit_compat %}
+
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'admin:index' %}">
+                {% trans 'Home' %}
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'admin:app_list' app_label=opts.app_label %}">
+                {% firstof opts.app_config.verbose_name app_label|capfirst|escape %}
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url opts|admin_urlname:'changelist' %}">
+                {{ module_name }}
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url opts|admin_urlname:'change' object.pk %}">
+                {{ object|truncatewords:"18" }}
+            </a>
+        </li>
+        <li class="breadcrumb-item active">
+            {% trans 'History' %}
+        </li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        {% trans 'History' %}
+                    </h3>
+                </div>
+                <div class="card-body ">
+                    {% if action_list %}
+                        <table id="change-history" class="table table-layout-fixed">
+                            <thead>
+                            <tr>
+                                <th scope="col"><span>{% trans 'Date/time' %}</span></th>
+                                <th scope="col"><span>{% trans 'User' %}</span></th>
+                                <th scope="col" class="text-center"><span>{% trans 'Action' %}</span></th>
+                                <th scope="col"><span>{% trans 'Field' %}</span></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for action in action_list %}
+                                {% string_to_json_obj action.change_message as data_msg %}
+                                <tr>
+                                    <td scope="row">{{ action.action_time|date:"DATETIME_FORMAT" }}</td>
+                                    <td>
+                                        {{ action.user.username }}
+                                    </td>
+                                    <td class="text-center">
+                                        {% if action.action_flag == 1 %}<span class="badge bg-success">{% trans 'Created' %}</span>{% endif %}
+                                        {% if action.action_flag == 2 %}<span class="badge bg-info">{% trans 'Updated' %}</span>{% endif %}
+                                        {% if action.action_flag == 3 %}<span class="badge bg-danger">{% trans 'Deleted' %}</span>{% endif %}
+                                    </td>
+                                    <td>
+                                        {% log_msg data_msg.fields as result %}
+                                        {{ result }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>{% trans "This object doesn't have a change history. It probably wasn't added via this admin site." %}</p>
+                    {% endif %}
+                </div>
+                <div class="card-footer"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

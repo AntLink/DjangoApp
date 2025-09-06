@@ -1,0 +1,1 @@
+$(document).on('nifty.ready', function () { $(".select2").select2();});

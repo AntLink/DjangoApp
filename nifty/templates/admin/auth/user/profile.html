@@ -1,0 +1,194 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_modify suit_tags admin_urls %}
+{% load url from suit_compat %}
+
+{% block extrahead %}{{ block.super }}
+    {% url 'admin:jsi18n' as jsi18nurl %}
+    <script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
+
+    <script type="text/javascript" src="{% url 'admin:jsi18n2' %}"></script>
+    {{ form.media }}
+{% endblock %}
+
+{% block extrastyle %}
+    {{ block.super }}{{ media.css }}
+
+{% endblock %}
+
+{% block extrajs %}
+
+{% endblock %}
+
+{% block error-messages %}
+    {% if form.errors %}
+        <div class="alert alert-callout alert-danger" style="border-radius: 0;">
+            {% trans 'Please correct the error below.' %}
+        </div>
+    {% endif %}
+{% endblock error-messages %}
+{% block content %}
+
+    {% if is_popup %}<input type="hidden" name="_popup" value="1"/>{% endif %}
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">{% trans 'Profile change' %}</h3>
+        </div>
+        <div class="card-body">
+            <form action="{{ form_url }}" method="post" id="{% firstof opts.model_name opts.module_name %}_form" class="needs-validation {% if form.errors %}was-validated{% endif %}" novalidate>
+                {% csrf_token %}{% block form_top %}{% endblock %}
+                <fieldset class="module aligned wide">
+                    <div class="row mb-3 form-row{{ form.photo.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_photo" class="col-sm-1 col-form-label required">{{ form.photo.label }}</label>
+
+                        <div class="col-lg-11">
+                            {{ form.photo }}
+                            <div class="help-block">{{ form.photo.errors.as_text }}</div>
+                            <div class="help-block">{{ form.photo.help_text }}</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.first_name.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_first_name" class="col-sm-1 col-form-label required">{{ form.first_name.label }}</label>
+
+
+                        <div class="col-sm-11">
+                            {{ form.first_name|add_class:"form-control" }}
+                            <div class="help-block">{{ form.first_name.errors.as_text }}</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.last_name.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_last_name" class="col-sm-1 col-form-label required">{{ form.last_name.label }}</label>
+
+                        <div class="col-sm-11">
+                            {{ form.last_name|add_class:"form-control" }}
+                            <div class="help-block">{{ form.last_name.errors.as_text }}</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.gender.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_gender" class="col-sm-1 col-form-label required">{{ form.gender.label }}</label>
+
+
+                        <div class="col-sm-2">
+                            {{ form.gender|add_class:"form-control" }}
+                            <div class="help-block">{{ form.gender.errors.as_text }}</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.email.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_email" class="col-sm-1 col-form-label required">{{ form.email.label }}</label>
+
+
+                        <div class="col-sm-7">
+                            {{ form.email|add_class:"form-control" }}
+                            <div class="help-block">{{ form.email.errors.as_text }}</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.phone_number.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_phone_number" class="col-sm-1 col-form-label required">{{ form.phone_number.label }}</label>
+
+
+                        <div class="col-sm-7">
+                            {{ form.phone_number|add_class:"form-control" }}
+                            <div class="help-block">{{ form.phone_number.errors.as_text }}</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.address.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_address" class="col-sm-1 col-form-label required">{{ form.address.label }}</label>
+
+
+                        <div class="col-sm-11">
+                            {{ form.address|add_class:"form-control" }}
+                            <div class="help-block">{{ form.address.errors.as_text }}</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.place_of_birth.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_place_of_birth" class="col-sm-1 col-form-label required">{{ form.place_of_birth.label }}</label>
+
+
+                        <div class="col-sm-7">
+                            {{ form.place_of_birth|add_class:"form-control" }}
+                            <div class="help-block">{{ form.place_of_birth.errors.as_text }}</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.birth_date.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_birth_date" class="col-sm-1 col-form-label required">{{ form.birth_date.label }}</label>
+
+
+                        <div class="col-sm-7">
+                            {{ form.birth_date|add_class:"form-control" }}
+                            <div class="help-block">{{ form.birth_date.errors.as_text }}</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.facebook.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_facebook" class="col-sm-1 col-form-label">{{ form.facebook.label }}</label>
+
+
+                        <div class="col-sm-7">
+                            {{ form.facebook|add_class:"form-control" }}
+                            <div class="help-block">{{ form.facebook.errors.as_text }}</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.twitter.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_twitter" class="col-sm-1 col-form-label">{{ form.twitter.label }}</label>
+
+
+                        <div class="col-sm-7">
+                            {{ form.twitter|add_class:"form-control" }}
+                            <div class="help-block">{{ form.twitter.errors.as_text }}</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.google_plus.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_google_plus" class="col-sm-1 col-form-label">{{ form.google_plus.label }}</label>
+
+
+                        <div class="col-sm-7">
+                            {{ form.google_plus|add_class:"form-control" }}
+                            <div class="help-block">{{ form.google_plus.errors.as_text }}</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 form-row{{ form.instagram.errors|yesno:' has-error errors,' }}">
+
+                        <label for="id_instagram" class="col-sm-1 col-form-label">{{ form.instagram.label }}</label>
+
+
+                        <div class="col-sm-7">
+                            {{ form.instagram|add_class:"form-control" }}
+                            <div class="help-block">{{ form.instagram.errors.as_text }}</div>
+                        </div>
+                    </div>
+
+
+                </fieldset>
+
+        </div>
+        <div class="card-footer">
+            <button type="submit" class="btn btn-primary"><i class="btn-label fa fa-check-circle-o"></i>{% trans 'Save Change' %}</button>
+        </div>
+
+        </form>
+    </div>
+
+{% endblock %}

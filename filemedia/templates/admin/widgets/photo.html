@@ -1,0 +1,45 @@
+{% load i18n static admin_modify suit_tags admin_urls %}
+<img id="img-{{ widget.name }}" data-target="#modal-img-{{ widget.name }}" data-name="{{ widget.name }}" data-toggle="modal" {% if widget.value != None %} src="{{ widget.value|stringformat:'s' }}" {% else %}src="{% static '/static/filemedia/img/men.png' %}"{% endif %}{% include "django/forms/widgets/attrs.html" %}>
+<input id="id_img_{{ widget.name }}" type="{{ widget.type }}" name="{{ widget.name }}"{% if widget.value != None %} value="{{ widget.value|stringformat:'s' }}"{% endif %}>
+<div id="modal-img-{{ widget.name }}" class="modal fade" tabindex="-1" style="margin-top: 70px;" data-backdrop="static">
+    <div class="modal-dialog modal-lg" style="width: 1054px">
+        <div class="modal-content">
+            <div class="panel">
+                <div class="panel-heading">
+                    <div class="panel-control">
+                        <button type="button" class="close add-tooltip" data-original-title="{% trans 'Close' %}" id="img-modal-close-{{ widget.name }}" style="margin-top: 15px; margin-right: 10px"><i class="pci-cross pci-circle"></i></button>
+                    </div>
+                    <h4 class="panel-title">{% trans 'Upload Photo' %}</h4>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <div id="slim-scroll-{{ widget.name }}">
+                                <div data-page="1" class="dropzone" id="dropzone-{{ widget.name }}" style="width: 763px;">
+                                    <div id="dropzone-preview-{{ widget.name }}"></div>
+                                    <div id="dropzone-load-{{ widget.name }}"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div id="img-detail-{{ widget.name }}"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <button id="add-image-{{ widget.name }}" class="btn btn-primary pull-left" type="button">{% trans 'Add Photo' %}</button>
+                            <div class="btn-group pull-right">
+                                <button data-page="0" id="img-prev-{{ widget.name }}" type="button" class="btn btn-default btn-hover-success add-tooltip ">{% trans 'Prev' %}</button>
+                                <button data-page="2" id="img-next-{{ widget.name }}" type="button" class="btn btn-default btn-hover-danger add-tooltip">{% trans 'Next' %}</button>
+                            </div>
+                        </div>
+                        <div class="col-sm-3"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

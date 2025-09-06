@@ -1,0 +1,176 @@
+{% load static suit_tags suit_menu i18n %}
+{% load url from suit_compat %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ title }} | {{ admin_site_title }}{% endblock %}</title>
+    <link href="{{ admin_site_favicon }}" rel="shortcut icon">
+    <link type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700" rel="stylesheet">
+    <link type="text/css" href="{% static 'nifty/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'nifty/css/nifty.min.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'nifty/css/demo/nifty-demo-icons.min.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'nifty/css/demo/nifty-demo.min.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'nifty/plugins/pace/pace.min.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'nifty/plugins/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'nifty/plugins/bootstrap-select/bootstrap-select.min.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'nifty/css/style.css' %}" rel="stylesheet">
+    <link type="text/css" {% if admin_color_theme %}href="{% static 'nifty/css/themes/' %}{{ admin_color_theme }}"{% endif %} rel="stylesheet" id="theme">
+    {% block extrastyle %}{% endblock %}
+    {% if LANGUAGE_BIDI %}
+        <link type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" rel="stylesheet">
+    {% endif %}
+    <script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static "admin/" %}{% endfilter %}";</script>
+    <script src="{% static 'nifty/js/jquery.min.js' %}"></script>
+    <script src="{% static 'nifty/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'nifty/js/nifty.min.js' %}"></script>
+    <script src="{% static 'nifty/plugins/pace/pace.min.js' %}"></script>
+    <script src="{% static 'nifty/plugins/bootstrap-select/bootstrap-select.min.js' %}"></script>
+    {% if perms.admin.change_theme_ajax_setting %}
+        <script type="text/javascript" src="{% static 'nifty/js/setting.js' %}"></script>
+    {% endif %}
+    <!--jQuery [ REQUIRED ]-->
+    {% block extrahead %}{% endblock %}
+    <script type="text/javascript">
+        var settings_link = "{% url 'admin:ajax_theme_settings' %}";
+        var settings_update = "{% url 'admin:ajax_change_settings' %}";
+
+        var csrf_token = "{{ csrf_token }}";
+        var Suit = {$: $.noConflict()};
+        if (!$) $ = Suit.$;
+    </script>
+    <script src="{% static 'nifty/js/suit.js' %}"></script>
+    {% if 'SHOW_REQUIRED_ASTERISK'|suit_conf %}
+        <style type="text/css">
+            label.required:after {
+                content: '*';
+                margin: 1px 0 0 5px;
+                position: absolute;
+                font-size: 18px;
+            }
+        </style>
+    {% endif %}
+    {% block blockbots %}
+        <meta name="robots" content="NONE,NOARCHIVE"/>
+    {% endblock %}
+</head>
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">
+<!-- Container -->
+{% block container %}
+    <div id="container" style="{% if admin_boxed_layout %}{{ admin_boxed_bg }}{% endif %}" class="{% if admin_enable_theme_animation == 'effect' %}{{ admin_enable_theme_animation }} {{ admin_theme_animation }}{% endif %} {% if  admin_mainnav_offcanvas != 'none' %}{{ admin_mainnav_offcanvas }}{% endif %} {{ admin_navbar_fixed }} {{ admin_mainnav_fixed }} {{ admin_colpase_menu }} {{ admin_footer_fixed }} {{ admin_visible_aside }} {{ admin_fixed_aside }} {{ admin_float_aside }} {{ admin_left_aside }} {{ admin_dark_aside }} {{ admin_boxed_layout }} {{ admin_navbar_show_menu }} {{ admin_nav_show_menu }} {{ admin_hide_aside }} {{ admin_navbar_show_usermenu }}">
+        {% block header %}
+            {% include 'nifty/header.html' %}
+        {% endblock %}
+        <div class="boxed {{ is_popup|yesno:'one-column,two-columns' }}">
+            <!--CONTENT CONTAINER-->
+            {% block content-center %}
+                <div {% if not is_popup %} id="content-container" {% endif %}>
+                    <div id="page-head">
+                        {% block messages %}
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="mar-no alert alert-{% firstof message.tags 'info' %} fade in " style="border-radius: 0;">
+                                        <button class="close" data-dismiss="alert" style="margin-top: 5px;"><i class="pci-cross pci-circle"></i></button>
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endblock messages %}
+                        {% block error-messages %}{% endblock error-messages %}
+                        {% if not is_popup %}
+                            <!--Page Title-->
+                            <div id="page-title">
+                                {% block pretitle %}{% endblock %}
+                                {% block content_title %}
+                                    {% if title %}
+                                        <h1 class="page-header text-overflow">{{ title }}</h1>
+                                    {% endif %}
+                                {% endblock %}
+                                {% block searchbox %}{% endblock %}
+                            </div>
+                            <!--End page title-->
+                            <!--Breadcrumb-->
+                            {% block breadcrumbs %}
+                                <ol class="breadcrumb">
+                                    <li><a href="{% url 'admin:index' %}">{% trans 'Home' %}</a></li>
+                                    {% if title %}
+                                        <li class="active">{{ title }}</li>
+                                    {% endif %}
+                                </ol>
+                            {% endblock %}
+                            <!--End breadcrumb-->
+                        {% endif %}
+                    </div>
+
+                    <!--Page content-->
+                    <div id="page-content" class="no-padding-top {% block coltype %}colM{% endblock %}">
+
+                        {% block content %}
+                            {% block object-tools %}{% endblock %}
+                            {{ content }}
+                        {% endblock %}
+                        {% block sidebar_content %}
+                            {% block sidebar %}{% endblock %}
+                        {% endblock %}
+                    </div>
+                    <!--End page content-->
+                </div>
+            {% endblock %}
+            {% if not is_popup %}
+
+                <!--END CONTENT CONTAINER-->
+                <!--ASIDE-->
+                <!--===================================================-->
+                <aside id="aside-container">
+                    <div id="aside">
+                        <div class="nano">
+                            {% include 'nifty/aside.html' %}
+                        </div>
+                    </div>
+                </aside>
+                <!--===================================================-->
+                <!--END ASIDE-->
+            {% endif %}
+            <!--MAIN NAVIGATION-->
+            {% block content-left %}
+                {% if not is_popup %}
+                    <nav id="mainnav-container">
+                        <div id="mainnav">
+                            <div id="mainnav-menu-wrap">
+                                <div class="nano">
+                                    <div class="nano-content">
+                                        {% include 'nifty/menu.html' %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+                {% endif %}
+            {% endblock %}
+            <!--END MAIN NAVIGATION-->
+        </div>
+
+        {% if not is_popup %}
+            <!-- FOOTER -->
+            <!--===================================================-->
+            <footer id="footer">
+                <div class="hide-fixed pull-right pad-rgt">&nbsp;</div>
+                <p class="pad-lft">&#0169; 2014 - {% now 'Y' %} {{ admin_site_copyright }}</p>
+            </footer>
+            <!--===================================================-->
+            <!-- END FOOTER -->
+        {% endif %}
+
+        <!-- SCROLL TOP BUTTON -->
+        <!--===================================================-->
+        <button class="scroll-top btn">
+            <i class="pci-chevron chevron-up"></i>
+        </button>
+        <!--===================================================-->
+    </div>
+{% endblock %}
+
+{% block extrajs %}{% endblock %}
+</body>
+</html>

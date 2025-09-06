@@ -1,0 +1,327 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <style>
+        .legend table {
+            margin-top: 40px;
+            margin-right: -10px;
+        }
+    </style>
+{% endblock %}
+{% block extrahead %}
+    {{ media }}
+    <!--Flot Chart [ OPTIONAL ]-->
+    <script src="{% static "nifty/plugins/flot-charts/jquery.flot.min.js" %}"></script>
+    <script src="{% static "nifty/plugins/flot-charts/jquery.flot.resize.min.js" %}"></script>
+    <script src="{% static "nifty/plugins/flot-charts/jquery.flot.pie.min.js" %}"></script>
+    <script src="{% static "nifty/plugins/flot-charts/jquery.flot.tooltip.min.js" %}"></script>
+
+
+    <!--Flot Sample [ SAMPLE ]-->
+    {#    <script src="{% static "nifty/js/demo/flot-charts.js" %}"></script>#}
+{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+    <div class="row">
+
+        <div class="col-md-8">
+            <!-- Donut Chart -->
+            <!---------------------------------->
+            <div class="panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{% trans "violation" %}</h3>
+                </div>
+                <div class="panel-body">
+                    <div id="demo-flot-donut" style="height: 400px"></div>
+                    <p class="text-main text-semibold">{% trans "Description" %}</p>
+                    <ol>
+                        <li style="padding-bottom: 6px">Pelanggaran Pengunaan Spektrum Frekuensi Radio Tampa Izin Station Radio (ISR) <span class="label" style="background-color:#4285f4">{{ a1 }}</span></li>
+                        <li style="padding-bottom: 6px">Pelanggaran Tidak Melunasi Biaya Hak Pengguna Spektrum Frekuensi Radio <span class="label" style="background-color:#fbbc05">{{ a2 }}</span></li>
+                        <li style="padding-bottom: 6px">Pelanggaran Pengunaan Spektrum Frekuensi Radio Tidak Sesuai Dengan Peruntukan <span class="label" style="background-color:#ea4335">{{ a3 }}</span></li>
+                        <li style="padding-bottom: 6px">Pelanggaran Penggunaan Spektrum Frekuensi Radio Tidak Sesuai Dengan Parameter Teknis <span class="label" style="background-color:#34a853">{{ a4 }}</span></li>
+                        <li style="padding-bottom: 6px">Pelanggaran Penggunaan Spektrum Frekuensi Radio Menimbulkan Gangguan Yang Merugikan (Harmful Interference) <span class="label" style="background-color:#44268f">{{ a5 }}</span></li>
+                        <li style="padding-bottom: 6px">Pelanggaran Penggunaan Alat Telekomunikasi Dan / Atau Perangkat Telekomunikasi Yang Tidak Bersertifikat <span class="label" style="background-color:#9a0095">{{ a6 }}</span></li>
+                        <li style="padding-bottom: 6px">Pelanggaran Pelaku Usaha Memperdagangkan Dan / Atau Menggunakan Alat Telekomunikasi Dan / Atau Perangkat Telekomunikasi Tidak Bersertifikat <span class="label" style="background-color:#002afa">{{ a7 }}</span></li>
+                        <li style="padding-bottom: 6px">Pelanggaran Pelaku Usaha Memperdagangkan Dan / Atau Menggunakan Alat Telekomunikasi Dan / Atau Perangkat Telekomunikasi Tidak Sesuai Dengan Sertifikat <span class="label" style="background-color:#00b2ff">{{ a8 }}</span></li>
+                        <li style="padding-bottom: 6px">Pelanggaran Setiap Orang Memperdagangkan Dan / Atau Menggunakan Alat Telekomunikasi Dan / Atau Perangkat Telekomunikasi Tidak Bersertifikat Dan / Atau Tidak Sesuai Dengan Sertifikat <span class="label" style="background-color:#e87fff">{{ a9 }}</span></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-info panel-colorful">
+                <div class="pad-all media">
+                    <div class="media-left">
+                        <i class="demo-pli-male icon-3x icon-fw"></i>
+                    </div>
+                    <div class="media-body">
+                        <p class="text-2x mar-no media-heading">{{ company }}</p>
+                        <span>Penyelenggara</span>
+                    </div>
+                </div>
+                <div class="progress progress-xs progress-success mar-no">
+                    <div role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-light" style="width: 100%"></div>
+                </div>
+                <div class="pad-all text-sm">
+                    Jumlah Penyelengara Yang melakukan Pelanggaran
+                </div>
+            </div>
+            <div class="panel media middle pad-all">
+                <div class="media-left">
+					                        <span class="icon-wrap icon-wrap-sm icon-circle bg-info">
+					                        <i class="demo-pli-mail icon-2x"></i>
+					                        </span>
+                </div>
+                <div class="media-body">
+                    <p class="text-2x mar-no text-semibold text-main">{{ total_surat }}</p>
+                    <p class="text-muted mar-no">Total Surat dan Berita Acara</p>
+                </div>
+            </div>
+
+            <div class="panel media middle pad-all">
+                <div class="media-left">
+					                        <span class="icon-wrap icon-wrap-sm icon-circle bg-danger">
+					                        <i class="demo-pli-mail icon-2x"></i>
+					                        </span>
+                </div>
+                <div class="media-body">
+                    <p class="text-2x mar-no text-semibold text-main">{{ total_surat_d }}</p>
+                    <p class="text-muted mar-no">Total Surat Dan Berita Acara yang belum di unggah</p>
+                </div>
+            </div>
+            <div class="panel media middle pad-all">
+                <div class="media-left">
+					                        <span class="icon-wrap icon-wrap-sm icon-circle bg-success">
+					                        <i class="demo-pli-mail icon-2x"></i>
+					                        </span>
+                </div>
+                <div class="media-body">
+                    <p class="text-2x mar-no text-semibold text-main">{{ total_surat_e }}</p>
+                    <p class="text-muted mar-no">Total Surat dan Berita Acara yang sudah di unggah</p>
+                </div>
+            </div>
+
+        </div>
+
+
+        {#    {{ test }}#}
+        {#        {% if app_list %}#}
+        {#            {% for app in app_list %}#}
+        {#                {% for model in app.models %}#}
+        {#                    <div class="col-md-2">#}
+        {#                        <div class="panel">#}
+        {#                            <div class="panel-body text-center">#}
+        {#                                <div class="pad-ver mar-top text-main"><i class="{{ model.icon }} icon-4x"></i></div>#}
+        {#                                <p class="text-lg text-semibold mar-no text-main">{{ model.name }}</p>#}
+        {#                                <a href="{{ model.admin_url }}" class="btn btn-primary mar-ver"><i class="fa fa-check"></i>&nbsp;{% trans 'Go' %}</a>#}
+        {#                            </div>#}
+        {#                        </div>#}
+        {#                    </div>#}
+        {#                {% endfor %}#}
+        {#            {% endfor %}#}
+        {#        {% else %}#}
+        {#                <div class="col-sm-12"><h3>{% trans "You don't have permission to edit anything." %}</h3></div>#}
+        {#            {% endif %}#}
+    </div>
+
+    {#    <div class="row">#}
+    {#        <div class="col-sm-12">#}
+    {#            {% if app_list %}#}
+    {#                {% for app in app_list %}#}
+    {#                    <div class="panel">#}
+    {#                        <div class="panel-heading">#}
+    {#                            <h3 class="panel-title">{% trans app.name %}</h3>#}
+    {#                        </div>#}
+    {#                        <div class="panel-body table-responsive">#}
+    {#                            <table class="table table-striped" summary="{% blocktrans with name=app.name %}Models available in the {{ name }} application.{% endblocktrans %}">#}
+    {#                                <thead>#}
+    {#                                <tr>#}
+    {#                                    <th>{% trans 'App' %}</th>#}
+    {#                                    <th>{% trans 'Action' %}</th>#}
+    {#                                </tr>#}
+    {#                                </thead>#}
+    {#                                <tbody>#}
+    {#                                {% for model in app.models %}#}
+    {#                                    {% if model.name != 'Grup' %}#}
+    {#                                    <tr>#}
+    {#                                        <td scope="row">{{ model.name }}</td>#}
+    {#                                        {% if model.admin_url %}#}
+    {#                                            <td>#}
+    {#                                                <a href="{{ model.admin_url }}" class="btn-link">#}
+    {#                                                    <i class="fa fa-check"></i>&nbsp;{% trans 'Change' %}#}
+    {#                                                </a>#}
+    {##}
+    {#                                                {% if model.add_url %}#}
+    {#                                                    |#}
+    {#                                                    <a href="{{ model.add_url }}" class="btn-link ">#}
+    {#                                                        <i class="fa fa-plus"></i>&nbsp;{% trans 'Add' %}#}
+    {#                                                    </a>#}
+    {#                                                {% endif %}#}
+    {#                                            </td>#}
+    {#                                        {% else %}#}
+    {#                                            <td>&nbsp;</td>#}
+    {#                                        {% endif %}#}
+    {#                                    </tr>#}
+    {#                                    {% endif %}#}
+    {#                                {% endfor %}#}
+    {#                                </tbody>#}
+    {#                            </table>#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {#                {% endfor %}#}
+    {#            {% else %}#}
+    {#                <h3>{% trans "You don't have permission to edit anything." %}</h3>#}
+    {#            {% endif %}#}
+    {#        </div>#}
+    {##}
+    {#    </div>#}
+{% endblock %}
+
+{% block extrajs %}
+    <script type="text/javascript">
+        // FLOT DONUTS CHART
+        // =================================================================
+        // Require Flot Charts
+        // -----------------------------------------------------------------
+        // http://www.flotcharts.org/
+        // =================================================================
+        var data2 = [
+            {
+                label: 'Pelanggaran Pengunaan Spektrum Frekuensi Radio Tampa Izin Station Radio (ISR)',
+                data: 1,
+                color: "#4285f4"
+            },
+            {
+                label: 'Pelanggaran Tidak Melunasi Biaya Hak Pengguna Spektrum Frekuensi Radio',
+                data: 2,
+                color: "#fbbc05"
+            },
+            {
+                label: 'Pelanggaran Pengunaan Spektrum Frekuensi Radio Tidak Sesuai Dengan Peruntukan',
+                data: 3,
+                color: "#ea4335"
+            },
+            {
+                label: 'Pelanggaran Penggunaan Spektrum Frekuensi Radio Tidak Sesuai Dengan Parameter Teknis',
+                data: 4,
+                color: "#34a853"
+            },
+            {
+                label: 'Pelanggaran Penggunaan Spektrum Frekuensi Radio Menimbulkan Gangguan Yang Merugikan (Harmful Interference)',
+                data: 5,
+                color: "#44268f"
+            },
+            {
+                label: 'Pelanggaran Penggunaan Alat Telekomunikasi Dan/Atau Perangkat Telekomunikasi Yang Tidak Bersertifikat',
+                data: 6,
+                color: "#9a0095"
+            },
+            {
+                label: 'Pelanggaran Pelaku Usaha Memperdagangkan Dan/Atau Menggunakan Alat Telekomunikasi Dan/Atau Perangkat Telekomunikasi Tidak Bersertifikat',
+                data: 7,
+                color: "#002afa"
+            },
+            {
+                label: 'Pelanggaran Pelaku Usaha Memperdagangkan Dan/Atau Menggunakan Alat Telekomunikasi Dan/Atau Perangkat Telekomunikasi Tidak Sesuai Dengan Sertifikat',
+                data: 8,
+                color: "#00b2ff"
+            },
+            {
+                label: 'Pelanggaran Setiap Orang Memperdagangkan Dan/Atau Menggunakan Alat Telekomunikasi Dan/Atau Perangkat Telekomunikasi Tidak Bersertifikat Dan/Atau Tidak Sesuai Dengan Sertifikat',
+                data: 9,
+                color: "#e87fff"
+            }
+        ];
+
+
+        // FLOT DONUTS CHART
+        // =================================================================
+        // Require Flot Charts
+        // -----------------------------------------------------------------
+        // http://www.flotcharts.org/
+        // =================================================================
+        var data = [
+            {
+                label: 'Pelanggaran',
+                data: {{ a1 }},
+                color: "#4285f4"
+            },
+            {
+                label: 'Pelanggaran',
+                data: {{ a2 }},
+                color: "#fbbc05"
+            },
+            {
+                label: 'Pelanggaran',
+                data: {{ a3 }},
+                color: "#ea4335"
+            },
+            {
+                label: 'Pelanggaran',
+                data: {{ a4 }},
+                color: "#34a853"
+            },
+            {
+                label: 'Pelanggaran',
+                data: {{ a5 }},
+                color: "#44268f"
+            },
+            {
+                label: 'Pelanggaran',
+                data: {{ a6 }},
+                color: "#9a0095"
+            },
+            {
+                label: 'Pelanggaran',
+                data: {{ a7 }},
+                color: "#002afa"
+            },
+            {
+                label: 'Pelanggaran',
+                data: {{ a8 }},
+                color: "#00b2ff"
+            },
+            {
+                label: 'Pelanggaran',
+                data: {{ a9 }},
+                color: "#e87fff"
+            }
+        ];
+
+        $.plot('#demo-flot-donut2', data, {
+            series: {
+                pie: {
+                    innerRadius: 0.5,
+                    show: true,
+                    label: {
+                        show: false
+                    }
+                },
+
+            },
+            legend: {
+                show: false
+            }
+        });
+
+        $.plot('#demo-flot-donut', data, {
+            series: {
+                pie: {
+                    show: true,
+                },
+
+            },
+            legend: {
+                show: false
+            }
+        });
+
+
+    </script>
+{% endblock %}
+
+

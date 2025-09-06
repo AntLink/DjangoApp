@@ -1,0 +1,1 @@
+try{const{default:e}=await import("../vendors/bootstrap5-tags/tags.min.js");e.init(".form-select.form-tags",{badgeStyle:"tags"})}catch{console.error("Couln't import Bootstrap5 Tags Plugins")}

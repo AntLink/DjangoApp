@@ -1,0 +1,217 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_list admin_modify admin_urls suit_list suit_tags %}
+{% load url from suit_compat %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    {% if cl.formset or action_form %}
+        {% url 'admin:jsi18n' as jsi18nurl %}
+        <script type="text/javascript" src="{{ jsi18nurl|default:'../../jsi18n/' }}"></script>
+    {% endif %}
+    {{ media.css }}
+{% endblock %}
+
+{% block searchbox %}
+    {% searchbox_form cl %}
+{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    {{ media.js }}
+{% endblock %}
+
+{% block extrajs %}
+    {% prepopulated_fields_js %}
+    {{ block.super }}
+{% endblock %}
+
+{% block bodyclass %}change-list{% endblock %}
+
+{% if not is_popup %}
+    {% block breadcrumbs %}
+        <ol class="breadcrumb">
+            {% if perms.admin.index_view %}
+                <li class="breadcrumb-item">
+                    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+                </li>
+            {% endif %}
+            <li class="breadcrumb-item">
+                <a href="{% url 'admin:app_list' app_label=cl.opts.app_label %}">{% trans cl.opts.app_config.verbose_name %}</a>
+            </li>
+            <li class="breadcrumb-item active">{{ cl.opts.verbose_name_plural|capfirst }}</li>
+        </ol>
+    {% endblock %}
+{% endif %}
+
+{% block coltype %}flex{% endblock %}
+
+{% block content %}
+    {% if not is_popup %}
+        <div class="row">
+            <div class="col-sm-11">
+                {% block search %}
+                    {% if cl.full_result_count %}
+                        {% search_form cl %}
+                    {% endif %}
+                {% endblock %}
+            </div>
+            <div class="col-sm-1">
+                {% block object-tools %}
+                    {% if has_add_permission and change %}
+                        {% block object-tools-items %}
+                            <a href="{% url cl.opts|admin_urlname:'add' %}{% if is_popup %}?_popup=1{% endif %}" class="btn btn-default btn-labeled pull-right add-tooltip" title="{% trans 'Add' %} {% blocktrans with cl.opts.verbose_name as name %}{{ name }}{% endblocktrans %}">
+                                <i class="btn-label icon-lg fa fa-plus "></i>{% trans 'Add' %}
+                            </a>
+                        {% endblock %}
+                    {% endif %}
+                {% endblock %}
+            </div>
+        </div>
+        <div class="row mar-top">
+            <div class="col-sm-8">
+                {% block date_hierarchy %}
+                    {% if cl.date_hierarchy %}
+                        {% date_hierarchy cl %}
+                    {% endif %}
+                {% endblock %}
+
+                {% if cl.formset.errors %}
+                    <div class="alert alert-error errornote">
+                        {% blocktrans count cl.formset.errors|length as counter %}Please correct the error below. {% plural %} Please correct the errors below.{% endblocktrans %}
+                    </div>
+                    {{ cl.formset.non_form_errors }}
+                {% endif %}
+                {% block result_list %}
+                    {% if cl.result_count %}
+                        <form id="changelist-form" action="" method="POST" {% if cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %} class="form-inline">
+                            {% csrf_token %}
+                            <div class="panel">
+                                <div class="panel-footer" style="border-radius: 0px">
+                                    <div class="row" style="margin-top: 5px;">
+                                        <div class="col-sm-12">
+                                            {% if action_form and cl.full_result_count %}
+                                                {% admin_actions %}
+                                            {% endif %}
+                                            {% if cl.result_count %}
+                                                {% get_request request 'p' as pagenum %}
+                                                {% page cl pagenum as page %}
+                                                <div class="btn-group btn-group">
+                                                    {% if page.has_previous %}
+                                                        <a class="btn btn-default add-tooltip" title="{% trans 'Previous' %}" href="?p={{ page.previous_page_number }}">
+                                                            <i class="demo-psi-arrow-left"></i>
+                                                        </a>
+                                                    {% endif %}
+                                                    {% if pagenum == '1' %}
+                                                        <a class="btn btn-default add-tooltip" title="{% trans 'Previous' %}" href="?p=0">
+                                                            <i class="demo-psi-arrow-left"></i>
+                                                        </a>
+                                                    {% endif %}
+
+                                                    {% if page.has_next %}
+                                                        {% if pagenum == '0' or not pagenum %}
+                                                            <a class="btn btn-default add-tooltip" title="{% trans 'Next' %}" href="?p=1">
+                                                                <i class="demo-psi-arrow-right"></i>
+                                                            </a>
+                                                        {% else %}
+                                                            {% if page.next_page_number != page.paginator.num_pages %}
+                                                                <a class="btn btn-default add-tooltip" title="{% trans 'Next' %}" href="?p={{ page.next_page_number }}">
+                                                                    <i class="demo-psi-arrow-right"></i>
+                                                                </a>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </div>
+                                            {% endif %}
+                                            <span class="text-main text-bold pull-right" style="margin-top: 6px">{% trans 'Showing' %}&nbsp;{% paginator_info cl %} {% trans 'of' %} {{ cl.result_count }} {% if cl.result_count == 1 %}{{ cl.opts.verbose_name_plural|capfirst }}{% else %}{{ cl.opts.verbose_name_plural|capfirst }}{% endif %}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="panel-body" style="padding-right: 16px;padding-left: 16px; padding-bottom: 0px;padding-top: 0px;">
+                                    <div class="table-responsive">
+                                        {% result_list_with_context cl %}
+                                    </div>
+                                </div>
+                                <div class="panel-footer">
+                                    <div class="row" style="margin-bottom: 5px;">
+                                        <div class="col-sm-12">
+                                            {% if action_form and cl.full_result_count %}
+                                                {% admin_actions %}
+                                            {% endif %}
+                                            {% if cl.result_count %}
+                                                {% get_request request 'p' as pagenum %}
+                                                {% page cl pagenum as page %}
+                                                <div class="btn-group btn-group">
+                                                    {% if page.has_previous %}
+                                                        <a class="btn btn-default add-tooltip" title="{% trans 'Previous' %}" href="?p={{ page.previous_page_number }}">
+                                                            <i class="demo-psi-arrow-left"></i>
+                                                        </a>
+                                                    {% endif %}
+                                                    {% if pagenum == '1' %}
+                                                        <a class="btn btn-default add-tooltip" title="{% trans 'Previous' %}" href="?p=0">
+                                                            <i class="demo-psi-arrow-left"></i>
+                                                        </a>
+                                                    {% endif %}
+
+                                                    {% if page.has_next %}
+                                                        {% if pagenum == '0' or not pagenum %}
+                                                            <a class="btn btn-default add-tooltip" title="{% trans 'Next' %}" href="?p=1">
+                                                                <i class="demo-psi-arrow-right"></i>
+                                                            </a>
+                                                        {% else %}
+                                                            {% if page.next_page_number != page.paginator.num_pages %}
+                                                                <a class="btn btn-default add-tooltip" title="{% trans 'Next' %}" href="?p={{ page.next_page_number }}">
+                                                                    <i class="demo-psi-arrow-right"></i>
+                                                                </a>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </div>
+                                            {% endif %}
+                                            <span class="text-main text-bold pull-right" style="margin-top: 6px">{% trans 'Showing' %}&nbsp;{% paginator_info cl %} {% trans 'of' %} {{ cl.result_count }} {% if cl.result_count == 1 %}{{ cl.opts.verbose_name_plural|capfirst }}{% else %}{{ cl.opts.verbose_name_plural|capfirst }}{% endif %}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    {% else %}
+                        {% suit_bc_value 1.5 'pop' 1.6 '_popup' as POPUP_VAR %}
+                        <div class="alert alert-primary">
+                            {% if cl.full_result_count %}
+                                <h4>{% trans 'Nothing found' %}!</h4>
+                                <a href="?{% if cl.is_popup %}{{ POPUP_VAR }}=1{% endif %}">
+                                    <strong>{% trans 'Reset search and filters' %}</strong>
+                                </a>
+                            {% else %}
+                                {% blocktrans with cl.opts.verbose_name_plural|capfirst as name_plural %}{{ name_plural }} are not created yet{% endblocktrans %}.
+                                {% if has_add_permission %}
+                                    <a href="{% url cl.opts|admin_urlname:'add' %}{% if is_popup %}?{{ POPUP_VAR }}=1{% endif %}">
+                                        <strong>{% trans 'Add' %} {% blocktrans with cl.opts.verbose_name as name %}{{ name }}{% endblocktrans %}</strong>
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endblock %}
+            </div>
+            <div class="col-sm-4">
+                {% include "admin/tags/change_form.html" %}
+            </div>
+        </div>
+        {#        {% block pagination %}#}
+        {#            {% if cl.result_count %}#}
+        {#                <div class="row mar-btm">#}
+        {#                    <div class="col-sm-12">#}
+        {#                        {% pagination cl %}#}
+        {#                    </div>#}
+        {#                </div>#}
+        {#            {% endif %}#}
+        {#        {% endblock %}#}
+    {% else %}
+        <div class="row">
+            <div class="col-sm-12">
+                {% include "admin/tags/change_form.html" %}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

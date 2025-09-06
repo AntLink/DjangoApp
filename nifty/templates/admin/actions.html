@@ -1,0 +1,20 @@
+{% load i18n suit_tags %}
+
+<div class="col-12">
+    <input id="select-all" class="magic-checkbox" type="checkbox" style="margin-left: 8px">
+</div>
+<div class="col-12">
+    {% for field in action_form %}
+        {{ field|add_class:'selectpicker form-select ' }}
+    {% endfor %}
+
+</div>
+<div class="col-12">
+    <button style="border-left: none;" type="submit" class="btn btn-primary" title="{% trans "Run" %}" name="index" value="{{ action_index|default:0 }}">
+        {% trans "OK" %}
+    </button>
+</div>
+
+
+
+

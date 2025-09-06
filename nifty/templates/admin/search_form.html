@@ -1,0 +1,63 @@
+{% load i18n static suit_list admin_list suit_tags %}
+{% if cl.search_fields or cl.has_filters %}
+    {% suit_bc_value 1.5 'pop' 1.6 '_popup' as POPUP_VAR %}
+    {#    <div style="margin-left: 4px">#}
+    <form id="changelist-search" action="" method="get" class="row row-cols-md-auto g-3 align-items-center form-inline">
+        {#        <div class="input-group">#}
+
+        {#            {% if cl.search_field_dates %}#}
+        {#                <input type="text" class="form-control pull-right" name="{{ search_var }}"#}
+        {#                       value="{{ cl.query }}" id="searchbar"#}
+        {#                       placeholder="{% block search_placeholder %}{% trans 'keyword'|capfirst %}{% endblock %}"#}
+        {#                        {{ cl.query|yesno:' class=active,' }}>#}
+        {#                <script type="text/javascript">document.getElementById("searchbar").focus();</script>#}
+        {#            {% endif %}#}
+        {#        </div>#}
+        {% spaceless %}
+            {% if cl.has_filters %}
+                {% block filters %}
+                    {% if cl.has_filters %}
+                        {#                        <span class="search-filters">#}
+                        {% for spec in cl.filter_specs %}
+                            {#                    {% if spec.title == 'user' %}#}
+                            {#                        {{ request}}#}
+                            {#                    {% else %}#}
+
+                            <div class="form-group">{% suit_list_filter_select cl spec %}&nbsp;</div>
+
+
+                            {#                    {% endif %}#}
+                        {% endfor %}
+
+                        {#                </span>#}
+                    {% endif %}
+                {% endblock %}
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" style="margin-top: -20px">
+                        {% trans 'Filter' %} {{ user.active }}
+                    </button>
+                </div>
+
+                {% block result_serch %}
+                    {% if show_result_count %}
+                        <span class=" quiet result-count" style="margin-top:-5px">
+                            &nbsp;
+                            {% blocktrans count counter=cl.result_count %}{{ counter }} result {% plural %} {{ counter }} results {% endblocktrans %}
+                            &nbsp;
+                            <a href="?{% if cl.is_popup %}{{ POPUP_VAR }}=1{% endif %}">
+                                {% blocktrans with full_result_count=cl.full_result_count %}{{ full_result_count }} total {% endblocktrans %}
+                            </a>
+                        </span>
+                    {% endif %}
+                {% endblock %}
+            {% endif %}
+
+        {% endspaceless %}
+        {% if cl.is_popup %}
+            <input type="hidden" name="{{ POPUP_VAR }}" value="1">
+        {% endif %}
+
+    </form>
+    {#    </div>#}
+{% endif %}

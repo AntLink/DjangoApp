@@ -1,0 +1,375 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+    {{ block.super }}
+{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+
+{% block bodyclass %}dashboard{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+{% block searchbox %}
+    <div class="searchbox">
+        <form id="changelist-search" action="" method="get">
+            <div class="input-group custom-search-form">
+                <input type="text" class="form-control" name="y" value="{{ year }}" id="das-searchbar"
+                       placeholder="{{ year }}">
+                <span class="input-group-btn">
+                <button class="text-muted" type="button"><i class="fa fa-search"></i>
+                </button>
+            </span>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Statistik Jumlah Surat Pemberitahuan Pembayaran (SPP) {{ year }}</h3>
+                </div>
+                <div class="panel-body">
+
+                    <!--Morris Area Chart placeholder-->
+                    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+                    <div id="demo-morris-area" style="height:212px"></div>
+                    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+                    <hr>
+                    <div class="panel-body table-responsive">
+                        <table class="table  table-condensed">
+                            <thead>
+                            <tr>
+                                <th>Bulan</th>
+                                <th>Jumlah</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Januari</td>
+                                <td><span class="badge badge-primary">{{ spp_chart.jan }}</span> Perusahaan</td>
+                            </tr>
+                            <tr>
+                                <td>Februari</td>
+                                <td><span class="badge badge-primary">{{ spp_chart.feb }}</span> Perusahaan</td>
+                            </tr>
+                            <tr>
+                                <td>Maret</td>
+                                <td><span class="badge badge-primary">{{ spp_chart.mar }}</span> Perusahaan</td>
+                            </tr>
+                            <tr>
+                                <td>April</td>
+                                <td><span class="badge badge-primary">{{ spp_chart.apr }}</span> Perusahaan</td>
+                            </tr>
+                            <tr>
+                                <td>May</td>
+                                <td><span class="badge badge-primary">{{ spp_chart.may }}</span> Perusahaan</td>
+                            </tr>
+                            <tr>
+                                <td>Juni</td>
+                                <td><span class="badge badge-primary">{{ spp_chart.jun }}</span> Perusahaan</td>
+                            </tr>
+                            <tr>
+                                <td>Juli</td>
+                                <td><span class="badge badge-primary">{{ spp_chart.jul }}</span> Perusahaan</td>
+                            </tr>
+                            <tr>
+                                <td>Agustus</td>
+                                <td><span class="badge badge-primary">{{ spp_chart.aug }}</span> Perusahaan</td>
+                            </tr>
+                            <tr>
+                                <td>September</td>
+                                <td><span class="badge badge-primary">{{ spp_chart.sep }}</span> Perusahaan</td>
+                            </tr>
+                            <tr>
+                                <td>October</td>
+                                <td><span class="badge badge-primary">{{ spp_chart.oct }}</span> Perusahaan</td>
+                            </tr>
+                            <tr>
+                                <td>November</td>
+                                <td><span class="badge badge-primary">{{ spp_chart.nov }}</span> Perusahaan</td>
+                            </tr>
+                            <tr>
+                                <td>Desember</td>
+                                <td><span class="badge badge-primary">{{ spp_chart.des }}</span> Perusahaan</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% if app_list %}
+                {% for app in app_list %}
+                    {% if  app.name != 'Setting' %}
+                        <div class="panel">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">{% trans app.name %}</h3>
+                            </div>
+                            <div class="panel-body table-responsive">
+                                <table class="table table-hover table-condensed"
+                                       summary="{% blocktrans with name=app.name %}Models available in the {{ name }} application.{% endblocktrans %}">
+                                    <thead>
+                                    <tr>
+                                        <th>{% trans 'App' %}</th>
+                                        <th>{% trans 'Action' %}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for model in app.models %}
+                                        {% if model.name != 'Grup' %}
+                                            <tr>
+                                                <td scope="row">{{ model.name }}</td>
+                                                {% if model.admin_url %}
+                                                    <td>
+                                                        <a href="{{ model.admin_url }}">
+                                                            <i class="fa fa-check"></i>&nbsp;{% trans 'Change' %}
+                                                        </a>
+                                                        &nbsp;|&nbsp;
+                                                        <a href="{{ model.add_url }}" class="addlink icon">
+                                                            <i class="fa fa-plus"></i>&nbsp;{% trans 'Add' %}
+                                                        </a>
+                                                    </td>
+                                                {% else %}
+                                                    <td>&nbsp;</td>
+                                                {% endif %}
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <h3>{% trans "You don't have permission to edit anything." %}</h3>
+            {% endif %}
+        </div>
+        <div class="col-lg-6">
+            <div class="panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Statistik Rincian Surat Pemberitahuan Pembayaran (SPP) {{ year }}</h3>
+                </div>
+                <div class="panel-body">
+
+                    <div id="demo-morris-area2" style="height:212px"></div>
+                    <hr>
+                    <div class="panel-body table-responsive">
+                        <table class="table  table-condensed">
+                            <thead>
+                            <tr>
+                                <th>Rincian</th>
+                                <th>Jumlah</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Baru</td>
+                                <td><span class="badge badge-primary">{{ pie_chart.baru }}</span> Perusahaan</td>
+                            </tr>
+                            <tr>
+                                <td>Perpanjang</td>
+                                <td><span class="badge badge-primary">{{ pie_chart.perpanjang }}</span> Perusahaan</td>
+                            </tr>
+                            <tr>
+                                <td>Tunggakan</td>
+                                <td><span class="badge badge-primary">{{ pie_chart.tunggakan }}</span> Perusahaan</td>
+                            </tr>
+                            <tr>
+                                <td>Denda</td>
+                                <td><span class="badge badge-primary">{{ pie_chart.denda }}</span> Perusahaan</td>
+                            </tr>
+                            <tr>
+                                <td>Reminder 1</td>
+                                <td><span class="badge badge-primary">{{ pie_chart.reminder_1 }}</span> Perusahaan</td>
+                            </tr>
+                            <tr>
+                                <td>Reminder 2</td>
+                                <td><span class="badge badge-primary">{{ pie_chart.reminder_2 }}</span> Perusahaan</td>
+                            </tr>
+                            <tr>
+                                <td>Reminder 3</td>
+                                <td><span class="badge badge-primary">{{ pie_chart.reminder_3 }}</span> Perusahaan</td>
+                            </tr>
+                            <tr>
+                                <td>Reminder 4</td>
+                                <td><span class="badge badge-primary">{{ pie_chart.reminder_4 }}</span> Perusahaan</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{% trans 'Aktifitas Pengguna' %}</h3>
+                </div>
+                <div class="panel-body">
+                    {% load log %}
+                    {% get_admin_log 10 as admin_log for_user user %}
+                    {% if not admin_log %}
+                        <p>{% trans 'None available' %}</p>
+                    {% else %}
+                        <div class="table-responsive">
+                            <table class="table  table-condensed">
+                                <thead>
+                                <tr>
+                                    <th>{% trans 'App' %}</th>
+                                    <th>{% trans 'Item' %}</th>
+                                    <th>{% trans 'Action' %}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                {% for entry in admin_log %}
+                                    <tr>
+
+                                        <td>
+
+                                            {% if entry.content_type %}
+                                                <span class="mini quiet">
+                                                {% filter capfirst %}
+                                                    {% trans entry.content_type.name %}
+                                                {% endfilter %}
+                                                    </span>
+                                            {% else %}
+                                                <span class="mini quiet">{% trans 'Unknown content' %}</span>
+                                            {% endif %}
+
+                                        </td>
+
+                                        <td>
+                                            {% if entry.is_deletion or not entry.get_admin_url %}
+                                                <span class="color-grey">{{ entry.object_repr }}</span>
+                                            {% else %}
+                                                <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+
+                                            {% if entry.is_addition %}
+                                                <span class="label label-purple">{% trans 'added'|capfirst %}</span>
+                                            {% endif %}
+                                            {% if entry.is_change %}
+                                                <span class="label label-primary">{% trans 'changed'|capfirst %}</span>
+                                            {% endif %}
+                                            {% if entry.is_deletion %}
+                                                <span class="label label-danger">{% trans 'deleted'|capfirst %}</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        Morris.Line({
+            element: 'demo-morris-area',
+            data: [{
+                period: 'Jan',
+                dl: {{ spp_chart.jan }}
+            }, {
+                period: 'Feb',
+                dl: {{ spp_chart.feb }}
+            }, {
+                period: 'Mar',
+                dl: {{ spp_chart.mar }}
+            }, {
+                period: 'Apr',
+                dl: {{ spp_chart.apr }}
+            }, {
+                period: 'May',
+                dl: {{ spp_chart.may }}
+            }, {
+                period: 'Jun',
+                dl: {{ spp_chart.jun }}
+            }, {
+                period: 'Jul',
+                dl: {{ spp_chart.jul }}
+            }, {
+                period: 'Aug',
+                dl: {{ spp_chart.aug }}
+            }, {
+                period: 'Sep',
+                dl: {{ spp_chart.sep }}
+            }, {
+                period: 'Oct',
+                dl: {{ spp_chart.oct }}
+            }, {
+                period: 'Nov',
+                dl: {{ spp_chart.nov }}
+            }, {
+                period: 'Des',
+                dl: {{ spp_chart.des }}
+            }],
+            gridEnabled: true,
+            {#        gridLineColor: 'transparent',#}
+            behaveLikeLine: true,
+            xkey: 'period',
+            ykeys: ['dl'],
+            labels: ['Jumlah'],
+            lineColors: ['#045d97'],
+            pointSize: 5,
+            pointStrokeColors: ['#37aef8'],
+            lineWidth: 1,
+            resize: true,
+            hideHover: 'auto',
+            fillOpacity: 0.7,
+            parseTime: false
+        });
+
+        Morris.Area({
+            element: 'demo-morris-area2',
+            data: [{
+                period: 'Baru',
+                dl: {{ pie_chart.baru }}
+            }, {
+                period: 'Perpanjang',
+                dl: {{ pie_chart.perpanjang }}
+            }, {
+                period: 'Tunggakan',
+                dl: {{ pie_chart.tunggakan }}
+            }, {
+                period: 'Denda',
+                dl: {{ pie_chart.denda }}
+            }, {
+                period: 'Reminder 1',
+                dl: {{ pie_chart.reminder_1 }}
+            }, {
+                period: 'Reminder 2',
+                dl: {{ pie_chart.reminder_2 }}
+            }, {
+                period: 'Reminder 3',
+                dl: {{ pie_chart.reminder_3 }}
+            }, {
+                period: 'Reminder 4',
+                dl: {{ pie_chart.reminder_4 }}
+            }],
+            gridEnabled: false,
+            {#            gridLineColor: 'transparent',#}
+            behaveLikeLine: true,
+            xkey: 'period',
+            ykeys: ['dl'],
+            labels: ['Jumlah'],
+            lineColors: ['#045d97'],
+            pointSize: 4,
+            pointStrokeColors: ['#37aef8'],
+            lineWidth: 2,
+            resize: true,
+            hideHover: 'auto',
+            fillOpacity: 0.7,
+            parseTime: false
+        });
+    </script>
+{% endblock %}
+
