@@ -83,8 +83,8 @@ class Admin(admin.ModelAdmin):
 
     def action_checkbox(self, obj):
         from django import forms
-        checkbox = forms.CheckboxInput({'class': 'magic-checkbox', 'id': 'list-%s' % obj.id}, lambda value: False)
-        html = u'%s<label for="list-%s" style="margin-left:7px"></label>' % (checkbox.render(helpers.ACTION_CHECKBOX_NAME, force_str(obj.pk)), obj.pk)
+        checkbox = forms.CheckboxInput({'class': 'form-check-input magic-checkbox', 'id': 'list-%s' % obj.id}, lambda value: False)
+        html = u'%s' % (checkbox.render(helpers.ACTION_CHECKBOX_NAME, force_str(obj.pk)))
         return mark_safe(html)
 
     action_checkbox.short_description = mark_safe('<label style="margin-left:11px">#</label>')
