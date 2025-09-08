@@ -83,6 +83,7 @@ class MyUserAdmin(UserAdmin):
         return [
             # path('api/', include(router.urls)),
             path('jsi18n/', JavaScriptCatalog.as_view(), name='%s_%s_jsi18n' % info),
+            path('', include('users.urls')),
             # path('api/', views.UserViewSet.as_view({'get': 'list'}), name='%s-%s' % info),
         ] + super().get_urls()
 

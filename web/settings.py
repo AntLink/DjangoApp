@@ -38,13 +38,14 @@ AUTH_USER_MODEL = 'auth.user'
 DATETIME_FORMAT = 'Y-m-d H:i:sO'
 INSTALLED_APPS = [
     'nifty',
+    'django.forms',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'filemedia',
+    'filemedia',
     'users',
     'debug_toolbar',
 ]
@@ -120,7 +121,7 @@ NIFTY_SETTING = {
     'MENU_SHORCUT_OPEN_FIRST_CHILD': True,
     'MENU_SHORCUT_ORDER': (),
     # misc
-    'LIST_PER_PAGE': 10
+    'LIST_PER_PAGE': 24
 }
 
 MIDDLEWARE = [
@@ -139,7 +140,10 @@ ROOT_URLCONF = 'web.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'users/templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

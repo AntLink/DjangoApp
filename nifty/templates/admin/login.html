@@ -2,85 +2,103 @@
 {% load i18n static suit_tags %}
 {% load url from suit_compat %}
 
+{% block title %}{% if form.errors %}{% translate "Error:" %} {% endif %}{{ block.super }}{% endblock %}
 {% block extrastyle %}{{ block.super }}
-    {#    <link rel="stylesheet" type="text/css" href="{% static "admin/css/login.css" %}" />#}
+    {#    <link rel="stylesheet" href="{% static "admin/css/login.css" %}">#}
+    {{ form.media }}
 {% endblock %}
 
-{% block bodyclass %}login{% endblock %}
+{% block bodyclass %}{{ block.super }} login{% endblock %}
+
+{% block usertools %}{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block nav-sidebar %}{% endblock %}
+
+{% block content_title %}{% endblock %}
+
+{% block nav-breadcrumbs %}{% endblock %}
 
 {% block content %}
-    <div id="bg-overlay" class="bg-img img-balloon">
-        {#    <img class="bg-img img-balloon" src="{% static 'nifty/img/bg-img/bg-img-2.jpg' %}">#}
-    </div>
-    <div class="cls-header cls-header-lg">
-        <div class="cls-brand">
-            <img alt="{{ admin_brand_title }}" src="{{ admin_site_logo }}" class="brand-icon">
-            <span class="brand-title">{{ admin_brand_title }}</span>
-{#            <span class="brand-title" style="color: #1976d2">Sistem Informasi Sanksi Administrasi Balai Monitor Spektrum Frekuensi Radio Kelas II Mataram</span>#}
-        </div>
-    </div>
+    {% if form.errors and not form.non_field_errors %}
+        <p class="errornote">
+            {% blocktranslate count counter=form.errors.items|length %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktranslate %}
+        </p>
+    {% endif %}
 
-{#    {% if form.errors and not form.non_field_errors and not form.this_is_the_login_form.errors %}#}
-{#        <p class="errornote alert alert-error">#}
-{#            {% blocktrans count counter=form.errors.items|length %}Please correct the error below.{% plural %}Please#}
-{#                correct the errors below.{% endblocktrans %}#}
-{#        </p>#}
-{#    {% endif %}#}
-{##}
-{#    {% if form.non_field_errors or form.this_is_the_login_form.errors %}#}
-{#        {% for error in form.non_field_errors|add:form.this_is_the_login_form.errors %}#}
-{#            <p class="errornote alert alert-error">#}
-{#                {{ error }}#}
-{#            </p>#}
-{#        {% endfor %}#}
-{#    {% endif %}#}
+    {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+            <p class="errornote">
+                {{ error }}
+            </p>
+        {% endfor %}
+    {% endif %}
+    {% if user.is_authenticated %}
+        <p class="errornote">
+            {% blocktranslate trimmed %}
+                You are authenticated as {{ username }}, but are not authorized to
+                access this page. Would you like to login to a different account?
+            {% endblocktranslate %}
+        </p>
+    {% endif %}
+    <div class="card shadow-lg">
+        <div class="card-body p-4">
+            <div class="text-center">
+                <h1 class="h3">Account Login</h1>
+                <p>Sign In to your account</p>
+            </div>
 
-    <div class="cls-content">
 
-
-        <div class="cls-content-sm panel">
             <form action="{{ app_path }}" method="post" id="login-form" novalidate>
                 {% csrf_token %}
-                <div class="panel-body">
-                    <p class="pad-btm">{% trans 'Sign In to your account' %}</p>
-                    <div class="form-group{% if not form.this_is_the_login_form.errors and form.username.errors %} has-error{% endif %}">
-                        <div class="input-group">
-                            <div class="input-group-addon"><i class="fa fa-user"></i></div>
-                            {{ form.username|add_class:'form-control' }}
-                        </div>
-                        {% if not form.this_is_the_login_form.errors and form.username.errors %}
-                            <span class="help-block text-left">{{ form.username.errors.as_text }}</span>
-                        {% endif %}
-                    </div>
-                    <div class="form-group{% if not form.this_is_the_login_form.errors and form.password.errors %} has-error{% endif %}">
-                        <div class="input-group">
-                            <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
-                            {{ form.password|add_class:'form-control' }}
-                        </div>
-                        {% if not form.this_is_the_login_form.errors and form.password.errors %}
-                            <span class="help-block text-left">{{ form.password.errors.as_text }}</span>
-                        {% endif %}
-                        <input type="hidden" name="this_is_the_login_form" value="1"/>
-                        <input type="hidden" name="next" value="{{ next }}"/>
-                    </div>
-                    {% url 'admin_password_reset' as password_reset_url %}
-                    {% if password_reset_url %}
-                        <div class="password-reset-link">
-                            <a href="{{ password_reset_url }}">{% trans 'Forgotten your password or username?' %}</a>
-                        </div>
-                    {% endif %}
+                <div class="form-row">
+                    {{ form.username.label_tag }}
+                    {{ form.username|add_class:"form-control" }}
+                    {{ form.username.errors }}
                 </div>
-                <div class="panel-footer">
-                    <div class="text-right" style="margin-right: 5px;">
-                        <input type="submit" value="{% trans 'Sign In' %}" class="btn btn-info"/>
+                <div class="form-row">
+                    {{ form.password.label_tag }}
+                    {{ form.password|add_class:"form-control" }}
+                    {{ form.password.errors }}
+                    <input type="hidden" name="next" value="{{ next }}">
+                </div>
+                {% url 'admin_password_reset' as password_reset_url %}
+                {% if password_reset_url %}
+                    <div class="password-reset-link">
+                        <a href="{{ password_reset_url }}">{% translate 'Forgotten your login credentials?' %}</a>
                     </div>
+                {% endif %}
+                <div class="d-grid mt-5">
+                    <button class="btn btn-primary btn-lg" type="submit">Sign In</button>
                 </div>
             </form>
+            <div class="d-flex justify-content-between gap-md-5 mt-4">
+                <a href=":javascript:void(0);" class="btn-link text-decoration-none">Forgot password ?</a>
+                <a href=":javascript:void(0);" class="btn-link text-decoration-none">Create a new account</a>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-between border-top pt-3 mt-3">
+                <h5 class="m-0">Login with</h5>
+
+                <!-- Social media buttons -->
+                <div class="ms-3">
+                    <a href=":javascript:void(0);" class="btn btn-sm btn-icon btn-hover btn-primary text-inherit">
+                        <i class="demo-psi-facebook fs-5"></i>
+                    </a>
+                    <a href=":javascript:void(0);" class="btn btn-sm btn-icon btn-hover btn-info text-inherit">
+                        <i class="demo-psi-twitter fs-5"></i>
+                    </a>
+                    <a href=":javascript:void(0);" class="btn btn-sm btn-icon btn-hover btn-danger text-inherit">
+                        <i class="demo-psi-google-plus fs-5"></i>
+                    </a>
+                    <a href=":javascript:void(0);" class="btn btn-sm btn-icon btn-hover btn-warning text-inherit">
+                        <i class="demo-psi-instagram fs-5"></i>
+                    </a>
+                </div>
+                <!-- END : Social media buttons -->
+
+            </div>
         </div>
-
-
-        <script type="text/javascript">
-            document.getElementById('id_username').focus()
-        </script>
     </div>
 {% endblock %}

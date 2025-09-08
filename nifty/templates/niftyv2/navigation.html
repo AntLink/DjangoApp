@@ -8,7 +8,7 @@
             <div id="_dm-mainnavProfile" class="mainnav__widget my-3 hv-outline-parent {{ admin_navbar_show_usermenu }}">
                 <!-- Profile picture  -->
                 <div class="mininav-toggle text-center py-2">
-                    <img class="mainnav__avatar img-md rounded-circle hv-oc" src="{{ user.profile.get_profile_photo }}" alt="{{ user.username }}">
+                    <img class="mainnav__avatar img-md rounded-circle hv-oc" src="/media/{{ user.profile.get_profile_photo }}" alt="{{ user.username }}">
                 </div>
                 <div class="mininav-content collapse d-mn-max">
                     <span data-popper-arrow class="arrow"></span>

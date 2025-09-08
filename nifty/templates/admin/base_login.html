@@ -4,11 +4,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>{% block title %}{{ title }} |  {{ admin_site_title }} {% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% endblock %}"/>
-    <link href="{% static 'nifty/img/favicon2.png' %}" rel="shortcut icon">
-    <link rel="stylesheet" type="text/css" href="{% static 'nifty/css/bootstrap.min.css' %}" media="all"/>
-    <link rel="stylesheet" type="text/css" href="{% static 'nifty/css/nifty.min.css' %}" media="all">
-    <link rel="stylesheet" type="text/css" href="{% static 'nifty/plugins/font-awesome/css/font-awesome.min.css' %}" media="all">
-    <link rel="stylesheet" type="text/css" href="{% static 'nifty/css/demo/nifty-demo.min.css' %}" media="all">
+    <link href="{% static 'niftyv2/img/favicon.png' %}" rel="shortcut icon">
+    <link type="text/css" href="{% static 'niftyv2/css/fonts.css' %}" rel="stylesheet">
+
+    <!-- Bootstrap CSS [ REQUIRED ] -->
+    <link type="text/css" href="{% static 'niftyv2/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Nifty CSS [ REQUIRED ] -->
+    <link type="text/css" href="{% static 'niftyv2/css/nifty.min.css' %}" rel="stylesheet">
     {% block extrastyle %}{% endblock %}
     {% if LANGUAGE_BIDI %}
         <link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}"/>
@@ -19,22 +21,26 @@
     {% endblock %}
 </head>
 {% load i18n %}
-<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">
+<body cz-shortcut-listen="true" style="background-image: url('{% static "niftyv2/premium/boxed-bg/abstract/bg/8.jpg" %}');">
 <!-- Container -->
-{% block container %}
-    <div id="container" class="cls-container">
-        <!--Page content-->
-        {% block content %}
-            {{ content }}
-        {% endblock %}
-    </div>
-    <!--End page content-->
-{% endblock %}
+<!-- CONTENTS -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<section id="content" class="content" style="background-color: #000000bf">
+    <div class="content__boxed w-100 min-vh-100 d-flex flex-column align-items-center justify-content-center">
+        <div class="content__wrap">
+            {% block container %}
+                <!--Page content-->
+                {% block content %}
+                    {{ content }}
+                {% endblock %}
 
+                <!--End page content-->
+            {% endblock %}
+        </div>
+    </div>
+</section>
 <!--Nifty Admin [ RECOMMENDED ]-->
 {% block extrajs %}{% endblock %}
-<script>
-    document.body.innerHTML.replace('2000', 'hi');
-</script>
+
 </body>
 </html>

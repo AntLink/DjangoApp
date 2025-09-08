@@ -10,7 +10,7 @@ from nifty.widgets import (
 )
 from .utils import get_url_choice
 from .models import MyPermission
-
+from .widgets import ProfileImageWidget
 
 class MyUserAddForm(UserCreationForm):
     def save(self, commit=True):
@@ -45,6 +45,7 @@ class MyGroupForm(forms.ModelForm):
 class MyUserChangeForm(UserChangeForm):
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.get("instance")
         super().__init__(*args, **kwargs)
         self.initial['redirect_url'] = self.instance.profile.redirect_url
         self.initial['gender'] = self.instance.profile.gender
@@ -61,8 +62,8 @@ class MyUserChangeForm(UserChangeForm):
             self.fields['user_permissions'].queryset = MyPermission.objects.all()
         except KeyError:
             pass
-
-        self.initial['photo'] = self.instance.profile.get_profile_photo()
+        if user and hasattr(user, "profile") and user.profile.photo:
+            self.fields["photo"].initial = user.profile.photo
 
     class Media:
         css = {
@@ -80,6 +81,7 @@ class MyUserChangeForm(UserChangeForm):
         widgets = {
             'last_login': NiftySplitDateTimeWidget(attrs={'autocomplete': "off"}),
             'date_joined': NiftySplitDateTimeWidget(attrs={'autocomplete': "off"}),
+            "photo": ProfileImageWidget(),
         }
 
     password = ReadOnlyPasswordHashField(
@@ -91,9 +93,9 @@ class MyUserChangeForm(UserChangeForm):
     )
 
     photo = forms.CharField(
-        widget=forms.TextInput,
+        widget=ProfileImageWidget(),
         label=_('Photo profile'),
-        help_text=_('Double click to change your profile photo'),
+        help_text=_('Click to change your profile photo'),
         required=False,
     )
 

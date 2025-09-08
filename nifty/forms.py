@@ -1,6 +1,7 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from .widgets import MCDatePickerWidget
+from users.widgets import ProfileImageWidget
 from filemedia.widgets import FileMediaPhoto
 
 class UserProfileForm(forms.Form):
@@ -37,11 +38,8 @@ class UserProfileForm(forms.Form):
         self.initial['photo'] = self.user.profile.get_profile_photo()
 
     photo = forms.CharField(
-        widget=forms.TextInput(
-            attrs={'class': 'form-control', 'readonly': 'readonly'}
-        ),
+        widget=ProfileImageWidget(),
         label=_('Photo profile'),
-        help_text=_('Double click to change your profile photo'),
         required=False,
     )
 
@@ -76,7 +74,6 @@ class UserProfileForm(forms.Form):
         required=True,
     )
     place_of_birth = forms.CharField(
-
         label=_('Place of birth'),
         required=True,
     )

@@ -340,7 +340,7 @@ class ImageAdmin(Admin):
             }
             return HttpResponse(json.dumps(data), content_type='application/json')
 
-        file = request.FILES.get('file')
+        file = request.FILES.get('image')
         file_split = str(file.name).split('.')
         file_ext = file_split[len(file_split) - 1]
         uploader = ImagesUuidUploader(file, upload_to=None)
@@ -404,7 +404,6 @@ class ImageAdmin(Admin):
         img_dir = settings.MEDIA_ROOT + 'images' + os.sep + path_date + os.sep
 
         mi.comprase_image(img_dir, file_name)
-
 
         if request.user.is_superuser:
             img_count = Image.objects.filter(type='p').all().count()
@@ -640,8 +639,8 @@ class ImageAdmin(Admin):
 
     def action_checkbox(self, obj):
         from django import forms
-        checkbox = forms.CheckboxInput({'class': 'magic-checkbox', 'id': 'list-%s' % obj.id}, lambda value: False)
-        html = u'<div class="file-control" style="width: 30px;">%s<label for="list-%s"></label></div>' % (checkbox.render(helpers.ACTION_CHECKBOX_NAME, force_str(obj.pk)), obj.pk)
+        checkbox = forms.CheckboxInput({'class': 'form-check-input magic-checkbox', 'id': 'list-%s' % obj.id}, lambda value: False)
+        html = u'<div class="file-control" style="width: 30px;">%s</div>' % (checkbox.render(helpers.ACTION_CHECKBOX_NAME, force_str(obj.pk)))
         return mark_safe(html)
 
     def thumbnail(self, obj):
@@ -650,15 +649,26 @@ class ImageAdmin(Admin):
         v = ''
         if obj.unique_name:
             if self.user_req.has_perm('filemedia.change_image'):
-                c = u'<a class="add-tooltip btn-link" title="%s" href="%s">%s</a>' % (_('Change'), reverse('admin:%s_%s_change' % (obj._meta.app_label, obj._meta.model_name), args=[obj.id]), '<i class="demo-pli-pen-5"></i>')
+                c = u'<a data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="%s" class="btn-link" href="%s">%s</a>' % (_('Change'), reverse('admin:%s_%s_change' % (obj._meta.app_label, obj._meta.model_name), args=[obj.id]), '<i class="demo-pli-pen-5"></i>')
             if self.user_req.has_perm('filemedia.delete_image'):
-                d = u'<a class="add-tooltip btn-link" title="%s" href="%s">%s</a>' % (_('Delete'), reverse('admin:%s_%s_delete' % (obj._meta.app_label, obj._meta.model_name), args=[obj.id]), '<i class="demo-pli-trash"></i>')
+                d = u'<a data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="%s"  class="btn-link" href="%s">%s</a>' % (_('Delete'), reverse('admin:%s_%s_delete' % (obj._meta.app_label, obj._meta.model_name), args=[obj.id]), '<i class="demo-pli-trash"></i>')
             if self.user_req.has_perm('filemedia.download_image'):
-                v = u'<a target="_blank" class="add-tooltip btn-link" title="%s" href="%s">%s</a>' % (_('Download'), reverse('admin:%s_%s_download' % (obj._meta.app_label, obj._meta.model_name), args=[obj.id]), '<i class="demo-pli-download-from-cloud"></i>')
-
-            img = u'<img data-id="%s" src="%s" alt="%s" data-image="%s" data-description="%s" />' % (obj.pk, obj.get_image('256x256'), obj.name, obj.get_image('no'), obj.description)
-            html = u'%s <div style="text-align: center; width:inherit; position:absolute;margin-top:-25px"><span style="font-size:14px;">%s&nbsp;%s&nbsp;%s</span></div>' % (img, c, v, d)
+                v = u'<a data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="%s"  target="_blank" class="btn-link" href="%s">%s</a>' % (_('Download'), reverse('admin:%s_%s_download' % (obj._meta.app_label, obj._meta.model_name), args=[obj.id]), '<i class="demo-pli-download-from-cloud"></i>')
+            l = u'<a data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="%s" class="btn-link preview-btn"  href="javascript:;"><i class="demo-psi-layout-grid"></i></a>' % _('View Image')
+            img = u'<img class="card-img-top" data-id="%s" src="%s" alt="%s" data-image="%s" data-description="%s" />' % (obj.pk, obj.get_image('256x256'), obj.name, obj.get_image('no'), obj.description)
+            html = u'%s <div class="img-actions"><span style="font-size:14px;">%s&nbsp;%s&nbsp;%s&nbsp;%s</span></div>' % (img, c, v, d, l)
             return mark_safe(html)
+        # if obj.unique_name:
+        #     # if self.user_req.has_perm('filemedia.change_image'):
+        #     #     c = u'<a class="add-tooltip btn-link" title="%s" href="%s">%s</a>' % (_('Change'), reverse('admin:%s_%s_change' % (obj._meta.app_label, obj._meta.model_name), args=[obj.id]), '<i class="demo-pli-pen-5"></i>')
+        #     # if self.user_req.has_perm('filemedia.delete_image'):
+        #     #     d = u'<a class="add-tooltip btn-link" title="%s" href="%s">%s</a>' % (_('Delete'), reverse('admin:%s_%s_delete' % (obj._meta.app_label, obj._meta.model_name), args=[obj.id]), '<i class="demo-pli-trash"></i>')
+        #     # if self.user_req.has_perm('filemedia.download_image'):
+        #     #     v = u'<a target="_blank" class="add-tooltip btn-link" title="%s" href="%s">%s</a>' % (_('Download'), reverse('admin:%s_%s_download' % (obj._meta.app_label, obj._meta.model_name), args=[obj.id]), '<i class="demo-pli-download-from-cloud"></i>')
+        #
+        #     img = u'<img class="card-img-top" data-id="%s" src="%s" alt="%s" data-image="%s" data-description="%s" />' % (obj.pk, obj.get_image('256x256'), obj.name, obj.get_image('no'), obj.description)
+        #     # html = u'%s <div class="img-actions"><span style="font-size:14px;">%s&nbsp;%s&nbsp;%s</span></div>' % (img, c, v, d)
+        #     return mark_safe(img)
 
     def images(self, obj):
         c = ''
@@ -676,7 +686,7 @@ class ImageAdmin(Admin):
                 v = u'<li><a target="_blank" class="btn-link" style="width:%s" href="%s"><i class="demo-pli-download-from-cloud"></i> %s</a></li>' % ('100%', reverse('admin:%s_%s_download' % (obj._meta.app_label, obj._meta.model_name), args=[obj.id]), _('Download'))
 
             if self.user_req.has_perm('filemedia.change_image') or self.user_req.has_perm('filemedia.delete_image') or self.user_req.has_perm('filemedia.download_image'):
-                a = u'<div class="file-settings dropdown"><button class="btn btn-icon" data-toggle="dropdown" type="button" aria-expanded="false"><i class="pci-ver-dots"></i></button> <ul class="dropdown-menu dropdown-menu-right with-arrow" style="right:-6px">%s %s %s</ul></div>' % (c, d, v)
+                a = u'<div class="file-settings dropdown"><button class="btn btn-icon" data-bs-toggle="dropdown" type="button" aria-expanded="false"><i class="demo-psi-dot-vertical"></i></button> <ul class="dropdown-menu" >%s %s %s</ul></div>' % (c, d, v)
 
             html = u'%s<div class="file-details"><div class="media-block"><div class="media-left"><img class="img-responsive" style="width:40px" src="%s" alt="%s"/></div><div class="media-body"><p class="file-name">%s</p><small>%s | %s</small></small></div></div></div>' % (a, obj.get_image('100x100'), obj.name, obj.name, date_format(obj.created_at, "DATETIME_FORMAT"), obj.size)
             return mark_safe(html)
@@ -941,7 +951,7 @@ class FileAdmin(Admin):
     def action_checkbox(self, obj):
         from django import forms
         checkbox = forms.CheckboxInput({'class': 'magic-checkbox', 'id': 'list-%s' % obj.id}, lambda value: False)
-        html = u'<div class="file-control" style="width: 33px;">%s<label for="list-%s"></label></div>' % (checkbox.render(helpers.ACTION_CHECKBOX_NAME, force_str(obj.pk)), obj.pk)
+        html = u'<div class="file-control" style="width: 33px;">%s</div>' % (checkbox.render(helpers.ACTION_CHECKBOX_NAME, force_str(obj.pk)))
         return mark_safe(html)
 
     def humanbytes(self, B):

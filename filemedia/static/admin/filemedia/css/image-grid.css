@@ -1,0 +1,337 @@
+/* ==================== GRID PREVIEW STYLING ==================== */
+
+.dz-preview {
+  position: relative;
+
+  border-radius: 0.375rem;
+  overflow: hidden;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  transition: transform 0.2s, box-shadow 0.2s;
+  aspect-ratio: 1/1;
+}
+
+.dz-preview:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* ==================== CHECKBOX STYLING ==================== */
+.file-control {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 10;
+}
+
+/* ==================== IMAGE STYLING ==================== */
+.card-img-top {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: filter 0.3s;
+}
+
+.dz-preview:hover .card-img-top {
+  filter: brightness(0.85);
+}
+
+/* ==================== ACTION BUTTONS STYLING ==================== */
+.img-actions {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  padding: 0.75rem 0.5rem 0.5rem;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  z-index: 5;
+  text-align: center;
+}
+
+.dz-preview:hover .img-actions {
+  transform: translateY(0);
+}
+
+.img-actions a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.img-actions a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.img-actions i {
+  font-size: 1rem;
+  vertical-align: middle;
+}
+
+/* ==================== UPLOAD OVERLAY STYLING ==================== */
+.upload-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 25;
+  border-radius: 0.375rem;
+}
+
+.upload-overlay.show {
+  display: flex;
+}
+
+.custom-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.progress {
+  width: 80%;
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #fff;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  color: white;
+  font-size: 14px;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+/* Image Preview Modal Styles */
+.image-preview-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 1050;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.image-preview-modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+}
+
+.image-preview-content {
+    position: relative;
+    width: 90%;
+    height: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-preview-container {
+    position: relative;
+    max-width: 100%;
+    max-height: 100%;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.image-preview-container img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    transition: transform 0.3s ease;
+}
+
+.image-preview-container.dragging {
+    cursor: grabbing;
+}
+
+.image-preview-container.dragging img {
+    cursor: grabbing;
+}
+
+/* Preview Controls */
+.image-preview-close,
+.image-preview-prev,
+.image-preview-next {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color 0.3s ease;
+}
+
+.image-preview-close {
+    top: 15px;
+    right: 15px;
+}
+
+.image-preview-prev {
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+}
+
+.image-preview-next {
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+}
+
+.image-preview-close:hover,
+.image-preview-prev:hover,
+.image-preview-next:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.image-preview-counter {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-size: 14px;
+}
+
+.image-preview-zoom-controls {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.zoom-btn {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.zoom-btn:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.zoom-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ==================== NOTIFICATION STYLING ==================== */
+.notification {
+  padding: 12px 20px;
+  border-radius: 4px;
+  color: #fff;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  max-width: 300px;
+}
+
+.notification-success {
+  background-color: #28a745;
+}
+
+.notification-danger {
+  background-color: #dc3545;
+}
+
+/* ==================== RESPONSIVE STYLING ==================== */
+@media (max-width: 767.98px) {
+  .dz-preview {
+    margin-bottom: 0.5rem;
+  }
+  .img-actions {
+    transform: translateY(0);
+    background: rgba(0,0,0,0.6);
+    padding: 0.5rem;
+    text-align: center;
+  }
+  .img-actions a {
+    margin: 0 0.15rem;
+    padding: 0.2rem 0.4rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .image-preview-prev {
+    left: 10px;
+  }
+
+  .image-preview-next {
+    right: 10px;
+  }
+
+  .image-preview-counter {
+    bottom: 10px;
+  }
+
+  .image-preview-zoom-controls {
+    top: 10px;
+  }
+
+  .image-preview-close {
+    top: 10px;
+    right: 10px;
+  }
+}
+
+/* ==================== ANIMATION STYLING ==================== */
+.rearranging .dz-preview {
+  transition: all 0.3s ease;
+}

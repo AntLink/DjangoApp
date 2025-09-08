@@ -1,0 +1,25 @@
+{% load static  i18n %}
+<div class="profile-container" id="{{ widget_id }}-container">
+    <!-- Gunakan current_image_url bukan current_image.url -->
+    <img src="{% if is_initial %}{{ current_image_url }}{% else %}{% static 'niftyv2/img/profile-photos/2.png' %}{% endif %}"
+         alt="Foto Profil" class="profile-image" id="{{ widget_id }}-preview">
+    <div class="profile-overlay" id="{{ widget_id }}-overlay">
+        <i class="demo-psi-camera-2 fs-1"></i>
+        <span>{% trans 'Change photo' %}</span>
+    </div>
+
+    <div class="progress-overlay" id="{{ widget_id }}-progress">
+        <div class="spinner-container">
+            <div class="spinner-border text-light" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="progress-percent" id="{{ widget_id }}-percent">0%</div>
+        </div>
+        <div class="progress-text" id="{{ widget_id }}-text">Mengupload...</div>
+    </div>
+
+    <input type="{{ widget.type }}"
+           name="{{ widget.name }}"
+           {% if widget.value != None %} value="{{ widget.value }}"{% endif %}
+           {% include "django/forms/widgets/attrs.html" %}>
+</div>

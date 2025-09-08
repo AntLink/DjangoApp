@@ -45,7 +45,8 @@ class MyGroup(Group):
 
 class Profile(models.Model):
     user = models.OneToOneField(MyUser, verbose_name=_('Author'), on_delete=models.CASCADE, primary_key=True)
-    photo = models.TextField(verbose_name=_('Photo Profile'), blank=True, null=True)
+    # photo = models.TextField(verbose_name=_('Photo Profile'), blank=True, null=True)
+    photo = models.ImageField(upload_to='photo/', blank=True, null=True)
     gender = models.CharField(verbose_name=_('Gender'), max_length=30, blank=True, null=True)
     address = models.TextField(verbose_name=_('Address'), blank=True, null=True)
     phone_number = models.CharField(verbose_name=_('Phone Number'), blank=True, null=True, max_length=30)
@@ -67,9 +68,17 @@ class Profile(models.Model):
     def __str__(self):  # __unicode__ for Python 2
         return self.user.username
 
+    def delete(self, *args, **kwargs):
+        # Hapus file fisik ketika objek dihapus
+        if self.photo:
+            if os.path.isfile(self.photo.path):
+                os.remove(self.photo.path)
+        super().delete(*args, **kwargs)
+
     def get_image(self, size=None):
-        from django.core.exceptions import ObjectDoesNotExist
-        return mark_safe(u'/static/niftyv2/img/profile-photos/3.png')
+
+        image = u'%s' % self.photo
+        return mark_safe(image)
         # try:
         #     # if self.user.is_superuser:
         #     #     media = Media.objects.get(unique_name=self.photo)
@@ -97,7 +106,7 @@ class Profile(models.Model):
         #         return mark_safe(no_thumb)
 
     def get_profile_photo(self):
-        return self.get_image('256x256')
+        return self.get_image()
 
 
 @receiver(post_save, sender=MyUser)

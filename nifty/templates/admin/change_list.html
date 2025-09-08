@@ -76,11 +76,11 @@
                         <a href="{% url cl.opts|admin_urlname:'add' %}{% if is_popup %}?_popup=1{% endif %}" class="btn btn-primary hstack gap-3 " title="{% trans 'Add' %} {% blocktrans with cl.opts.verbose_name as name %}{{ name }}{% endblocktrans %}">
                             <i class="demo-psi-add fs-5 "></i><span class="vr"></span>{% trans 'Add' %}
                         </a>
-{#                        <button class="btn btn-outline-light hstack gap-2">#}
-{#                            <i class="demo-psi-add fs-5"></i>#}
-{#                            <span class="vr"></span>#}
-{#                            Add New#}
-{#                        </button>#}
+                        {#                        <button class="btn btn-outline-light hstack gap-2">#}
+                        {#                            <i class="demo-psi-add fs-5"></i>#}
+                        {#                            <span class="vr"></span>#}
+                        {#                            Add New#}
+                        {#                        </button>#}
                     {% endblock %}
                 {% endif %}
             {% endblock %}
@@ -116,24 +116,24 @@
                                         {% page cl pagenum as page %}
                                         <div class="btn-group btn-group">
                                             {% if page.has_previous %}
-                                                <a class="btn btn-outline-light add-tooltip" title="{% trans 'Previous' %}" href="?p={{ page.previous_page_number }}">
+                                                <a class="btn btn-outline-light" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="{% trans 'Previous' %}" href="?p={{ page.previous_page_number }}">
                                                     <i class="demo-psi-arrow-left"></i>
                                                 </a>
                                             {% endif %}
                                             {% if pagenum == '1' %}
-                                                <a class="btn btn-outline-light add-tooltip" title="{% trans 'Previous' %}" href="?p=0">
+                                                <a class="btn btn-outline-light" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="{% trans 'Previous' %}" href="?p=0">
                                                     <i class="demo-psi-arrow-left"></i>
                                                 </a>
                                             {% endif %}
 
                                             {% if page.has_next %}
                                                 {% if pagenum == '0' or not pagenum %}
-                                                    <a class="btn btn-outline-light add-tooltip" title="{% trans 'Next' %}" href="?p=1">
+                                                    <a class="btn btn-outline-light" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="{% trans 'Next' %}" href="?p=1">
                                                         <i class="demo-psi-arrow-right"></i>
                                                     </a>
                                                 {% else %}
                                                     {% if page.next_page_number != page.paginator.num_pages %}
-                                                        <a class="btn btn-outline-light add-tooltip" title="{% trans 'Next' %}" href="?p={{ page.next_page_number }}">
+                                                        <a class="btn btn-outline-light" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="{% trans 'Next' %}" href="?p={{ page.next_page_number }}">
                                                             <i class="demo-psi-arrow-right"></i>
                                                         </a>
                                                     {% endif %}
@@ -160,24 +160,24 @@
                                         {% page cl pagenum as page %}
                                         <div class="btn-group btn-group">
                                             {% if page.has_previous %}
-                                                <a class="btn btn-outline-light add-tooltip" title="{% trans 'Previous' %}" href="?p={{ page.previous_page_number }}">
+                                                <a class="btn btn-outline-light" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="{% trans 'Previous' %}" href="?p={{ page.previous_page_number }}">
                                                     <i class="demo-psi-arrow-left"></i>
                                                 </a>
                                             {% endif %}
                                             {% if pagenum == '1' %}
-                                                <a class="btn btn-outline-light add-tooltip" title="{% trans 'Previous' %}" href="?p=0">
+                                                <a class="btn btn-outline-light" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="{% trans 'Previous' %}" href="?p=0">
                                                     <i class="demo-psi-arrow-left"></i>
                                                 </a>
                                             {% endif %}
 
                                             {% if page.has_next %}
                                                 {% if pagenum == '0' or not pagenum %}
-                                                    <a class="btn btn-outline-light add-tooltip" title="{% trans 'Next' %}" href="?p=1">
+                                                    <a class="btn btn-outline-light" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="{% trans 'Next' %}" href="?p=1">
                                                         <i class="demo-psi-arrow-right"></i>
                                                     </a>
                                                 {% else %}
                                                     {% if page.next_page_number != page.paginator.num_pages %}
-                                                        <a class="btn btn-outline-light add-tooltip" title="{% trans 'Next' %}" href="?p={{ page.next_page_number }}">
+                                                        <a class="btn btn-outline-light" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="{% trans 'Next' %}" href="?p={{ page.next_page_number }}">
                                                             <i class="demo-psi-arrow-right"></i>
                                                         </a>
                                                     {% endif %}

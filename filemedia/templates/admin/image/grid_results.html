@@ -6,11 +6,13 @@
 {% endif %}
 {% if results %}
     {% for result in results|cells_handler:cl %}
+
         <div class="dz-preview">
             {% for item in result %}
                 {{ item }}
             {% endfor %}
         </div>
+
     {% endfor %}
 {% endif %}
 
