@@ -1,4 +1,4 @@
-{#{% load i18n admin_static admin_modify suit_tags admin_urls %}#}
+    {#{% load i18n admin_static admin_modify suit_tags admin_urls %}#}
 {#{% string_to_json_obj widget.value as wd %}#}
 {#<input id="id_img_{{ widget.name }}" type="{{ widget.type }}" name="{{ widget.name }}"{% if wd.value != None %} value="{{ wd.value|stringformat:'s' }}"{% endif %}>#}
 {#<div data-objectid="{{ wd.id }}" data-page="1" id="img-{{ widget.name }}" {% include "django/forms/widgets/attrs.html" %}>#}
@@ -17,7 +17,7 @@
         <div data-objectid="{{ wd.id }}" data-page="1" id="img-{{ widget.name }}" {% include "django/forms/widgets/attrs.html" %}>
             <div id="dropzone-preview-{{ widget.name }}"></div>
             <div id="dropzone-get-{{ widget.name }}">
-                <img style="width: 15%" class="img-responsive img-rounded" src="{% static '/admin/filemedia/img/no-thumb/td_100x100.png' %}">
+{#                <img style="width: 15%" class="img-responsive img-rounded" src="{% static '/admin/filemedia/img/no-thumb/td_100x100.png' %}">#}
             </div>
         </div>
     {% else %}

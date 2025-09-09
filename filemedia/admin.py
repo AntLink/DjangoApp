@@ -230,6 +230,41 @@ class ImageAdmin(Admin):
         ]
         return urlpatterns
 
+    @csrf_exempt
+    def file_preview(request, file_id):
+        try:
+            # Ganti dengan model file Anda
+            from .models import FileMedia
+            file_obj = FileMedia.objects.get(id=file_id)
+            file_path = os.path.join(settings.MEDIA_ROOT, file_obj.file.name)
+
+            if os.path.exists(file_path):
+                with open(file_path, 'rb') as f:
+                    file_content = f.read()
+
+                # Tentukan content type berdasarkan ekstensi file
+                file_name = file_obj.file.name.lower()
+                if file_name.endswith('.pdf'):
+                    content_type = 'application/pdf'
+                elif file_name.endswith('.doc') or file_name.endswith('.docx'):
+                    content_type = 'application/msword'
+                elif file_name.endswith('.xls') or file_name.endswith('.xlsx'):
+                    content_type = 'application/vnd.ms-excel'
+                elif file_name.endswith('.ppt') or file_name.endswith('.pptx'):
+                    content_type = 'application/vnd.ms-powerpoint'
+                else:
+                    content_type = 'application/octet-stream'
+
+                response = HttpResponse(file_content, content_type=content_type)
+                response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+                # Tambahkan header untuk mengizinkan akses dari domain eksternal
+                response['Access-Control-Allow-Origin'] = '*'
+                return response
+            else:
+                raise Http404("File not found")
+        except Exception as e:
+            print(f"Error loading file: {e}")
+            raise Http404("Error loading file")
     def changelist_view(self, request, extra_context=None, tax=None, mode=None):
         self.user_req = request.user
         extra_context = extra_context or {}
@@ -870,6 +905,8 @@ class FileAdmin(Admin):
             'description': file.description,
             'filelink': '',
             'filesize': file.size,
+            'data_type': file.file_type,
+            'data_src': str(file.file),
             'filename': file.name,
             'uniquename': unix_name,
             'path_date': file.path,
@@ -929,20 +966,70 @@ class FileAdmin(Admin):
         dl = ''
         a = ''
 
+        # Get file extension
+        file_extension = obj.file_type.lower() if obj.file_type else ''
+        file_name = obj.name.lower()
+
+        # Determine if it's an image file
+        image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg']
+        is_image = file_extension in image_extensions or any(file_name.endswith(ext) for ext in image_extensions)
+
+        # Get Font Awesome icon class based on file type
+        def get_file_icon_class(ext):
+            ext = ext.lower()
+            if ext in ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg']:
+                return None  # Will use actual image
+            elif ext == 'pdf':
+                return 'fas fa-file-pdf'
+            elif ext in ['doc', 'docx']:
+                return 'fas fa-file-word'
+            elif ext in ['xls', 'xlsx']:
+                return 'fas fa-file-excel'
+            elif ext in ['ppt', 'pptx']:
+                return 'fas fa-file-powerpoint'
+            elif ext in ['zip', 'rar', '7z', 'tar', 'gz']:
+                return 'fas fa-file-archive'
+            elif ext in ['txt', 'md', 'csv']:
+                return 'fas fa-file-alt'
+            elif ext in ['mp3', 'wav', 'ogg', 'flac']:
+                return 'fas fa-file-audio'
+            elif ext in ['mp4', 'avi', 'mkv', 'mov', 'wmv']:
+                return 'fas fa-file-video'
+            else:
+                return 'fas fa-file'
+
+        icon_class = get_file_icon_class(file_extension)
+
+        # Generate action links with Font Awesome icons
         if self.user_req.has_perm('filemedia.download_file'):
-            dw = u'<li><a target="_blank" href="%s" style="width: %s"><i class="demo-pli-download-from-cloud"></i> %s</a></li>' % (reverse('admin:%s_%s_download' % info, args=(obj.id,)), '100%', _('Download'))
+            dw = u'<li><a class="btn-link" target="_blank" href="%s" style="width: 100%%"><i class="fas fa-download"></i> %s</a></li>' % (
+                reverse('admin:%s_%s_download' % info, args=(obj.id,)), _('Download'))
 
         if self.user_req.has_perm('filemedia.change_file'):
-            ch = u'<li><a href="%s" style="width: %s"><i class="demo-pli-pen-5"></i> %s</a></li>' % (reverse('admin:%s_%s_change' % info, args=(obj.id,)), '100%', _('Change'))
+            ch = u'<li><a class="btn-link" href="%s" style="width: 100%%"><i class="fas fa-edit"></i> %s</a></li>' % (
+                reverse('admin:%s_%s_change' % info, args=(obj.id,)), _('Change'))
 
         if self.user_req.has_perm('filemedia.delete_file'):
-            dl = u'<li><a href="%s" style="width: %s"><i class="demo-pli-trash"></i> %s</a></li>' % (reverse('admin:%s_%s_delete' % info, args=(obj.id,)), '100%', _('Delete'))
+            dl = u'<li><a class="btn-link" href="%s" style="width: 100%%"><i class="fas fa-trash"></i> %s</a></li>' % (
+                reverse('admin:%s_%s_delete' % info, args=(obj.id,)), _('Delete'))
 
+        # Generate settings dropdown if any action is available
         if self.user_req.has_perm('filemedia.download_file') or self.user_req.has_perm('filemedia.change_file') or self.user_req.has_perm('filemedia.delete_file'):
-            a = u'<div class="file-settings dropdown"><button class="btn btn-icon" data-toggle="dropdown" type="button" aria-expanded="false"><i class="pci-ver-dots"></i></button> <ul class="dropdown-menu dropdown-menu-right with-arrow" style="right:-6px"> %s %s %s</ul></div>' % (ch, dl, dw)
+            a = u'<div class="file-settings dropdown"><button class="btn btn-icon" data-bs-toggle="dropdown" type="button" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button><ul class="dropdown-menu" style="right:-6px">%s %s %s</ul></div>' % (ch, dl, dw)
 
-        b = u'<div class="file-details"><div class="media-block"> <div class="media-left"><i class="demo-pli-file"></i></div><div class="media-body"> <p class="file-name">%s</p><small>%s | %s</small> </div></div></div>' % (obj.name, date_format(obj.created_at, "DATETIME_FORMAT"), obj.size)
-        html = (a + b)
+        # Generate file preview section
+        if is_image:
+            # For image files, use the actual image
+            b = u'<div class="file-details"><div class="media-block"><div class="media-left"><div style="position: relative; width: 50px; height: 50px;"><img data-type="%s" data-src="%s" class="img-responsive image-file" style="width: 50px; height: 50px; object-fit: cover; border-radius: 0.375rem; border: 1px solid rgb(222, 226, 230); cursor: default;" src="%s" alt="%s"><div class="upload-overlay"><div class="custom-spinner"></div></div></div></div><div class="media-body"><p class="file-name">%s</p><small>%s | %s</small></div></div></div>' % (
+                obj.file_type, obj.file, obj.file, obj.name,
+                obj.name, date_format(obj.created_at, "DATETIME_FORMAT"), obj.size)
+        else:
+            # For non-image files, use Font Awesome icon
+            b = u'<div class="file-details"><div class="media-block"><div class="media-left"><div style="position: relative; width: 50px; height: 50px;"><div class="file-icon-container" style="width:50px; height:50px; display: flex; align-items: center; justify-content: center; border-radius: 0.375rem; border: 1px solid #dee2e6; background-color: #f8f9fa;"><i class="%s" style="font-size: 24px; color: #6c757d;" data-type="%s" data-src="%s"></i></div></div></div><div class="media-body"><p class="file-name">%s</p><small>%s | %s</small></div></div></div>' % (
+                icon_class, obj.file_type,obj.file, obj.name,
+                date_format(obj.created_at, "DATETIME_FORMAT"), obj.size)
+
+        html = a + b
         return mark_safe(html)
 
     def get_action_choices(self, request, default_choices=[]):
@@ -950,7 +1037,7 @@ class FileAdmin(Admin):
 
     def action_checkbox(self, obj):
         from django import forms
-        checkbox = forms.CheckboxInput({'class': 'magic-checkbox', 'id': 'list-%s' % obj.id}, lambda value: False)
+        checkbox = forms.CheckboxInput({'class': 'form-check-input magic-checkbox', 'id': 'list-%s' % obj.id}, lambda value: False)
         html = u'<div class="file-control" style="width: 33px;">%s</div>' % (checkbox.render(helpers.ACTION_CHECKBOX_NAME, force_str(obj.pk)))
         return mark_safe(html)
 

@@ -97,7 +97,7 @@
                             {% endif %}
 
                             {# render suit_form_includes at top position #}
-                            {% include 'nifty/includes/change_form_includes.html' with position='top' %}
+{#                            {% include 'nifty/includes/change_form_includes.html' with position='top' %}#}
 
                             {% block field_sets %}
                                 {% for fieldset in adminform %}
@@ -108,7 +108,7 @@
                             {% block after_field_sets %}{% endblock %}
 
                             {# render suit_form_includes at middle position #}
-                            {% include 'nifty/includes/change_form_includes.html' with position='middle' %}
+{#                            {% include 'nifty/includes/change_form_includes.html' with position='middle' %}#}
 
                             {% block inline_field_sets %}
                                 {% for inline_admin_formset in inline_admin_formsets %}
@@ -123,7 +123,7 @@
                     {% block after_related_objects %}{% endblock %}
 
                     {# render suit_form_includes at last position #}
-                    {% include 'nifty/includes/change_form_includes.html' with position='bottom' %}
+{#                    {% include 'nifty/includes/change_form_includes.html' with position='bottom' %}#}
 
                     <div class="panel-footer">
                         <div class="row">

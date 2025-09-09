@@ -498,6 +498,7 @@ function uploadFile(file) {
                         if (deleteLink) deleteLink.href = response.imgdelete_link;
                         var downloadLink = previewElement.querySelector('.download-link');
                         if (downloadLink) downloadLink.href = response.imgview_link;
+
                         // Re-attach event listeners for the uploaded image
                         setupImagePreviewListeners(previewElement);
                     }
@@ -506,8 +507,10 @@ function uploadFile(file) {
                     if (imgFrom) imgFrom.textContent = " 1 - " + response.imgcount;
                     var imgTo = document.querySelector('.img-to');
                     if (imgTo) imgTo.textContent = response.imgcount;
+
                     // Update all images array after successful upload
                     updateAllImagesArray();
+
                     showNotification('success', 'Image uploaded successfully');
                 } else {
                     if (previewElement) {
@@ -586,6 +589,7 @@ function setupImagePreviewListeners(item) {
         img.addEventListener('click', handleImageClick);
     }
 }
+
 function handleImageClick(e) {
     e.preventDefault();
     var item = e.currentTarget.closest('li');
@@ -677,11 +681,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     // Setup existing items
     setupItemCheckboxListeners();
+
     // Tambahkan event listener untuk klik pada gambar untuk semua item yang ada
     var imageItems = document.querySelectorAll('#list-items li');
     imageItems.forEach(function(item) {
         setupImagePreviewListeners(item);
     });
+
     // Initialize Bootstrap dropdowns
     var dropdownElements = document.querySelectorAll('[data-bs-toggle="dropdown"]');
     dropdownElements.forEach(function(element) {
