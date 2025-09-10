@@ -25,44 +25,44 @@
                     {% with field.field|widget_type as widget_type %}
                         {# First field label #}
                         {% if forloop.first %}
-                            {{ field.label_tag }}
+                            <label for="{{ field.field.id_for_label }}" class="col-form-label">
+                                {{ field.field.label }}
+                                {% if field.field.field.required %}<span class="text-danger">*</span>{% endif %}
+                            </label>
                         {% endif %}
 
                         {% if not field.is_readonly and field.errors %}
                             <div class="inline error errors">
                         {% endif %}
 
-                        {% if field.is_readonly %}
-                            <p class="readonly" style="margin-top: 7px; margin-left: -15px">
-                                {{ field|field_contents_foreign_linked|linebreaksbr }}
-                            </p>
+                    {% if field.is_readonly %}
+                        <p class="readonly" style="margin-top: 7px; margin-left: -15px">
+                            {{ field|field_contents_foreign_linked|linebreaksbr }}
+                        </p>
+                    {% else %}
+                        {% if widget_type == 'admintextinputwidget' or widget_type == 'admintextareawidget' %}
+                            {{ field.field|add_class:"form-control" }}
+                        {% elif widget_type == 'select' %}
+                            {{ field.field|add_class:'form-select width-100' }}
                         {% else %}
-                            {% if widget_type == 'admintextinputwidget' or widget_type == 'admintextareawidget' %}
-                                {{ field.field|add_class:"form-control" }}
-                            {% elif widget_type == 'select' %}
-                                {{ field.field|add_class:'selectpicker width-100' }}
-                            {% else %}
-                                {{ field.field }}
-                            {% endif %}
+                            {{ field.field }}
                         {% endif %}
+                    {% endif %}
 
-                        {% for error in field.field.errors %}
-                            <span class="help-block">{{ error }}</span>
-                        {% endfor %}
+                    {% for error in field.field.errors %}
+                        <span class="text-danger">{{ error }}</span>
+                    {% endfor %}
 
-                        {% if field.errors and not singlefield and not field.is_readonly %}
-                            <span class="help-block">{{ field.errors|striptags }}</span>
-                        {% endif %}
 
-                        {% if field.field.help_text %}
-                            <span class="{% if line.errors or field.errors or not singlefield %}help-block{% else %}text-muted{% endif %}">
+                    {% if field.field.help_text %}
+                        <span class="{% if line.errors or field.errors or not singlefield %}help-block{% else %}text-muted{% endif %}">
                                 {{ field.field.help_text|safe }}
-                            </span>
-                        {% endif %}
+                        </span>
+                    {% endif %}
 
-                        {% if not field.is_readonly and field.errors %}
-                            </div>
-                        {% endif %}
+                    {% if not field.is_readonly and field.errors %}
+                        </div>
+                    {% endif %}
                     {% endwith %}
                 {% endfor %}
             </div>

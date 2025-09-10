@@ -85,91 +85,91 @@
                     {% if cl.result_count %}
                         <form id="changelist-form" action="" method="POST" {% if cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %} class="form-inline">
                             {% csrf_token %}
-                            <div class="panel">
-                                <div class="panel-footer" style="border-radius: 0px">
-                                    <div class="row" style="margin-top: 5px;">
-                                        <div class="col-sm-12">
-                                            {% if action_form and cl.full_result_count %}
-                                                {% admin_actions %}
-                                            {% endif %}
-                                            {% if cl.result_count %}
-                                                {% get_request request 'p' as pagenum %}
-                                                {% page cl pagenum as page %}
-                                                <div class="btn-group btn-group">
-                                                    {% if page.has_previous %}
-                                                        <a class="btn btn-default add-tooltip" title="{% trans 'Previous' %}" href="?p={{ page.previous_page_number }}">
-                                                            <i class="demo-psi-arrow-left"></i>
-                                                        </a>
-                                                    {% endif %}
-                                                    {% if pagenum == '1' %}
-                                                        <a class="btn btn-default add-tooltip" title="{% trans 'Previous' %}" href="?p=0">
-                                                            <i class="demo-psi-arrow-left"></i>
-                                                        </a>
-                                                    {% endif %}
+                            <div class="card">
+                                <div class="card-header" style="border-radius: 0px">
+                                    <div class="row row-cols-md-auto g-3 align-items-center">
 
-                                                    {% if page.has_next %}
-                                                        {% if pagenum == '0' or not pagenum %}
-                                                            <a class="btn btn-default add-tooltip" title="{% trans 'Next' %}" href="?p=1">
+                                        {% if action_form and cl.full_result_count %}
+                                            {% admin_actions %}
+                                        {% endif %}
+                                        {% if cl.result_count %}
+                                            {% get_request request 'p' as pagenum %}
+                                            {% page cl pagenum as page %}
+                                            <div class="btn-group btn-group">
+                                                {% if page.has_previous %}
+                                                    <a class="btn btn-default add-tooltip" title="{% trans 'Previous' %}" href="?p={{ page.previous_page_number }}">
+                                                        <i class="demo-psi-arrow-left"></i>
+                                                    </a>
+                                                {% endif %}
+                                                {% if pagenum == '1' %}
+                                                    <a class="btn btn-default add-tooltip" title="{% trans 'Previous' %}" href="?p=0">
+                                                        <i class="demo-psi-arrow-left"></i>
+                                                    </a>
+                                                {% endif %}
+
+                                                {% if page.has_next %}
+                                                    {% if pagenum == '0' or not pagenum %}
+                                                        <a class="btn btn-default add-tooltip" title="{% trans 'Next' %}" href="?p=1">
+                                                            <i class="demo-psi-arrow-right"></i>
+                                                        </a>
+                                                    {% else %}
+                                                        {% if page.next_page_number != page.paginator.num_pages %}
+                                                            <a class="btn btn-default add-tooltip" title="{% trans 'Next' %}" href="?p={{ page.next_page_number }}">
                                                                 <i class="demo-psi-arrow-right"></i>
                                                             </a>
-                                                        {% else %}
-                                                            {% if page.next_page_number != page.paginator.num_pages %}
-                                                                <a class="btn btn-default add-tooltip" title="{% trans 'Next' %}" href="?p={{ page.next_page_number }}">
-                                                                    <i class="demo-psi-arrow-right"></i>
-                                                                </a>
-                                                            {% endif %}
                                                         {% endif %}
                                                     {% endif %}
-                                                </div>
-                                            {% endif %}
-                                            <span class="text-main text-bold pull-right" style="margin-top: 6px">{% trans 'Showing' %}&nbsp;{% paginator_info cl %} {% trans 'of' %} {{ cl.result_count }} {% if cl.result_count == 1 %}{{ cl.opts.verbose_name_plural|capfirst }}{% else %}{{ cl.opts.verbose_name_plural|capfirst }}{% endif %}</span>
-                                        </div>
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+                                        <span class="text-main text-bold pull-right" style="margin-top: 20px">{% trans 'Showing' %}&nbsp;{% paginator_info cl %} {% trans 'of' %} {{ cl.result_count }} {% if cl.result_count == 1 %}{{ cl.opts.verbose_name_plural|capfirst }}{% else %}{{ cl.opts.verbose_name_plural|capfirst }}{% endif %}</span>
+
                                     </div>
                                 </div>
 
-                                <div class="panel-body" style="padding-right: 16px;padding-left: 16px; padding-bottom: 0px;padding-top: 0px;">
+                                <div class="card-body">
                                     <div class="table-responsive">
                                         {% result_list_with_context cl %}
                                     </div>
                                 </div>
-                                <div class="panel-footer">
-                                    <div class="row" style="margin-bottom: 5px;">
-                                        <div class="col-sm-12">
-                                            {% if action_form and cl.full_result_count %}
-                                                {% admin_actions %}
-                                            {% endif %}
-                                            {% if cl.result_count %}
-                                                {% get_request request 'p' as pagenum %}
-                                                {% page cl pagenum as page %}
-                                                <div class="btn-group btn-group">
-                                                    {% if page.has_previous %}
-                                                        <a class="btn btn-default add-tooltip" title="{% trans 'Previous' %}" href="?p={{ page.previous_page_number }}">
-                                                            <i class="demo-psi-arrow-left"></i>
-                                                        </a>
-                                                    {% endif %}
-                                                    {% if pagenum == '1' %}
-                                                        <a class="btn btn-default add-tooltip" title="{% trans 'Previous' %}" href="?p=0">
-                                                            <i class="demo-psi-arrow-left"></i>
-                                                        </a>
-                                                    {% endif %}
+                                <div class="card-footer">
+                                    <div class="row row-cols-md-auto g-3 align-items-center">
 
-                                                    {% if page.has_next %}
-                                                        {% if pagenum == '0' or not pagenum %}
-                                                            <a class="btn btn-default add-tooltip" title="{% trans 'Next' %}" href="?p=1">
+                                        {% if action_form and cl.full_result_count %}
+                                            {% admin_actions %}
+                                        {% endif %}
+                                        {% if cl.result_count %}
+                                            {% get_request request 'p' as pagenum %}
+                                            {% page cl pagenum as page %}
+                                            <div class="btn-group btn-group">
+                                                {% if page.has_previous %}
+                                                    <a class="btn btn-default add-tooltip" title="{% trans 'Previous' %}" href="?p={{ page.previous_page_number }}">
+                                                        <i class="demo-psi-arrow-left"></i>
+                                                    </a>
+                                                {% endif %}
+                                                {% if pagenum == '1' %}
+                                                    <a class="btn btn-default add-tooltip" title="{% trans 'Previous' %}" href="?p=0">
+                                                        <i class="demo-psi-arrow-left"></i>
+                                                    </a>
+                                                {% endif %}
+
+                                                {% if page.has_next %}
+                                                    {% if pagenum == '0' or not pagenum %}
+                                                        <a class="btn btn-default add-tooltip" title="{% trans 'Next' %}" href="?p=1">
+                                                            <i class="demo-psi-arrow-right"></i>
+                                                        </a>
+                                                    {% else %}
+                                                        {% if page.next_page_number != page.paginator.num_pages %}
+                                                            <a class="btn btn-default add-tooltip" title="{% trans 'Next' %}" href="?p={{ page.next_page_number }}">
                                                                 <i class="demo-psi-arrow-right"></i>
                                                             </a>
-                                                        {% else %}
-                                                            {% if page.next_page_number != page.paginator.num_pages %}
-                                                                <a class="btn btn-default add-tooltip" title="{% trans 'Next' %}" href="?p={{ page.next_page_number }}">
-                                                                    <i class="demo-psi-arrow-right"></i>
-                                                                </a>
-                                                            {% endif %}
                                                         {% endif %}
                                                     {% endif %}
-                                                </div>
-                                            {% endif %}
-                                            <span class="text-main text-bold pull-right" style="margin-top: 6px">{% trans 'Showing' %}&nbsp;{% paginator_info cl %} {% trans 'of' %} {{ cl.result_count }} {% if cl.result_count == 1 %}{{ cl.opts.verbose_name_plural|capfirst }}{% else %}{{ cl.opts.verbose_name_plural|capfirst }}{% endif %}</span>
-                                        </div>
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+                                        <span class="text-main text-bold pull-right" style="margin-top: 20px">{% trans 'Showing' %}&nbsp;{% paginator_info cl %} {% trans 'of' %} {{ cl.result_count }} {% if cl.result_count == 1 %}{{ cl.opts.verbose_name_plural|capfirst }}{% else %}{{ cl.opts.verbose_name_plural|capfirst }}{% endif %}</span>
+
                                     </div>
                                 </div>
                             </div>

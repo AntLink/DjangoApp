@@ -3,8 +3,8 @@
 
 <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{% firstof opts.model_name opts.module_name %}_form" novalidate>
     {% csrf_token %}
-    <div class="panel">
-        <div class="panel-heading">
+    <div class="card">
+        <div class="card-header">
             {% block form_top_panel %}
                 <div class="panel-control">
                     {% block suit_form_tabs %}
@@ -21,7 +21,7 @@
             {% endblock %}
         </div>
 
-        <div class="panel-body">
+        <div class="card-body">
             {% block field_sets %}
                 {% for fieldset in adminform %}
                     {% include "admin/tags/fieldset.html" %}
@@ -29,10 +29,10 @@
             {% endblock %}
         </div>
 
-        <div class="panel-footer">
+        <div class="card-footer">
             <div class="row">
                 <div class="col-lg-12">
-                    <button type="submit" class="btn btn-labeled btn-default" name="_save"><i class="btn-label fa fa-check-circle-o"></i>{% trans 'Save' %}</button>
+                    <button type="submit" class="btn btn-primary" name="_save"><i class="btn-label fa fa-check-circle-o"></i>{% trans 'Save' %}</button>
                 </div>
             </div>
         </div>
