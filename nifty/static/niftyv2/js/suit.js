@@ -245,6 +245,7 @@ function suit_form_debounce() {
     });
 }
 
+
 // Inisialisasi setelah dokumen dimuat
 document.addEventListener('DOMContentLoaded', function () {
     // Fixed submit buttons

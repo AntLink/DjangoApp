@@ -170,7 +170,7 @@
     font-weight: 500;
     margin-bottom: 4px;
     color: #212529;
-    font-size: 1rem;
+    font-size: 0.8rem;
 }
 
 #list-items .media-body small {
@@ -219,7 +219,9 @@
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Image Preview Modal Styles */
@@ -407,21 +409,24 @@
     }
 }
 
+
 html[data-bs-theme="dark"] .file-name {
-  color: white !important;
+    color: white !important;
 }
 
 html[data-bs-theme="dark"] .btn-link {
-  color: white !important;
+    color: white !important;
 }
 
 html[data-bs-theme="dark"] .btn-link:hover {
-  color: #0066ff !important;
+    color: #0066ff !important;
+    background-color: #2e3439 !important;
 }
+
 html[data-bs-theme="dark"] .file-list > li {
     border-bottom: 1px solid #4f5154 !important;
 }
 
 html[data-bs-theme="dark"] .file-list > li:hover {
-    background: #23292f !important;
+    background: #2e3439 !important;
 }

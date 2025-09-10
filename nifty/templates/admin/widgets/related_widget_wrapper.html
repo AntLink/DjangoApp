@@ -7,21 +7,21 @@
     {% block links %}
         {% spaceless %}
             {% if can_change_related %}
-                <a style="margin-right: 5px; margin-left: 10px" class="related-widget-wrapper-link change-related btn btn-mint add-tooltip" id="change_id_{{ name }}" data-href-template="{{ change_related_template_url }}?{{ url_params }}" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="{% blocktrans %}Change selected {{ model }}{% endblocktrans %}" title="{% blocktrans %}Change selected {{ model }}{% endblocktrans %}">
+                <a style="margin-right: 5px; margin-left: 10px" class="related-widget-wrapper-link change-related btn btn-secondary btn-sm" id="change_id_{{ name }}" data-href-template="{{ change_related_template_url }}?{{ url_params }}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="{% blocktrans %}Change selected {{ model }}{% endblocktrans %}" title="{% blocktrans %}Change selected {{ model }}{% endblocktrans %}">
                     <i class="fa fa-pencil"></i>
                 </a>
             {% endif %}
             {% if can_add_related %}
-                <a class="related-widget-wrapper-link add-related btn  btn-primary add-tooltip" id="add_id_{{ name }}" href="{{ add_related_url }}?{{ url_params }}" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="{% blocktrans %}Add another {{ model }}{% endblocktrans %}" title="{% blocktrans %}Add another {{ model }}{% endblocktrans %}">
+                <a class="related-widget-wrapper-link add-related btn  btn-primary btn-sm" id="add_id_{{ name }}" href="{{ add_related_url }}?{{ url_params }}"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title=="{% blocktrans %}Add another {{ model }}{% endblocktrans %}" title="{% blocktrans %}Add another {{ model }}{% endblocktrans %}">
                     <i class="fa fa-plus-circle"></i>
                 </a>
             {% endif %}
             {% if can_delete_related %}
-                <a style="margin-left: 5px" class="related-widget-wrapper-link delete-related btn btn-danger add-tooltip" id="delete_id_{{ name }}" data-href-template="{{ delete_related_template_url }}?{{ url_params }}" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="{% blocktrans %}Delete selected {{ model }}{% endblocktrans %}" title="{% blocktrans %}Delete selected {{ model }}{% endblocktrans %}">
+                <a style="margin-left: 5px" class="related-widget-wrapper-link delete-related btn btn-danger btn-sm" id="delete_id_{{ name }}" data-href-template="{{ delete_related_template_url }}?{{ url_params }}"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title=="{% blocktrans %}Delete selected {{ model }}{% endblocktrans %}" title="{% blocktrans %}Delete selected {{ model }}{% endblocktrans %}">
                     <i class="fa fa-trash-o"></i>
                 </a>
             {% endif %}
-
+         <div style="padding-bottom: 10px"></div>
         {% endspaceless %}
 
     {% endblock %}

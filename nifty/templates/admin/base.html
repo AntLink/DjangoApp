@@ -17,6 +17,8 @@
     <link type="text/css" href="{% static 'niftyv2/css/bootstrap.min.css' %}" rel="stylesheet">
     <!-- Nifty CSS [ REQUIRED ] -->
     <link type="text/css" href="{% static 'niftyv2/css/nifty.min.css' %}" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'niftyv2/vendors/font-awesome/all.min.css' %}">
     {% block extrastyle %}{% endblock %}
     {% if LANGUAGE_BIDI %}
         <link type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" rel="stylesheet">

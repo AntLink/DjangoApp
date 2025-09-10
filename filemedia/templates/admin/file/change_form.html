@@ -71,8 +71,8 @@
         {% csrf_token %}
         <div class="row">
             <div class="col-sm-12">
-                <div class="panel">
-                    <div class="panel-heading">
+                <div class="card">
+                    <div class="card-header">
                         {% block form_top_panel %}
                             <div class="panel-control">
                                 {% block suit_form_tabs %}
@@ -85,11 +85,11 @@
                                     {% endif %}
                                 {% endblock %}
                             </div>
-                            <h3 class="panel-title">{{ opts.verbose_name|capfirst }}</h3>
+                            <h3 class="card-title">{{ opts.verbose_name|capfirst }}</h3>
                         {% endblock %}
                     </div>
 
-                    <div class="panel-body">
+                    <div class="card-body">
 
                         <div class="tab-content tab-content-main">
                             {% if is_popup %}
@@ -97,7 +97,7 @@
                             {% endif %}
 
                             {# render suit_form_includes at top position #}
-{#                            {% include 'nifty/includes/change_form_includes.html' with position='top' %}#}
+                            {#                            {% include 'nifty/includes/change_form_includes.html' with position='top' %}#}
 
                             {% block field_sets %}
                                 {% for fieldset in adminform %}
@@ -108,7 +108,7 @@
                             {% block after_field_sets %}{% endblock %}
 
                             {# render suit_form_includes at middle position #}
-{#                            {% include 'nifty/includes/change_form_includes.html' with position='middle' %}#}
+                            {#                            {% include 'nifty/includes/change_form_includes.html' with position='middle' %}#}
 
                             {% block inline_field_sets %}
                                 {% for inline_admin_formset in inline_admin_formsets %}
@@ -123,34 +123,29 @@
                     {% block after_related_objects %}{% endblock %}
 
                     {# render suit_form_includes at last position #}
-{#                    {% include 'nifty/includes/change_form_includes.html' with position='bottom' %}#}
+                    {#                    {% include 'nifty/includes/change_form_includes.html' with position='bottom' %}#}
 
-                    <div class="panel-footer">
-                        <div class="row">
-                            <div class="col-lg-2"></div>
-                            <div class="col-lg-10">
-                                {% block submit_buttons_bottom %}
-                                    {% if has_change_permission %}
-                                        <button type="submit" class="btn btn-labeled btn-default" name="_save"><i class="btn-label fa fa-check-circle-o"></i>{% trans 'Save' %}</button>
-                                        <button type="submit" name="_continue" class="btn btn-labeled btn-default"><i class="btn-label fa fa-check-circle-o"></i>{% trans 'Save and continue editing' %}</button>
-                                    {% endif %}
-                                    {% if has_delete_permission %}
-                                        <a href="../delete/" class="btn btn-default btn-labeled"><i class="btn-label fa fa-trash-o"></i>{% trans "Delete" %}</a>
-                                    {% endif %}
-                                {% endblock %}
-                                {% block object-tools %}
-                                    {% if change %}
-                                        {% if not is_popup %}
-                                            {% block object-tools-items %}
-                                                {% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}
-                                                <a href="{% add_preserved_filters history_url %}" class="btn  btn-default btn-labeled"><i class="btn-label fa fa-bookmark-o"></i>{% trans "History" %}</a>
-                                            {% endblock %}
+                    <div class="card-footer">
+                        {% block submit_buttons_bottom %}
+                            {% if has_change_permission %}
+                                <button type="submit" class="btn btn-primary" name="_save"><i class="fa fa-check-circle-o"></i>{% trans 'Save' %}</button>
+                                <button type="submit" name="_continue" class="btn btn-primary"><i class="fa fa-check-circle-o"></i>{% trans 'Save and continue editing' %}</button>
+                            {% endif %}
+                            {% if has_delete_permission %}
+                                <a href="../delete/" class="btn btn-danger"><i class="fa fa-trash-o"></i>{% trans "Delete" %}</a>
+                            {% endif %}
+                        {% endblock %}
+                        {% block object-tools %}
+                            {% if change %}
+                                {% if not is_popup %}
+                                    {% block object-tools-items %}
+                                        {% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}
+                                        <a href="{% add_preserved_filters history_url %}" class="btn  btn-info"><i class="fa fa-bookmark-o"></i>{% trans "History" %}</a>
+                                    {% endblock %}
 
-                                        {% endif %}
-                                    {% endif %}
-                                {% endblock %}
-                            </div>
-                        </div>
+                                {% endif %}
+                            {% endif %}
+                        {% endblock %}
                     </div>
                 </div>
             </div>

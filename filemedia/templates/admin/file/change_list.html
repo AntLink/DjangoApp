@@ -33,7 +33,6 @@
     {#    <script type="text/javascript" src="{% static 'admin/filemedia/js/freewall/freewall.js' %}"></script>#}
 
     <link rel="stylesheet" type="text/css" href="{% static 'admin/filemedia/css/file-list.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'niftyv2/vendors/font-awesome/all.min.css' %}">
     <!-- Tambahkan di head -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
     <script>
@@ -198,6 +197,47 @@
                                     <ul id="list-items" class="file-list">
                                         {% document_media_result_list cl %}
                                     </ul>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="row row-cols-md-auto g-3 align-items-center">
+                                        {% if action_form and cl.full_result_count %}
+                                            {% admin_actions %}
+                                        {% endif %}
+                                        <div class="col-sm-12">
+                                            <button id="add-files-list" type="button" class="btn btn-primary v-middle">{% trans "Add Files" %}</button>
+                                            {% if cl.result_count %}
+                                                {% get_request request 'p' as pagenum %}
+                                                {% page cl pagenum as page %}
+                                                <div class="btn-group btn-group">
+                                                    {% if page.has_previous %}
+                                                        <a class="btn btn-outline-light" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="{% trans 'Previous' %}" href="?p={{ page.previous_page_number }}">
+                                                            <i class="demo-psi-arrow-left"></i>
+                                                        </a>
+                                                    {% endif %}
+                                                    {% if pagenum == '1' %}
+                                                        <a class="btn btn-outline-light" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="{% trans 'Previous' %}" href="?p=0">
+                                                            <i class="demo-psi-arrow-left"></i>
+                                                        </a>
+                                                    {% endif %}
+
+                                                    {% if page.has_next %}
+                                                        {% if pagenum == '0' or not pagenum %}
+                                                            <a class="btn btn-outline-light" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="{% trans 'Next' %}" href="?p=1">
+                                                                <i class="demo-psi-arrow-right"></i>
+                                                            </a>
+                                                        {% else %}
+                                                            {% if page.next_page_number != page.paginator.num_pages %}
+                                                                <a class="btn btn-outline-light" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="{% trans 'Next' %}" href="?p={{ page.next_page_number }}">
+                                                                    <i class="demo-psi-arrow-right"></i>
+                                                                </a>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </div>
+                                            {% endif %}
+                                            <span class="text-main text-bold pull-right" style="margin-top: 6px">{% trans 'Showing' %}<span class="img-from">&nbsp;{% paginator_info cl %}</span> {% trans 'of' %} <span class="img-to">{{ cl.result_count }}</span> {% if cl.result_count == 1 %}{{ cl.opts.verbose_name_plural|capfirst }}{% else %}{{ cl.opts.verbose_name_plural|capfirst }}{% endif %}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
