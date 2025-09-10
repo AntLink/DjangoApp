@@ -689,7 +689,7 @@ class ImageAdmin(Admin):
                 d = u'<a data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="%s"  class="btn-link" href="%s">%s</a>' % (_('Delete'), reverse('admin:%s_%s_delete' % (obj._meta.app_label, obj._meta.model_name), args=[obj.id]), '<i class="demo-pli-trash"></i>')
             if self.user_req.has_perm('filemedia.download_image'):
                 v = u'<a data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="%s"  target="_blank" class="btn-link" href="%s">%s</a>' % (_('Download'), reverse('admin:%s_%s_download' % (obj._meta.app_label, obj._meta.model_name), args=[obj.id]), '<i class="demo-pli-download-from-cloud"></i>')
-            l = u'<a data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="%s" class="btn-link preview-btn"  href="javascript:;"><i class="demo-psi-layout-grid"></i></a>' % _('View Image')
+            l = u'<a data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="%s" class="btn-link preview-btn"  href="javascript:;"><i class="fa fa-eye"></i></a>' % _('View Image')
             img = u'<img class="card-img-top" data-id="%s" src="%s" alt="%s" data-image="%s" data-description="%s" />' % (obj.pk, obj.get_image('256x256'), obj.name, obj.get_image('no'), obj.description)
             html = u'%s <div class="img-actions"><span style="font-size:14px;">%s&nbsp;%s&nbsp;%s&nbsp;%s</span></div>' % (img, c, v, d, l)
             return mark_safe(html)

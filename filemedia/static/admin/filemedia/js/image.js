@@ -543,15 +543,14 @@ function createPreview(file) {
     previewElement.innerHTML =
         '<div class="file-control" style="width: 30px;">' +
         '<input type="checkbox" name="_selected_action" class="form-check-input magic-checkbox" id="list-' + id + '">' +
-        '<label for="list-' + id + '"></label>' +
         '</div>' +
         '<img class="card-img-top" src="/static/admin/filemedia/img/no-thumb/td_100x100.png" alt="' + file.name + '">' +
         '<div class="img-actions">' +
         '<span style="font-size:14px;">' +
-        '<a class="add-tooltip btn-link" title="Change" href="#"><i class="demo-pli-pen-5"></i></a>&nbsp;' +
-        '<a target="_blank" class="add-tooltip btn-link" title="Download" href="javascript:;"><i class="demo-pli-download-from-cloud"></i></a>&nbsp;' +
-        '<a class="add-tooltip btn-link" title="Delete" href="#"><i class="demo-pli-trash"></i></a>&nbsp;' +
-        '<a class="add-tooltip btn-link preview-btn" title="Preview" href="javascript:;"><i class="demo-psi-layout-grid"></i></a>' +
+        '<a class="btn-link"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Change" href="#"><i class="demo-pli-pen-5"></i></a>&nbsp;' +
+        '<a target="_blank" class="btn-link"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Download" href="javascript:;"><i class="demo-pli-download-from-cloud"></i></a>&nbsp;' +
+        '<a class="btn-link"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Delete" href="#"><i class="demo-pli-trash"></i></a>&nbsp;' +
+        '<a class="btn-link preview-btn"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="View Image" href="javascript:;"><i class="fa fa-eye"></i></a>' +
         '</span>' +
         '</div>';
 

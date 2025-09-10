@@ -190,11 +190,11 @@
                                                     <a href="history/" class="btn btn-default">{% trans "History" %}</a>
                                                 {% else %}
                                                     {% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}
-                                                    <a href="{% add_preserved_filters history_url %}" class="btn  btn-default btn-labeled"><i class="btn-label fa fa-bookmark-o"></i>{% trans "History" %}</a>
+                                                    <a href="{% add_preserved_filters history_url %}" class="btn  btn-info"><i class="fa fa-history"></i>{% trans "History" %}</a>
                                                 {% endif %}
 
                                                 {% if has_absolute_url %}
-                                                    <a href="{{ original.get_absolute_url }}" class="btn btn-default btn-labeled"><i class="btn-label fa fa-eye"></i>{% trans "View on site" %}</a>
+                                                    <a href="{{ original.get_absolute_url }}" class="btn btn-info"><i class="fa fa-eye"></i>{% trans "View on site" %}</a>
                                                 {% endif %}
 
 {#                                                {% if has_add_permission %}#}

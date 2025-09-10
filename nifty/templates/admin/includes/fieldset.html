@@ -1,5 +1,5 @@
 {% load suit_tags %}
-<div id="{{ fieldset.classes }}" class=" {% if fieldset.classes == 'tab-general' %}active show{% endif %} {{ fieldset.classes }}">
+{#<div id="{{ fieldset.classes }}" class=" {% if fieldset.classes == 'tab-general' %}active show{% endif %} {{ fieldset.classes }}">#}
     {% if fieldset.name %}
         <div class="mb-4">
             <h4 class="text-thin mb-2">{{ fieldset.name }}</h4>
@@ -76,12 +76,12 @@
                             {{ error }}
                         </span>
                     {% endfor %}
-                    </div>
+{#                    </div>#}
                 {% endwith %}
             {% endfor %}
-        {#        </div>#}
+                </div>
     {% endfor %}
-</div>
+{#</div>#}
 
 {% if 'plugin-holder' in fieldset.classes %}
     <hr class="plugin-holder-separator my-4">

@@ -5,21 +5,21 @@
 {% block breadcrumbs %}
     <ol class="breadcrumb">
         {% if perms.admin.index_view %}
-            <li>
+            <li class="breadcrumb-item">
                 <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
             </li>
         {% endif %}
-        <li>
+        <li class="breadcrumb-item">
             <a href="{% url 'admin:app_list' app_label=opts.app_label %}">
                 {% trans opts.app_config.verbose_name|capfirst|escape %}
             </a>
         </li>
-        <li>
+        <li class="breadcrumb-item">
             <a href="{% url opts|admin_urlname:'changelist' %}">
                 {{ opts.verbose_name_plural|capfirst }}
             </a>
         </li>
-        <li class="active">{% trans 'Delete multiple objects' %}</li>
+        <li class="breadcrumb-item active">{% trans 'Delete multiple objects' %}</li>
     </ol>
 {% endblock %}
 

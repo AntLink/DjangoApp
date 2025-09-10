@@ -101,10 +101,10 @@
                                     {% if not is_popup %}
                                         {% block object-tools-items %}
                                             {% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}
-                                            <a href="{% add_preserved_filters history_url %}" class="btn  btn-info"><i class="btn-label fa fa-bookmark-o"></i>{% trans "History" %}</a>
+                                            <a href="{% add_preserved_filters history_url %}" class="btn  btn-info"><i class="fa fa-history me-2"></i>{% trans "History" %}</a>
 
                                             {% if has_absolute_url %}
-                                                <a href="{{ original.get_absolute_url }}" class="btn btn-primary"><i class="btn-label fa fa-eye"></i>{% trans "View on site" %}</a>
+                                                <a href="{{ original.get_absolute_url }}" class="btn btn-primary"><i class="fa fa-eye"></i>{% trans "View on site" %}</a>
                                             {% endif %}
                                         {% endblock %}
 

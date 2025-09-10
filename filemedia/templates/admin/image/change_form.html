@@ -103,110 +103,103 @@
 {% block content %}
     <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{% firstof opts.model_name opts.module_name %}_form" class="form-horizontal" novalidate>
         {% csrf_token %}
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="card">
-                    <div class="card-header">
-                        {% block form_top_panel %}
-                            <div class="panel-control">
-                                {% block suit_form_tabs %}
-                                    {% if adminform.model_admin.suit_form_tabs %}
-                                        <ul id="suit_form_tabs" class="nav nav-tabs nav-tabs-suit" data-tab-prefix="suit-tab">
-                                            {% for tab in adminform.model_admin.suit_form_tabs %}
-                                                <li><a href="#{{ tab.0 }}">{{ tab.1 }}</a></li>
-                                            {% endfor %}
-                                        </ul>
-                                    {% endif %}
-                                {% endblock %}
-                            </div>
-                            <h3 class="card-title">{{ opts.verbose_name|capfirst }}</h3>
-                        {% endblock %}
-                    </div>
-
-                    <div class="card-body">
-
-                        <div class="tab-content tab-content-main">
-                            {% if is_popup %}
-                                <input type="hidden" name="_popup" value="1"/>
-                            {% endif %}
-
-                            {# render suit_form_includes at top position #}
-                            {#                            {% include 'nifty/includes/change_form_includes.html' with position='top' %}#}
-
-                            {% block field_sets %}
-                                {% for fieldset in adminform %}
-                                    {% include "admin/includes/fieldset.html" %}
-                                {% endfor %}
-                            {% endblock %}
-
-                            {% block after_field_sets %}{% endblock %}
-
-                            {# render suit_form_includes at middle position #}
-                            {#                            {% include 'nifty/includes/change_form_includes.html' with position='middle' %}#}
-
-                            {% block inline_field_sets %}
-                                {% for inline_admin_formset in inline_admin_formsets %}
-                                    {% include inline_admin_formset.opts.template %}
-                                {% endfor %}
-                            {% endblock %}
-
-                        </div>
-                    </div>
-
-
-                    {% block after_related_objects %}{% endblock %}
-
-                    {# render suit_form_includes at last position #}
-                    {#                    {% include 'nifty/includes/change_form_includes.html' with position='bottom' %}#}
-
-                    {#                    {% block admin_change_form_document_ready %}#}
-                    {#                        <script type="text/javascript">#}
-                    {#                            (function ($) {#}
-                    {#                                $(document).ready(function () {#}
-                    {#                                    $('.add-another').click(function (e) {#}
-                    {#                                        e.preventDefault();#}
-                    {#                                        showAddAnotherPopup(this);#}
-                    {#                                    });#}
-                    {#                                    $('.related-lookup').click(function (e) {#}
-                    {#                                        e.preventDefault();#}
-                    {#                                        showRelatedObjectLookupPopup(this);#}
-                    {#                                    });#}
-                    {#                                    {% if adminform and add %}#}
-                    {#                                        $('form#{% firstof opts.model_name opts.module_name %}_form :input[type!=button][type!=submit]:visible:enabled:first').focus()#}
-                    {#                                    {% endif %}#}
-                    {#                                });#}
-                    {#                            })(django.jQuery);#}
-                    {#                        </script>#}
-                    {#                    {% endblock %}#}
-
-                    <div class="card-footer">
-
-                        {% block submit_buttons_bottom %}
-                            {% if has_change_permission %}
-                                <button type="submit" class="btn btn-primary" name="_save"><i class="fa fa-check-circle-o"></i>{% trans 'Save' %}</button>
-                                <button type="submit" name="_continue" class="btn btn-primary"><i class="fa fa-check-circle-o"></i>{% trans 'Save and continue editing' %}</button>
-                            {% endif %}
-                            {% if has_delete_permission %}
-                                <a href="../delete/" class="btn btn-danger"><i class="fa fa-trash-o"></i>{% trans "Delete" %}</a>
+        <div class="card">
+            <div class="card-header">
+                {% block form_top_panel %}
+                    <div class="panel-control">
+                        {% block suit_form_tabs %}
+                            {% if adminform.model_admin.suit_form_tabs %}
+                                <ul id="suit_form_tabs" class="nav nav-tabs nav-tabs-suit" data-tab-prefix="suit-tab">
+                                    {% for tab in adminform.model_admin.suit_form_tabs %}
+                                        <li><a href="#{{ tab.0 }}">{{ tab.1 }}</a></li>
+                                    {% endfor %}
+                                </ul>
                             {% endif %}
                         {% endblock %}
-                        {% block object-tools %}
-                            {% if change %}
-                                {% if not is_popup %}
-                                    {% block object-tools-items %}
-
-                                        {% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}
-                                        <a href="{% add_preserved_filters history_url %}" class="btn  btn-info"><i class="fa fa-bookmark-o"></i>{% trans "History" %}</a>
-
-                                    {% endblock %}
-
-                                {% endif %}
-                            {% endif %}
-                        {% endblock %}
-
                     </div>
+                    <h3 class="card-title">{{ opts.verbose_name|capfirst }}</h3>
+                {% endblock %}
+            </div>
+
+            <div class="card-body">
+
+                <div class="tab-content tab-content-main">
+                    {% if is_popup %}
+                        <input type="hidden" name="_popup" value="1"/>
+                    {% endif %}
+
+                    {# render suit_form_includes at top position #}
+                    {#                            {% include 'nifty/includes/change_form_includes.html' with position='top' %}#}
+
+                    {% block field_sets %}
+                        {% for fieldset in adminform %}
+                            {% include "admin/includes/fieldset.html" %}
+                        {% endfor %}
+                    {% endblock %}
+
+                    {% block after_field_sets %}{% endblock %}
+
+                    {# render suit_form_includes at middle position #}
+                    {#                            {% include 'nifty/includes/change_form_includes.html' with position='middle' %}#}
+
+                    {% block inline_field_sets %}
+                        {% for inline_admin_formset in inline_admin_formsets %}
+                            {% include inline_admin_formset.opts.template %}
+                        {% endfor %}
+                    {% endblock %}
+
                 </div>
+            </div>
 
+
+            {% block after_related_objects %}{% endblock %}
+
+            {# render suit_form_includes at last position #}
+            {#                    {% include 'nifty/includes/change_form_includes.html' with position='bottom' %}#}
+
+            {#                    {% block admin_change_form_document_ready %}#}
+            {#                        <script type="text/javascript">#}
+            {#                            (function ($) {#}
+            {#                                $(document).ready(function () {#}
+            {#                                    $('.add-another').click(function (e) {#}
+            {#                                        e.preventDefault();#}
+            {#                                        showAddAnotherPopup(this);#}
+            {#                                    });#}
+            {#                                    $('.related-lookup').click(function (e) {#}
+            {#                                        e.preventDefault();#}
+            {#                                        showRelatedObjectLookupPopup(this);#}
+            {#                                    });#}
+            {#                                    {% if adminform and add %}#}
+            {#                                        $('form#{% firstof opts.model_name opts.module_name %}_form :input[type!=button][type!=submit]:visible:enabled:first').focus()#}
+            {#                                    {% endif %}#}
+            {#                                });#}
+            {#                            })(django.jQuery);#}
+            {#                        </script>#}
+            {#                    {% endblock %}#}
+
+            <div class="card-footer">
+
+                {% block submit_buttons_bottom %}
+                    {% if has_change_permission %}
+                        <button type="submit" class="btn btn-primary" name="_save"><i class="fa fa-check-circle me-2"></i>{% trans 'Save' %}</button>
+                        <button type="submit" name="_continue" class="btn btn-primary"><i class="fa fa-check-circle me-2"></i>{% trans 'Save and continue editing' %}</button>
+                    {% endif %}
+                    {% if has_delete_permission %}
+                        <a href="../delete/" class="btn btn-danger"><i class="fa fa-trash me-2"></i>{% trans "Delete" %}</a>
+                    {% endif %}
+                {% endblock %}
+                {% block object-tools %}
+                    {% if change %}
+                        {% if not is_popup %}
+                            {% block object-tools-items %}
+
+                                {% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}
+                                <a href="{% add_preserved_filters history_url %}" class="btn btn-info"><i class="fa fa-history me-2"></i>{% trans "History" %}</a>
+                            {% endblock %}
+
+                        {% endif %}
+                    {% endif %}
+                {% endblock %}
             </div>
     </form>
 {% endblock %}

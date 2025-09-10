@@ -125,7 +125,7 @@
 }
 
 #list-items .dropdown-menu .btn-link:hover {
-    color: #0d6efd;
+    color: inherit;
     background-color: #f8f9fa;
 }
 
@@ -419,7 +419,7 @@ html[data-bs-theme="dark"] .btn-link {
 }
 
 html[data-bs-theme="dark"] .btn-link:hover {
-    color: #0066ff !important;
+    color: inherit !important;
     background-color: #2e3439 !important;
 }
 

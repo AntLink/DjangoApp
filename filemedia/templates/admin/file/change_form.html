@@ -69,8 +69,6 @@
 {% block content %}
     <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{% firstof opts.model_name opts.module_name %}_form" class="form-horizontal" novalidate>
         {% csrf_token %}
-        <div class="row">
-            <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
                         {% block form_top_panel %}
@@ -128,11 +126,11 @@
                     <div class="card-footer">
                         {% block submit_buttons_bottom %}
                             {% if has_change_permission %}
-                                <button type="submit" class="btn btn-primary" name="_save"><i class="fa fa-check-circle-o"></i>{% trans 'Save' %}</button>
-                                <button type="submit" name="_continue" class="btn btn-primary"><i class="fa fa-check-circle-o"></i>{% trans 'Save and continue editing' %}</button>
+                                <button type="submit" class="btn btn-primary" name="_save"><i class="fa fa-check-circle me-2"></i>{% trans 'Save' %}</button>
+                                <button type="submit" name="_continue" class="btn btn-primary"><i class="fa fa-check-circle me-2"></i>{% trans 'Save and continue editing' %}</button>
                             {% endif %}
                             {% if has_delete_permission %}
-                                <a href="../delete/" class="btn btn-danger"><i class="fa fa-trash-o"></i>{% trans "Delete" %}</a>
+                                <a href="../delete/" class="btn btn-danger"><i class="fa fa-trash me-2"></i>{% trans "Delete" %}</a>
                             {% endif %}
                         {% endblock %}
                         {% block object-tools %}
@@ -140,15 +138,14 @@
                                 {% if not is_popup %}
                                     {% block object-tools-items %}
                                         {% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}
-                                        <a href="{% add_preserved_filters history_url %}" class="btn  btn-info"><i class="fa fa-bookmark-o"></i>{% trans "History" %}</a>
+                                        <a href="{% add_preserved_filters history_url %}" class="btn  btn-info"><i class="fa fa-history me-2"></i>{% trans "History" %}</a>
                                     {% endblock %}
 
                                 {% endif %}
                             {% endif %}
                         {% endblock %}
                     </div>
-                </div>
-            </div>
+
 
         </div>
     </form>
