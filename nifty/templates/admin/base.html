@@ -19,6 +19,7 @@
     <link type="text/css" href="{% static 'niftyv2/css/nifty.min.css' %}" rel="stylesheet">
 
     <link rel="stylesheet" type="text/css" href="{% static 'niftyv2/vendors/font-awesome/all.min.css' %}">
+
     {% block extrastyle %}{% endblock %}
     {% if LANGUAGE_BIDI %}
         <link type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" rel="stylesheet">
@@ -81,7 +82,7 @@
         }
 
     </script>
-        <script src="{% static 'niftyv2/js/suit.js' %}"></script>
+    <script src="{% static 'niftyv2/js/suit.js' %}"></script>
     {% if 'SHOW_REQUIRED_ASTERISK'|suit_conf %}
         <style type="text/css">
             label.required:after {

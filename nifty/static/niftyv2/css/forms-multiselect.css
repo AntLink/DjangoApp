@@ -1,5 +1,4 @@
 .selector {
-    /*background: #f9f9f9;*/
     border: 1px solid #939393;
     border-radius: 3px;
     -moz-border-radius: 3px;
@@ -17,11 +16,12 @@
     float: left;
 }
 
-.selector .selector-available{
-     width: 46.8%;
+.selector .selector-available {
+    width: 46.8%;
 }
+
 .selector .selector-chosen {
-    width: 49.7%;
+    width: 49.3%;
 }
 
 .selector .selector-chooser {
@@ -48,8 +48,8 @@
 
 .selector select {
     border-top: 1px solid #939393;
-    /*border-left: 1px solid #eee;*/
-    /*border-right: 1px solid #eee;*/
+    border-left: 1px solid rgba(238, 238, 238, 0);
+    border-right: 1px solid rgba(238, 238, 238, 0);
     border-bottom: 1px solid #939393;
     border-radius: 0;
     -moz-border-radius: 0;
@@ -58,7 +58,9 @@
     padding: 5px 15px;
     width: 100%;
     overflow-y: auto;
+
 }
+
 
 .selector select:focus {
     border: none !important;
@@ -124,9 +126,6 @@
 }
 
 
-
-
-
 @media (max-width: 992px) {
     .selector .selector-available,
     .selector .selector-chooser,
@@ -150,3 +149,11 @@
         width: 50%;
     }
 }
+
+html[data-bs-theme="dark"] .selector select {
+    background: #293038 !important;
+}
+html[data-bs-theme="dark"] .selector input {
+    background: #293038 !important;
+}
+
