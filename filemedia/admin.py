@@ -41,6 +41,23 @@ class TagsAdmin(Admin):
         (None, {'fields': ('name', 'type', 'description')}),
     ]
 
+    @property
+    def media(self):
+        from django import forms
+        from django.conf import settings
+        extra = '' if settings.DEBUG else '.min'
+        js = [
+            # 'vendor/jquery/jquery%s.js' % extra,
+            # 'jquery.init.js',
+            # 'core.js',
+            # 'admin/RelatedObjectLookups.js',
+            # 'actions%s.js' % extra,
+            # 'urlify.js',
+            # 'prepopulate%s.js' % extra,
+            # 'vendor/xregexp/xregexp%s.js' % extra,
+        ]
+        return forms.Media(js=['admin/js/%s' % url for url in js])
+
     def get_urls(self):
         from django.urls import path
         def wrap(view):
@@ -183,6 +200,23 @@ class ImageAdmin(Admin):
     fieldsets = [
         (None, {'fields': ('name', 'image', 'relationships', 'description')}),
     ]
+
+    @property
+    def media(self):
+        from django import forms
+        from django.conf import settings
+        extra = '' if settings.DEBUG else '.min'
+        js = [
+            # 'vendor/jquery/jquery%s.js' % extra,
+            # 'jquery.init.js',
+            # 'core.js',
+            # 'admin/RelatedObjectLookups.js',
+            # 'actions%s.js' % extra,
+            # 'urlify.js',
+            # 'prepopulate%s.js' % extra,
+            # 'vendor/xregexp/xregexp%s.js' % extra,
+        ]
+        return forms.Media(js=['admin/js/%s' % url for url in js])
 
     def get_urls(self):
         # from .api import views
@@ -744,6 +778,23 @@ class FileAdmin(Admin):
     list_display = ['get_name']
     search_fields = ['name', 'description']
     filter_horizontal = ('relationships',)
+
+    @property
+    def media(self):
+        from django import forms
+        from django.conf import settings
+        extra = '' if settings.DEBUG else '.min'
+        js = [
+            # 'vendor/jquery/jquery%s.js' % extra,
+            # 'jquery.init.js',
+            # 'core.js',
+            # 'admin/RelatedObjectLookups.js',
+            # 'actions%s.js' % extra,
+            # 'urlify.js',
+            # 'prepopulate%s.js' % extra,
+            # 'vendor/xregexp/xregexp%s.js' % extra,
+        ]
+        return forms.Media(js=['admin/js/%s' % url for url in js])
 
     def get_urls(self):
         from django.urls import path

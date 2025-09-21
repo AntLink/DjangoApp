@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RedactorX Demo</title>
+    <link rel="stylesheet" href="redactor.min.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 30px;
+        }
+
+        #editor {
+            min-height: 200px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+<h2>RedactorX Demo dengan Alignment</h2>
+<textarea id="editorx">
+    <h2>
+    Easy customization from the control panel
+</h2>
+<p>
+    Did I mention there are a lot of options with this editor? It’s kind of ridiculous how many choices you have with the default buttons/menus. Find the combination that works best for you and your team; or your dad, as the case may be. Spellcheck options (including&nbsp;<a href="https://www.grammarly.com/">Grammarly</a>!) and a Right-to-Left language option are there out-of-the box as well.
+</p>
+
+<h2>
+    Expand your horizons without being a programmer
+</h2>
+<p>
+    No matter how many options come standard, sometimes you need more. The emphasis on making your work easier continues in the Redactor X RTE’s advanced settings. Adding, editing, and customizing the native options can be done in the control panel via a simple configuration array. Custom CSS and/or custom Javascript can be added into standard ExpressionEngine templates, and then linked by select options. It doesn’t require a frontend developer to add new formatting options, custom styles, or even additional plugins.
+</p>
+<h2>
+    Redactor- not gone, but kinda forgotten
+</h2>
+<p>
+    Imperavi, the company behind both Redactor and Redactor X has ceased development of Redactor, and their&nbsp;<a href="https://imperavi.com/redactor/">support for it ended in 2023</a>. Redactor X is their new, premier WYSIWYG editor, built from the ground up. Your existing Redactor fields will continue working just fine, but they will also convert seamlessly to Redactor X as long as they use the shipped configuration. If your site uses custom javascript, it can be manually converted to the Redactor X format.
+</p>
+<p>
+    Even if you’re not one to use a WYSIWYG, we think it’s worth giving Redactor X a shot. The feedback from the developer previews has been phenomenal!
+</p>
+</textarea>
+
+<script src="redactor.js"></script>
+<script src="plugin/emoji.js"></script>
+
+
+<!-- Inisialisasi Editor -->
+<script>
+
+    RedactorX('#editorx', {
+        minHeight: '200px',
+        toolbar: {
+            buttons: ['format', 'bold', 'italic', 'underline', 'lists', 'link', 'image', 'table']
+        },
+        plugins: ['alignment', 'fontsize', 'imageresize', 'table']
+    });
+
+    // RedactorX('#editorx', {
+    //     context: true,
+    //     control: true,
+    //     context: {
+    //         add: {
+    //             add: {
+    //                 position: 'first'
+    //             }
+    //         }
+    //     },
+    //     pathbar: true,
+    //     table: {
+    //         template: '<table class="my-table"><tr><td></td></tr></table>'
+    //     },
+    //
+    //     plugins: [
+    //
+    //
+    //         'alignment',
+    //         'emoji',
+    //         'icons',
+    //         'fontsize',
+    //         'imageposition',
+    //         'imageresize',
+    //         'inlineformat',
+    //         'pages',
+    //         'readmore',
+    //         'removeformat',
+    //         'rte_definedlinks',
+    //         'selector',
+    //         'specialchars',
+    //         'textdirection',
+    //         'textexpander',
+    //         'underline',
+    //         'beyondgrammar',
+    //         'blockcode',
+    //         'clips',
+    //         'counter',
+    //         'definedlinks',
+    //         // 'filebrowser',
+    //         'filelink',
+    //         'fontcolor',
+    //         'fontfamily',
+    //         'handle'
+    //     ],
+    //     textdirection: {
+    //         context: true
+    //     },
+    //     image: {
+    //         context: true,
+    //         upload: '/api/demo/upload-image/',
+    //         select: 'https://imperavi.com/tests/redactor4/images.json?d=1758397870781'
+    //     }
+    // });
+</script>
+</body>
+</html>
