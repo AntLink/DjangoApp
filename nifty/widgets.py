@@ -1,6 +1,7 @@
 from django.forms import TextInput, Select, Textarea
 from django.utils.safestring import mark_safe
 from django import forms
+import json
 from django.templatetags.static import static
 from . import utils
 
@@ -225,3 +226,478 @@ def _make_attrs(attrs, defaults=None, classes=None):
     if classes:
         result["class"] = " ".join((classes, result.get("class", "")))
     return result
+
+
+
+
+
+class CKEditorWidget(forms.Widget):
+    template_name = None
+
+    class Media:
+        css = {
+            'all': (
+                'niftyv2/vendors/ckeditor5/style.css',
+                'niftyv2/vendors/ckeditor5/ckeditor5.css',
+                'niftyv2/vendors/ckeditor5/premium-features.css',
+                'niftyv2/vendors/ckeditor5/dark.css',
+                'niftyv2/vendors/ckeditor5/box-dark.css',
+            )
+        }
+        js = (
+            'niftyv2/vendors/ckeditor5/ckeditor5ai.js',
+            'niftyv2/vendors/ckeditor5/premium-features.js',
+            'niftyv2/vendors/ckeditor5/ckbox.js',
+        )
+
+    def __init__(self, attrs=None, config=None):
+        # Konfigurasi default
+        default_config = {
+            'ai_api_key': '1b4818209ba04b069314ba81be1ff1c2.xx6qQKiR9qnWCPTD',
+            'ai_api_url': 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
+            'ai_model': "glm-4.5-flash",
+            'ai_temperature': 0.8,
+            'ai_top_p': 1,
+            'cloud_services_token_url': 'http://127.0.0.1:8089/static/niftyv2/vendors/ckeditor5/token',
+            'cloud_services_api_url': "https://api.ckbox.io",
+            'placeholder': 'Type or paste your content here!',
+            'license_key': '-',
+            'initial_data': '',
+        }
+
+        # Gabungkan dengan konfigurasi kustom jika ada
+        if config:
+            default_config.update(config)
+
+        self.config = default_config
+        default_attrs = {'id': 'editor'}
+        if attrs:
+            default_attrs.update(attrs)
+        super().__init__(default_attrs)
+
+    def render(self, name, value, attrs=None, renderer=None):
+        if value is None:
+            value = ""
+
+        # Konversi konfigurasi Python ke JavaScript
+        js_config = json.dumps(self.config)
+
+        # Kode JavaScript yang terintegrasi
+        html = f"""
+        <textarea id="editor-{name}" name="{name}" hidden>{value}</textarea>
+        <script>
+        function getTheme() {{
+          return document.documentElement.getAttribute("data-bs-theme");
+        }}
+        document.addEventListener('DOMContentLoaded', function() {{
+            const {{
+                ClassicEditor,
+                Alignment,
+                Autoformat,
+                AutoImage,
+                AutoLink,
+                Autosave,
+                BalloonToolbar,
+                BlockQuote,
+                BlockToolbar,
+                Bold,
+                Bookmark,
+                CKBox,
+                CKBoxImageEdit,
+                CloudServices,
+                Code,
+                CodeBlock,
+                Emoji,
+                Essentials,
+                FindAndReplace,
+                FontBackgroundColor,
+                FontColor,
+                FontFamily,
+                FontSize,
+                Fullscreen,
+                GeneralHtmlSupport,
+                Heading,
+                Highlight,
+                HorizontalLine,
+                HtmlEmbed,
+                ImageBlock,
+                ImageCaption,
+                ImageEditing,
+                ImageInline,
+                ImageInsert,
+                ImageInsertViaUrl,
+                ImageResize,
+                ImageStyle,
+                ImageTextAlternative,
+                ImageToolbar,
+                ImageUpload,
+                ImageUtils,
+                Indent,
+                IndentBlock,
+                Italic,
+                Link,
+                LinkImage,
+                List,
+                ListProperties,
+                MediaEmbed,
+                Mention,
+                PageBreak,
+                Paragraph,
+                PasteFromMarkdownExperimental,
+                PasteFromOffice,
+                PictureEditing,
+                PlainTableOutput,
+                RemoveFormat,
+                ShowBlocks,
+                SourceEditing,
+                SpecialCharacters,
+                SpecialCharactersArrows,
+                SpecialCharactersCurrency,
+                SpecialCharactersEssentials,
+                SpecialCharactersLatin,
+                SpecialCharactersMathematical,
+                SpecialCharactersText,
+                Strikethrough,
+                Subscript,
+                Superscript,
+                Table,
+                TableCaption,
+                TableCellProperties,
+                TableColumnResize,
+                TableLayout,
+                TableProperties,
+                TableToolbar,
+                TextTransformation,
+                TodoList,
+                Underline
+            }} = window.CKEDITOR;
+            const {{AIAssistant, OpenAITextAdapter}} = window.CKEDITOR_PREMIUM_FEATURES;
+
+            const config = {js_config};
+
+            const editorConfig = {{
+                ui: {{
+                        viewportOffset: {{
+                            top: 53
+                        }}
+                    }},
+                toolbar: {{                    
+                    items: [
+                        'fullscreen',
+                        '|',
+                        'undo',
+                        'redo',
+                        '|',
+                        'aiCommands',
+                        'aiAssistant',
+                        '|',
+                        'sourceEditing',
+                        'showBlocks',
+                        'findAndReplace',
+                        '|',
+                        'heading',
+                        '|',
+                        'fontSize',
+                        'fontFamily',
+                        'fontColor',
+                        'fontBackgroundColor',
+                        '|',
+                        'bold',
+                        'italic',
+                        'underline',
+                        'strikethrough',
+                        'subscript',
+                        'superscript',
+                        'code',
+                        'removeFormat',
+                        '|',
+                        'emoji',
+                        'specialCharacters',
+                        'horizontalLine',
+                        'pageBreak',
+                        'link',
+                        'bookmark',
+                        'insertImage',
+                        'ckbox',
+                        'mediaEmbed',
+                        'insertTable',
+                        'insertTableLayout',
+                        'highlight',
+                        'blockQuote',
+                        'codeBlock',
+                        'htmlEmbed',
+                        '|',
+                        'alignment',
+                        '|',
+                        'bulletedList',
+                        'numberedList',
+                        'todoList',
+                        'outdent',
+                        'indent'
+                    ],
+                    shouldNotGroupWhenFull: false,
+                   
+                }},
+                plugins: [
+                    AIAssistant,
+                    Alignment,
+                    Autoformat,
+                    AutoImage,
+                    AutoLink,
+                    Autosave,
+                    BalloonToolbar,
+                    BlockQuote,
+                    BlockToolbar,
+                    Bold,
+                    Bookmark,
+                    CKBox,
+                    CKBoxImageEdit,
+                    CloudServices,
+                    Code,
+                    CodeBlock,
+                    Emoji,
+                    Essentials,
+                    FindAndReplace,
+                    FontBackgroundColor,
+                    FontColor,
+                    FontFamily,
+                    FontSize,
+                    Fullscreen,
+                    GeneralHtmlSupport,
+                    Heading,
+                    Highlight,
+                    HorizontalLine,
+                    HtmlEmbed,
+                    ImageBlock,
+                    ImageCaption,
+                    ImageEditing,
+                    ImageInline,
+                    ImageInsert,
+                    ImageInsertViaUrl,
+                    ImageResize,
+                    ImageStyle,
+                    ImageTextAlternative,
+                    ImageToolbar,
+                    ImageUpload,
+                    ImageUtils,
+                    Indent,
+                    IndentBlock,
+                    Italic,
+                    Link,
+                    LinkImage,
+                    List,
+                    ListProperties,
+                    MediaEmbed,
+                    Mention,
+                    OpenAITextAdapter,
+                    PageBreak,
+                    Paragraph,
+                    PasteFromMarkdownExperimental,
+                    PasteFromOffice,
+                    PictureEditing,
+                    PlainTableOutput,
+                    RemoveFormat,
+                    ShowBlocks,
+                    SourceEditing,
+                    SpecialCharacters,
+                    SpecialCharactersArrows,
+                    SpecialCharactersCurrency,
+                    SpecialCharactersEssentials,
+                    SpecialCharactersLatin,
+                    SpecialCharactersMathematical,
+                    SpecialCharactersText,
+                    Strikethrough,
+                    Subscript,
+                    Superscript,
+                    Table,
+                    TableCaption,
+                    TableCellProperties,
+                    TableColumnResize,
+                    TableLayout,
+                    TableProperties,
+                    TableToolbar,
+                    TextTransformation,
+                    TodoList,
+                    Underline
+                ],
+                ai: {{
+                    openAI: {{
+                        apiUrl: config.ai_api_url,
+                        requestParameters: {{
+                            model: config.ai_model,
+                            stream: true,
+                            temperature: config.ai_temperature,
+                            top_p: config.ai_top_p
+                        }},
+                        requestHeaders: {{
+                            Authorization: 'Bearer ' + config.ai_api_key
+                        }}
+                    }}
+                }},
+                balloonToolbar: ['aiAssistant', '|', 'bold', 'italic', '|', 'link', 'insertImage', '|', 'bulletedList', 'numberedList'],
+                blockToolbar: [
+                    'aiCommands',
+                    'aiAssistant',
+                    '|',
+                    'fontSize',
+                    'fontColor',
+                    'fontBackgroundColor',
+                    '|',
+                    'bold',
+                    'italic',
+                    '|',
+                    'link',
+                    'insertImage',
+                    'insertTable',
+                    'insertTableLayout',
+                    '|',
+                    'bulletedList',
+                    'numberedList',
+                    'outdent',
+                    'indent'
+                ],
+                cloudServices: {{
+                    tokenUrl: config.cloud_services_token_url,
+                    ApiURL: config.cloud_services_api_url
+                }},
+                 ckbox: {{                  
+                   theme: document.documentElement.getAttribute("data-bs-theme"),
+                   dialog: {{
+                        width: 600,
+                        height: 600,                     
+                    }},
+                 }},
+                fontFamily: {{
+                    supportAllValues: true
+                }},
+                fontSize: {{
+                    options: [10, 12, 14, 'default', 18, 20, 22],
+                    supportAllValues: true
+                }},
+                fullscreen: {{
+                    onEnterCallback: container =>
+                        container.classList.add(
+                            'editor-container',
+                            'editor-container_classic-editor',
+                            'editor-container_include-block-toolbar',
+                            'editor-container_include-fullscreen',
+                            'main-container'
+                        )
+                }},
+                heading: {{
+                    options: [
+                        {{
+                            model: 'paragraph',
+                            title: 'Paragraph',
+                            class: 'ck-heading_paragraph'
+                        }},
+                        {{
+                            model: 'heading1',
+                            view: 'h1',
+                            title: 'Heading 1',
+                            class: 'ck-heading_heading1'
+                        }},
+                        {{
+                            model: 'heading2',
+                            view: 'h2',
+                            title: 'Heading 2',
+                            class: 'ck-heading_heading2'
+                        }},
+                        {{
+                            model: 'heading3',
+                            view: 'h3',
+                            title: 'Heading 3',
+                            class: 'ck-heading_heading3'
+                        }},
+                        {{
+                            model: 'heading4',
+                            view: 'h4',
+                            title: 'Heading 4',
+                            class: 'ck-heading_heading4'
+                        }},
+                        {{
+                            model: 'heading5',
+                            view: 'h5',
+                            title: 'Heading 5',
+                            class: 'ck-heading_heading5'
+                        }},
+                        {{
+                            model: 'heading6',
+                            view: 'h6',
+                            title: 'Heading 6',
+                            class: 'ck-heading_heading6'
+                        }}
+                    ]
+                }},
+                htmlSupport: {{
+                    allow: [
+                        {{
+                            name: /^.*$/,
+                            styles: true,
+                            attributes: true,
+                            classes: true
+                        }}
+                    ], disallow: [
+                            {{  name: 'div'}},
+                            {{  name: 'header'}},
+                            {{  name: 'footer'}}
+                        ]
+                }},
+                image: {{
+                    toolbar: [
+                        'toggleImageCaption',
+                        'imageTextAlternative',
+                        '|',
+                        'imageStyle:inline',
+                        'imageStyle:wrapText',
+                        'imageStyle:breakText',
+                        '|',
+                        'resizeImage',
+                        '|',
+                        'ckboxImageEdit'
+                    ]
+                }},
+               
+                licenseKey: config.license_key,
+                link: {{
+                    addTargetToExternalLinks: true,
+                    defaultProtocol: 'https://',
+                    decorators: {{
+                        toggleDownloadable: {{
+                            mode: 'manual',
+                            label: 'Downloadable',
+                            attributes: {{
+                                download: 'file'
+                            }}
+                        }}
+                    }}
+                }},
+                list: {{
+                    properties: {{
+                        styles: true,
+                        startIndex: true,
+                        reversed: true
+                    }}
+                }},
+                mention: {{
+                    feeds: [
+                        {{
+                            marker: '@',
+                            feed: [ ]
+                        }}
+                    ]
+                }},
+                placeholder: config.placeholder,
+                table: {{
+                    contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
+                }}
+            }};
+
+            ClassicEditor.create(document.querySelector('#editor-{name}'), editorConfig);
+        }});
+        </script>
+        """
+
+
+
+        return mark_safe(html)

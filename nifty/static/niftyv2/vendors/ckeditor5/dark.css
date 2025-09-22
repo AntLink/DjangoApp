@@ -1,0 +1,1157 @@
+/**
+ * CKEditor 5 Dark Theme
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
+ */
+
+:root[data-bs-theme="dark"] .ck-fullscreen__main-wrapper .ck-fullscreen__editable .ck.ck-editor__editable:not(.ck-editor__nested-editable) {
+    background: #23292f;
+
+}
+
+:root[data-bs-theme="dark"] .ckbox {
+    background-color: var(--ck-custom-background, #202940) !important;
+}
+
+:root[data-bs-theme="dark"] {
+    /* Base colors */
+    --ck-color-base-foreground: #2d2d2d;
+    --ck-color-base-background: #23292f;
+    --ck-color-base-border: #444444;
+    --ck-color-base-action: #4a90e2;
+    --ck-color-base-focus: #4a90e2;
+    --ck-color-base-text: #e0e0e0;
+    --ck-color-base-active: #5a9fd4;
+    --ck-color-base-active-focus: #6aa0e0;
+    --ck-color-base-error: #e74c3c;
+
+    /* Focus */
+    --ck-color-focus-border-coordinates: 210, 79%, 54%;
+    --ck-color-focus-border: hsl(var(--ck-color-focus-border-coordinates));
+    --ck-color-focus-outer-shadow: rgba(74, 144, 226, 0.3);
+    --ck-color-focus-disabled-shadow: rgba(74, 144, 226, 0.2);
+    --ck-color-focus-error-shadow: rgba(231, 76, 60, 0.3);
+
+    /* Text */
+    --ck-color-text: var(--ck-color-base-text);
+
+    /* Shadows */
+    --ck-color-shadow-drop: rgba(0, 0, 0, 0.3);
+    --ck-color-shadow-drop-active: rgba(0, 0, 0, 0.4);
+    --ck-color-shadow-inner: rgba(0, 0, 0, 0.2);
+
+    /* Buttons */
+    --ck-color-button-default-background: transparent;
+    --ck-color-button-default-hover-background: #333333;
+    --ck-color-button-default-active-background: #333333;
+    --ck-color-button-default-disabled-background: transparent;
+    --ck-color-button-on-background: #2d4a6b;
+    --ck-color-button-on-hover-background: #345580;
+    --ck-color-button-on-active-background: #345580;
+    --ck-color-button-on-disabled-background: #2a2a2a;
+    --ck-color-button-on-color: #e0e0e0;
+    --ck-color-button-action-background: var(--ck-color-base-action);
+    --ck-color-button-action-hover-background: #5a9fd4;
+    --ck-color-button-action-active-background: #5a9fd4;
+    --ck-color-button-action-disabled-background: #3a7abd;
+    --ck-color-button-action-text: #ffffff;
+    --ck-color-button-save: #27ae60;
+    --ck-color-button-cancel: #e74c3c;
+    --ck-color-switch-button-off-background: #444444;
+    --ck-color-switch-button-off-hover-background: #555555;
+    --ck-color-switch-button-on-background: var(--ck-color-button-action-background);
+    --ck-color-switch-button-on-hover-background: #5a9fd4;
+    --ck-color-switch-button-inner-background: var(--ck-color-base-background);
+    --ck-color-switch-button-inner-shadow: rgba(0, 0, 0, 0.3);
+
+    /* Dropdown */
+    --ck-color-dropdown-panel-background: var(--ck-color-base-background);
+    --ck-color-dropdown-panel-border: var(--ck-color-base-border);
+
+    /* Input */
+    --ck-color-input-background: #2d2d2d;
+    --ck-color-input-border: var(--ck-color-base-border);
+    --ck-color-input-error-border: var(--ck-color-base-error);
+    --ck-color-input-text: var(--ck-color-base-text);
+    --ck-color-input-disabled-background: #252525;
+    --ck-color-input-disabled-border: #444444;
+    --ck-color-input-disabled-text: #777777;
+
+    /* List */
+    --ck-color-list-background: var(--ck-color-base-background);
+    --ck-color-list-button-hover-background: #333333;
+    --ck-color-list-button-on-background: var(--ck-color-button-on-background);
+    --ck-color-list-button-on-background-focus: var(--ck-color-button-on-hover-background);
+    --ck-color-list-button-on-text: var(--ck-color-base-text);
+
+    /* Panel */
+    --ck-color-panel-background: var(--ck-color-base-background);
+    --ck-color-panel-border: var(--ck-color-base-border);
+
+    /* Toolbar */
+    --ck-color-toolbar-background: var(--ck-color-base-background);
+    --ck-color-toolbar-border: var(--ck-color-base-border);
+
+    /* Tooltip */
+    --ck-color-tooltip-background: var(--ck-color-base-text);
+    --ck-color-tooltip-text: var(--ck-color-base-background);
+
+    /* Editor */
+    --ck-color-engine-placeholder-text: #888888;
+    --ck-color-upload-bar-background: #4a90e2;
+    --ck-color-link-default: #6aa0e0;
+    --ck-color-link-selected-background: rgba(106, 160, 224, 0.1);
+    --ck-color-link-fake-selection: rgba(106, 160, 224, 0.3);
+    --ck-color-highlight-background: #966900;
+
+    /* Dialog */
+    --ck-color-dialog-background: var(--ck-color-base-background);
+    --ck-color-dialog-form-header-border: var(--ck-color-base-border);
+
+    /* Labeled Field */
+    --ck-color-labeled-field-label-background: var(--ck-color-base-background);
+
+    /* Resizer */
+    --ck-color-resizer: var(--ck-color-focus-border);
+
+    /* Widget */
+    --ck-color-widget-blurred-border: #505050;
+    --ck-color-widget-hover-border: #4a90e2;
+    --ck-color-widget-editable-focus-background: var(--ck-color-base-background);
+    --ck-color-widget-drag-handler-icon-color: var(--ck-color-base-background);
+
+    /* Table */
+    --ck-color-table-focused-cell-background: rgba(74, 144, 226, 0.2);
+    --ck-color-table-selected-cell-background: rgba(74, 144, 226, 0.3);
+
+    /* Image */
+    --ck-color-image-caption-background: #2d2d2d;
+    --ck-color-image-caption-text: #e0e0e0;
+    --ck-color-image-caption-highlighted-background: #966900;
+
+    /* Accessibility Help */
+    --ck-accessibility-help-dialog-max-width: 600px;
+    --ck-accessibility-help-dialog-max-height: 400px;
+    --ck-accessibility-help-dialog-border-color: #444444;
+    --ck-accessibility-help-dialog-code-background-color: #333333;
+    --ck-accessibility-help-dialog-kbd-shadow-color: #222222;
+
+    /* Balloon */
+    --ck-balloon-border-width: 1px;
+    --ck-balloon-arrow-offset: 2px;
+    --ck-balloon-arrow-height: 10px;
+    --ck-balloon-arrow-half-width: 8px;
+    --ck-balloon-arrow-drop-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+
+    /* Form */
+    --ck-form-header-height: 44px;
+
+    /* Icon */
+    --ck-icon-size: calc(var(--ck-line-height-base) * var(--ck-font-size-normal));
+    --ck-icon-font-size: 0.8333350694em;
+
+    /* Input */
+    --ck-input-width: 18em;
+    --ck-input-text-width: var(--ck-input-width);
+
+    /* Labeled Field */
+    --ck-labeled-field-view-transition: 0.1s cubic-bezier(0, 0, 0.24, 0.95);
+    --ck-labeled-field-empty-unfocused-max-width: 100% -2 *var(--ck-spacing-medium);
+    --ck-labeled-field-label-default-position-x: var(--ck-spacing-medium);
+    --ck-labeled-field-label-default-position-y: calc(var(--ck-font-size-base) * 0.6);
+    --ck-color-labeled-field-label-background: var(--ck-color-base-background);
+
+    /* Link */
+    --ck-link-bookmark-icon-size: calc(var(--ck-icon-size) * 0.7);
+
+    /* List */
+    --ck-dropdown-menu-menu-item-min-width: 18em;
+
+    /* Menu Bar */
+    --ck-menu-bar-menu-item-min-width: 18em;
+    --ck-menu-bar-menu-panel-max-width: 75vw;
+
+    /* Balloon Panel */
+    --ck-balloon-fake-panel-offset-horizontal: 6px;
+    --ck-balloon-fake-panel-offset-vertical: 6px;
+
+    /* Responsive Form */
+    --ck-responsive-form-min-width: 300px;
+
+    /* Search */
+    --ck-search-field-view-horizontal-spacing: calc(var(--ck-icon-size) + var(--ck-spacing-medium));
+
+    /* Spinner */
+    --ck-toolbar-spinner-size: 18px;
+
+    /* Toolbar */
+    --ck-border-radius: 2px;
+    --ck-inner-shadow: 2px 2px 3px var(--ck-color-shadow-inner) inset;
+    --ck-drop-shadow: 0 1px 2px 1px var(--ck-color-shadow-drop);
+    --ck-spacing-unit: 0.6em;
+    --ck-spacing-large: calc(var(--ck-spacing-unit) * 1.5);
+    --ck-spacing-standard: var(--ck-spacing-unit);
+    --ck-spacing-medium: calc(var(--ck-spacing-unit) * 0.8);
+    --ck-spacing-small: calc(var(--ck-spacing-unit) * 0.5);
+    --ck-spacing-tiny: calc(var(--ck-spacing-unit) * 0.3);
+    --ck-spacing-extra-tiny: calc(var(--ck-spacing-unit) * 0.16);
+
+    /* UI Component */
+    --ck-ui-component-min-height: 2.3em;
+
+    /* Font */
+    --ck-font-size-base: 13px;
+    --ck-line-height-base: 1.84615;
+    --ck-font-face: Helvetica, Arial, Tahoma, Verdana, Sans-Serif;
+    --ck-font-size-tiny: 0.7em;
+    --ck-font-size-small: 0.75em;
+    --ck-font-size-normal: 1em;
+    --ck-font-size-big: 1.4em;
+    --ck-font-size-large: 1.8em;
+
+    /* Content */
+    --ck-content-font-family: var(--ck-font-face);
+    --ck-content-font-size: var(--ck-font-size-normal);
+    --ck-content-font-color: var(--ck-color-base-text);
+    --ck-content-line-height: 1.5;
+    --ck-content-word-break: break-word;
+
+    /* Disabled */
+    --ck-disabled-opacity: 0.5;
+
+    /* Focus */
+    --ck-focus-outer-shadow-geometry: 0 0 0 3px;
+    --ck-focus-outer-shadow: var(--ck-focus-outer-shadow-geometry) var(--ck-color-focus-outer-shadow);
+    --ck-focus-disabled-outer-shadow: var(--ck-focus-outer-shadow-geometry) var(--ck-color-focus-disabled-shadow);
+    --ck-focus-error-outer-shadow: var(--ck-focus-outer-shadow-geometry) var(--ck-color-focus-error-shadow);
+    --ck-focus-ring: 1px solid var(--ck-color-focus-border);
+
+    /* Z-index */
+    --ck-z-default: 1;
+    --ck-z-panel: calc(var(--ck-z-default) + 999);
+    --ck-z-dialog: 9999;
+
+    /* Custom */
+    --ck-color-split-button-hover-background: #333333;
+    --ck-color-split-button-hover-border: #555555;
+
+    /* Block Toolbar */
+    --ck-color-block-toolbar-button: var(--ck-color-base-text);
+    --ck-block-toolbar-button-size: var(--ck-font-size-normal);
+
+    /* Color Grid */
+    --ck-color-grid-tile-size: 24px;
+    --ck-color-color-grid-check-icon: #166fd4;
+
+    /* Dialog */
+    --ck-dialog-overlay-background-color: rgba(0, 0, 0, 0.7);
+    --ck-dialog-drop-shadow: 0px 0px 6px 2px rgba(0, 0, 0, 0.3);
+    --ck-dialog-max-width: 100vw;
+    --ck-dialog-max-height: 90vh;
+
+    /* Dropdown */
+    --ck-dropdown-arrow-size: calc(var(--ck-icon-size) * 0.5);
+
+    /* Form */
+    --ck-form-default-width: 340px;
+
+    /* HTML Embed */
+    --ck-html-embed-content-width: calc(100% - var(--ck-icon-size) * 1.5);
+    --ck-html-embed-source-height: 10em;
+    --ck-html-embed-unfocused-outline-width: 1px;
+    --ck-html-embed-content-min-height: calc(var(--ck-icon-size) + var(--ck-spacing-standard));
+    --ck-html-embed-source-disabled-background: var(--ck-color-base-foreground);
+    --ck-html-embed-source-disabled-color: #737373;
+
+    /* Image */
+    --ck-image-insert-insert-by-url-width: 250px;
+    --ck-color-image-upload-icon: #ffffff;
+    --ck-color-image-upload-icon-background: #008a00;
+    --ck-image-upload-icon-size: 20;
+    --ck-image-upload-icon-width: 2px;
+    --ck-image-upload-icon-is-visible: clamp(0px, 100% - 50px, 1px);
+
+    /* Link */
+    --ck-link-panel-width: 340px;
+    --ck-link-provider-list-item-text-height: calc(var(--ck-line-height-base) * var(--ck-font-size-base));
+    --ck-link-provider-list-item-height: calc(var(--ck-link-provider-list-item-text-height) + var(--ck-spacing-small) + var(--ck-spacing-small));
+
+    /* List Properties */
+    --ck-list-style-button-size: 44px;
+
+    /* Media Embed */
+    --ck-media-embed-placeholder-icon-size: 3em;
+    --ck-color-media-embed-placeholder-url-text: #888888;
+    --ck-color-media-embed-placeholder-url-text-hover: var(--ck-color-base-text);
+
+    /* Mention */
+    --ck-content-color-mention-background: rgba(153, 0, 48, 0.2);
+    --ck-content-color-mention-text: #ff6b9d;
+
+    /* Restricted Editing */
+    --ck-color-restricted-editing-exception-background: rgba(255, 169, 77, 0.2);
+    --ck-color-restricted-editing-exception-hover-background: rgba(255, 169, 77, 0.35);
+    --ck-color-restricted-editing-exception-brackets: rgba(204, 105, 0, 0.4);
+    --ck-color-restricted-editing-selected-exception-background: rgba(255, 169, 77, 0.5);
+    --ck-color-restricted-editing-selected-exception-brackets: rgba(204, 105, 0, 0.6);
+
+    /* Special Characters */
+    --ck-character-grid-tile-size: 24px;
+
+    /* Style Panel */
+    --ck-style-panel-button-width: 120px;
+    --ck-style-panel-button-height: 80px;
+    --ck-style-panel-button-label-background: #2d2d2d;
+    --ck-style-panel-button-hover-label-background: #333333;
+    --ck-style-panel-button-hover-border-color: #555555;
+
+    /* Table */
+    --ck-color-table-layout-widget-type-around-button-size: 16px;
+    --ck-table-layout-widget-type-around-icon-width: 10px;
+    --ck-table-layout-widget-type-around-icon-height: 8px;
+    --ck-table-layout-widget-handler-icon-size: 10px;
+    --ck-table-layout-default-border-color: #444444;
+
+    /* Widget */
+    --ck-widget-outline-thickness: 3px;
+    --ck-widget-handler-icon-size: 16px;
+    --ck-widget-handler-animation-duration: 200ms;
+    --ck-widget-handler-animation-curve: ease;
+
+    /* Type Around */
+    --ck-widget-type-around-button-size: 20px;
+    --ck-color-widget-type-around-button-active: var(--ck-color-focus-border);
+    --ck-color-widget-type-around-button-hover: var(--ck-color-widget-hover-border);
+    --ck-color-widget-type-around-button-blurred-editable: var(--ck-color-widget-blurred-border);
+    --ck-color-widget-type-around-button-radar-start-alpha: 0;
+    --ck-color-widget-type-around-button-radar-end-alpha: 0.3;
+    --ck-color-widget-type-around-button-icon: var(--ck-color-base-background);
+
+    /* Resizer */
+    --ck-resizer-size: 10px;
+    --ck-resizer-offset: calc(var(--ck-resizer-size) / -2 - 2px);
+    --ck-resizer-border-width: 1px;
+
+    /* Show Blocks */
+    --ck-show-blocks-border-color: #757575;
+
+    /* Source Editing */
+    --ck-content-color-source-editing-background: #2d2d2d;
+    --ck-content-color-source-editing-text: #e0e0e0;
+
+    /* Table Properties */
+    --ck-table-properties-error-arrow-size: 6px;
+    --ck-table-properties-min-error-width: 150px;
+
+    /* Todo List */
+    --ck-content-todo-list-checkmark-size: 16px;
+
+    /* Fullscreen */
+    --ck-fullscreen-editor-top-margin: 28px;
+    --ck-fullscreen-editor-bottom-margin: 28px;
+
+    /* Highlight */
+    --ck-content-highlight-marker-yellow: #966900;
+    --ck-content-highlight-marker-green: #3a7a3a;
+    --ck-content-highlight-marker-pink: #a83a7a;
+    --ck-content-highlight-marker-blue: #3a6aa8;
+    --ck-content-highlight-pen-red: #e74c3c;
+    --ck-content-highlight-pen-green: #27ae60;
+
+    /* Page Break */
+    --ck-color-page-break-background: #2d2d2d;
+    --ck-color-page-break-text: #e0e0e0;
+    --ck-color-page-break-border: #444444;
+
+    /* Powered By */
+    --ck-powered-by-font-size: calc(var(--ck-font-size-base) * 7.5 / 13);
+    --ck-powered-by-line-height: calc(var(--ck-font-size-base) * 10 / 13);
+    --ck-powered-by-letter-spacing: calc(var(--ck-font-size-base) * -0.2 / 13);
+    --ck-powered-by-padding-vertical: 2px;
+    --ck-powered-by-padding-horizontal: 4px;
+    --ck-powered-by-text-color: #888888;
+    --ck-powered-by-border-radius: var(--ck-border-radius);
+    --ck-powered-by-background: #2d2d2d;
+    --ck-powered-by-border-color: var(--ck-color-focus-border);
+    --ck-powered-by-svg-width: 53;
+    --ck-powered-by-svg-height: 10;
+    --ck-powered-by-icon-width: calc(var(--ck-font-size-base) * var(--ck-powered-by-svg-width) / 13);
+    --ck-powered-by-icon-height: calc(var(--ck-font-size-base) * var(--ck-powered-by-svg-height) / 13);
+
+    /* Evaluation Badge */
+    --ck-evaluation-badge-font-size: calc(var(--ck-font-size-base) * 7.5 / 13);
+    --ck-evaluation-badge-line-height: calc(var(--ck-font-size-base) * 7.5 / 13);
+    --ck-evaluation-badge-letter-spacing: calc(var(--ck-font-size-base) * -0.2 / 13);
+    --ck-evaluation-badge-padding-vertical: 2px;
+    --ck-evaluation-badge-padding-horizontal: 4px;
+    --ck-evaluation-badge-text-color: #888888;
+    --ck-evaluation-badge-border-radius: var(--ck-border-radius);
+    --ck-evaluation-badge-background: #2d2d2d;
+    --ck-evaluation-badge-border-color: var(--ck-color-focus-border);
+
+    /* Content Styles */
+    --ck-content-color-image-caption-background: #2d2d2d;
+    --ck-content-color-image-caption-text: #e0e0e0;
+    --ck-color-image-caption-highlighted-background: #966900;
+
+    /* Table Content */
+    --ck-content-color-table-caption-background: #2d2d2d;
+    --ck-content-color-table-caption-text: #e0e0e0;
+    --ck-color-table-caption-highlighted-background: #966900;
+
+    /* Code Block */
+    --ck-color-code-block-label-background: #555555;
+
+    /* Editable Blur */
+    --ck-color-editable-blur-selection: #444444;
+
+    /* Clipboard */
+    --ck-color-clipboard-drop-target-dot-width: 12px;
+    --ck-color-clipboard-drop-target-dot-height: 8px;
+    --ck-color-clipboard-drop-target-color: var(--ck-color-focus-border);
+
+    /* Find and Replace */
+    --ck-color-find-result-background: #966900;
+    --ck-color-find-result-selected: #e67e22;
+
+    /* Font Size */
+    --ck-content-font-size-tiny: 1em;
+    --ck-content-font-size-small: 5em;
+    --ck-content-font-size-big: 1.4em;
+    --ck-content-font-size-huge: 1.8em;
+
+    /* Fullscreen */
+    --ck-z-fullscreen: 10000;
+
+    /* Heading */
+    --ck-content-color-heading-background: transparent;
+    --ck-content-color-heading-text: var(--ck-color-base-text);
+
+    /* Horizontal Line */
+    --ck-content-color-horizontal-line-background: #444444;
+
+    /* Iframe */
+    --ck-content-color-iframe-border: #444444;
+
+    /* List */
+    --ck-content-color-list-marker-color: var(--ck-content-font-color);
+    --ck-content-color-list-marker-font-family: var(--ck-content-font-family);
+    --ck-content-color-list-marker-font-size: var(--ck-content-font-size);
+
+    /* Media */
+    --ck-content-color-media-background: #2d2d2d;
+    --ck-content-color-media-border: #444444;
+
+    /* Page Break */
+    --ck-content-color-page-break-background: #2d2d2d;
+    --ck-content-color-page-break-border: #444444;
+
+    /* Quote */
+    --ck-content-color-quote-background: transparent;
+    --ck-content-color-quote-border: #444444;
+
+    /* Table */
+    --ck-content-color-table-background: transparent;
+    --ck-content-color-table-border: #444444;
+    --ck-content-color-table-header-background: #333333;
+
+    /* Todo List */
+    --ck-content-color-todo-list-background: transparent;
+    --ck-content-color-todo-list-border: #444444;
+}
+
+/* Dark mode adjustments for specific components */
+:root[data-bs-theme="dark"] .ck.ck-editor__editable {
+    background-color: var(--ck-color-base-background);
+    color: var(--ck-color-base-text);
+    font-size: 16px;
+}
+
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable.ck-focused {
+    border-color: var(--ck-color-focus-border);
+    box-shadow: var(--ck-inner-shadow), 0 0;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-toolbar {
+    background-color: var(--ck-color-toolbar-background);
+    border-color: var(--ck-color-toolbar-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-button {
+    color: var(--ck-color-base-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-button:not(.ck-disabled):hover {
+    background-color: var(--ck-color-button-default-hover-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-button.ck-on {
+    background-color: var(--ck-color-button-on-background);
+    color: var(--ck-color-button-on-color);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-dropdown .ck-dropdown__panel {
+    background-color: var(--ck-color-dropdown-panel-background);
+    border-color: var(--ck-color-dropdown-panel-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-input {
+    background-color: var(--ck-color-input-background);
+    border-color: var(--ck-color-input-border);
+    color: var(--ck-color-input-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-list {
+    background-color: var(--ck-color-list-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-balloon-panel {
+    background-color: var(--ck-color-panel-background);
+    border-color: var(--ck-color-panel-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-dialog {
+    background-color: var(--ck-color-dialog-background);
+    border-color: var(--ck-color-base-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-labeled-field-view .ck.ck-label {
+    color: var(--ck-color-base-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-widget {
+    outline-color: var(--ck-color-widget-blurred-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-widget.ck-widget_selected,
+:root[data-bs-theme="dark"] .ck.ck-widget.ck-widget_selected:hover {
+    outline-color: var(--ck-color-focus-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-widget:hover {
+    outline-color: var(--ck-color-widget-hover-border);
+}
+
+:root[data-bs-theme="dark"] .ck-content h1,
+:root[data-bs-theme="dark"] .ck-content h2,
+:root[data-bs-theme="dark"] .ck-content h3,
+:root[data-bs-theme="dark"] .ck-content h4,
+:root[data-bs-theme="dark"] .ck-content h5,
+:root[data-bs-theme="dark"] .ck-content h6 {
+    color: var(--ck-color-base-text);
+}
+
+:root[data-bs-theme="dark"] .ck-content blockquote {
+    border-left-color: var(--ck-color-base-border);
+    color: var(--ck-color-base-text);
+}
+
+:root[data-bs-theme="dark"] .ck-content code {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--ck-color-base-text);
+}
+
+:root[data-bs-theme="dark"] .ck-content pre {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: var(--ck-color-base-border);
+    color: var(--ck-color-base-text);
+}
+
+:root[data-bs-theme="dark"] .ck-content table {
+    border-color: var(--ck-color-base-border);
+}
+
+:root[data-bs-theme="dark"] .ck-content table th,
+:root[data-bs-theme="dark"] .ck-content table td {
+    border-color: var(--ck-color-base-border);
+}
+
+:root[data-bs-theme="dark"] .ck-content table th {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+:root[data-bs-theme="dark"] .ck-content a {
+    color: var(--ck-color-link-default);
+}
+
+:root[data-bs-theme="dark"] .ck-content hr {
+    background-color: var(--ck-color-base-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .image > figcaption {
+    background-color: var(--ck-content-color-image-caption-background);
+    color: var(--ck-content-color-image-caption-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .table > figcaption,
+:root[data-bs-theme="dark"] .ck.ck-editor__editable figure.table > table > caption {
+    background-color: var(--ck-content-color-table-caption-background);
+    color: var(--ck-content-color-table-caption-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .page-break {
+    background-color: var(--ck-color-page-break-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .page-break__label {
+    background-color: var(--ck-color-page-break-background);
+    border-color: var(--ck-color-page-break-border);
+    color: var(--ck-color-page-break-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .media .ck-media__placeholder {
+    background-color: var(--ck-content-color-media-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .todo-list .todo-list__label > input:before {
+    border-color: var(--ck-color-base-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .todo-list .todo-list__label > input[checked]:before {
+    background-color: var(--ck-color-button-action-background);
+    border-color: var(--ck-color-button-action-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .mention {
+    background-color: var(--ck-content-color-mention-background);
+    color: var(--ck-content-color-mention-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .restricted-editing-exception {
+    background-color: var(--ck-color-restricted-editing-exception-background);
+    border-color: var(--ck-color-restricted-editing-exception-brackets);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .restricted-editing-exception:hover {
+    background-color: var(--ck-color-restricted-editing-exception-hover-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .restricted-editing-exception.restricted-editing-exception_selected {
+    background-color: var(--ck-color-restricted-editing-selected-exception-background);
+    border-color: var(--ck-color-restricted-editing-selected-exception-brackets);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-find-result {
+    background-color: var(--ck-color-find-result-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-find-result_selected {
+    background-color: var(--ck-color-find-result-selected);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .marker-yellow {
+    background-color: var(--ck-content-highlight-marker-yellow);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .marker-green {
+    background-color: var(--ck-content-highlight-marker-green);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .marker-pink {
+    background-color: var(--ck-content-highlight-marker-pink);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .marker-blue {
+    background-color: var(--ck-content-highlight-marker-blue);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .pen-red {
+    color: var(--ck-content-highlight-pen-red);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .pen-green {
+    color: var(--ck-content-highlight-pen-green);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .text-tiny {
+    font-size: var(--ck-content-font-size-tiny);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .text-small {
+    font-size: var(--ck-content-font-size-small);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .text-big {
+    font-size: var(--ck-content-font-size-big);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .text-huge {
+    font-size: var(--ck-content-font-size-huge);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-table-bogus-paragraph {
+    color: #e1e1e1;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-table-selected-cell {
+    background-color: var(--ck-color-table-selected-cell-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-table-focused-cell {
+    background-color: var(--ck-color-table-focused-cell-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.table {
+    background-color: transparent;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.table .ck-widget__selection-handle {
+    background-color: var(--ck-color-widget-blurred-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.table .ck-widget__selection-handle:hover {
+    background-color: var(--ck-color-widget-hover-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.table.ck-widget_selected .ck-widget__selection-handle {
+    background-color: var(--ck-color-focus-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.image {
+    background-color: transparent;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.image .ck-widget__selection-handle {
+    background-color: var(--ck-color-widget-blurred-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.image .ck-widget__selection-handle:hover {
+    background-color: var(--ck-color-widget-hover-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.image.ck-widget_selected .ck-widget__selection-handle {
+    background-color: var(--ck-color-focus-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.media {
+    background-color: transparent;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.media .ck-widget__selection-handle {
+    background-color: var(--ck-color-widget-blurred-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.media .ck-widget__selection-handle:hover {
+    background-color: var(--ck-color-widget-hover-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.media.ck-widget_selected .ck-widget__selection-handle {
+    background-color: var(--ck-color-focus-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.blockquote {
+    background-color: transparent;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.blockquote .ck-widget__selection-handle {
+    background-color: var(--ck-color-widget-blurred-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.blockquote .ck-widget__selection-handle:hover {
+    background-color: var(--ck-color-widget-hover-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.blockquote.ck-widget_selected .ck-widget__selection-handle {
+    background-color: var(--ck-color-focus-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.code-block {
+    background-color: transparent;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.code-block .ck-widget__selection-handle {
+    background-color: var(--ck-color-widget-blurred-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.code-block .ck-widget__selection-handle:hover {
+    background-color: var(--ck-color-widget-hover-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.code-block.ck-widget_selected .ck-widget__selection-handle {
+    background-color: var(--ck-color-focus-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.html-embed {
+    background-color: transparent;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.html-embed .ck-widget__selection-handle {
+    background-color: var(--ck-color-widget-blurred-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.html-embed .ck-widget__selection-handle:hover {
+    background-color: var(--ck-color-widget-hover-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.html-embed.ck-widget_selected .ck-widget__selection-handle {
+    background-color: var(--ck-color-focus-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.page-break {
+    background-color: transparent;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.page-break .ck-widget__selection-handle {
+    background-color: var(--ck-color-widget-blurred-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.page-break .ck-widget__selection-handle:hover {
+    background-color: var(--ck-color-widget-hover-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.page-break.ck-widget_selected .ck-widget__selection-handle {
+    background-color: var(--ck-color-focus-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.todolist {
+    background-color: transparent;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.todolist .ck-widget__selection-handle {
+    background-color: var(--ck-color-widget-blurred-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.todolist .ck-widget__selection-handle:hover {
+    background-color: var(--ck-color-widget-hover-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck-widget.todolist.ck-widget_selected .ck-widget__selection-handle {
+    background-color: var(--ck-color-focus-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-insert-table-dropdown__grid-box:hover {
+    background-color: var(--ck-color-button-default-hover-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-insert-table-dropdown__grid-box.ck-on {
+    background-color: var(--ck-color-button-on-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-character-grid__tile:hover {
+    background-color: var(--ck-color-button-default-hover-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-character-grid__tile:focus {
+    background-color: var(--ck-color-button-on-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-style-grid .ck-style-grid__button:hover {
+    background-color: var(--ck-color-button-default-hover-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-style-grid .ck-style-grid__button.ck-on {
+    background-color: var(--ck-color-button-on-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-color-grid__tile:hover {
+    background-color: var(--ck-color-button-default-hover-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-color-grid__tile:focus {
+    background-color: var(--ck-color-button-on-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-emoji__tile:hover {
+    background-color: var(--ck-color-button-default-hover-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-emoji__tile:focus {
+    background-color: var(--ck-color-button-on-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-list__item > .ck-button:hover {
+    background-color: var(--ck-color-button-default-hover-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-list__item > .ck-button.ck-on {
+    background-color: var(--ck-color-button-on-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-menu-bar__menu__button:hover {
+    background-color: var(--ck-color-button-default-hover-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-menu-bar__menu__button.ck-on {
+    background-color: var(--ck-color-button-on-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-splitbutton:hover > .ck-splitbutton__action,
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-splitbutton:hover > .ck-splitbutton__arrow {
+    background-color: var(--ck-color-button-default-hover-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-splitbutton.ck-splitbutton_open > .ck-splitbutton__action,
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-splitbutton.ck-splitbutton_open > .ck-splitbutton__arrow {
+    background-color: var(--ck-color-button-on-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-toolbar__separator {
+    background-color: var(--ck-color-toolbar-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-list__separator {
+    background-color: var(--ck-color-toolbar-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__header {
+    border-bottom-color: var(--ck-color-toolbar-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row {
+    border-bottom-color: var(--ck-color-toolbar-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row:last-child {
+    border-bottom-color: transparent;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-label {
+    color: var(--ck-color-base-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-input {
+    background-color: var(--ck-color-input-background);
+    border-color: var(--ck-color-input-border);
+    color: var(--ck-color-input-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-input:focus {
+    border-color: var(--ck-color-focus-border);
+    box-shadow: var(--ck-focus-outer-shadow), 0 0;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-dropdown .ck-dropdown__button {
+    background-color: var(--ck-color-input-background);
+    border-color: var(--ck-color-input-border);
+    color: var(--ck-color-input-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-dropdown .ck-dropdown__button:hover {
+    background-color: var(--ck-color-button-default-hover-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-dropdown .ck-dropdown__button:focus {
+    border-color: var(--ck-color-focus-border);
+    box-shadow: var(--ck-focus-outer-shadow), 0 0;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-dropdown .ck-dropdown__panel {
+    background-color: var(--ck-color-dropdown-panel-background);
+    border-color: var(--ck-color-dropdown-panel-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-button {
+    background-color: var(--ck-color-button-default-background);
+    border-color: var(--ck-color-input-border);
+    color: var(--ck-color-input-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-button:hover {
+    background-color: var(--ck-color-button-default-hover-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-button:focus {
+    border-color: var(--ck-color-focus-border);
+    box-shadow: var(--ck-focus-outer-shadow), 0 0;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-button.ck-on {
+    background-color: var(--ck-color-button-on-background);
+    color: var(--ck-color-button-on-color);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-button.ck-button-action {
+    background-color: var(--ck-color-button-action-background);
+    color: var(--ck-color-button-action-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-button.ck-button-action:hover {
+    background-color: var(--ck-color-button-action-hover-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-button.ck-disabled {
+    background-color: var(--ck-color-button-default-disabled-background);
+    color: var(--ck-color-input-disabled-text);
+    opacity: var(--ck-disabled-opacity);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-switchbutton {
+    color: var(--ck-color-base-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-switchbutton .ck-button__toggle {
+    background-color: var(--ck-color-switch-button-off-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-switchbutton .ck-button__toggle:hover {
+    background-color: var(--ck-color-switch-button-off-hover-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-switchbutton.ck-on .ck-button__toggle {
+    background-color: var(--ck-color-switch-button-on-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-switchbutton.ck-on .ck-button__toggle:hover {
+    background-color: var(--ck-color-switch-button-on-hover-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-switchbutton .ck-button__toggle .ck-button__toggle__inner {
+    background-color: var(--ck-color-switch-button-inner-background);
+    box-shadow: var(--ck-color-switch-button-inner-shadow);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view .ck.ck-label {
+    color: var(--ck-color-base-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view .ck.ck-input {
+    background-color: var(--ck-color-input-background);
+    border-color: var(--ck-color-input-border);
+    color: var(--ck-color-input-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view .ck.ck-input:focus {
+    border-color: var(--ck-color-focus-border);
+    box-shadow: var(--ck-focus-outer-shadow), 0 0;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view .ck.ck-labeled-field-view__status {
+    background-color: var(--ck-color-base-error);
+    color: var(--ck-color-base-background);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view .ck.ck-labeled-field-view__status:after {
+    border-color: transparent transparent var(--ck-color-base-error) transparent;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_error .ck.ck-input {
+    border-color: var(--ck-color-input-error-border);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_error .ck.ck-input:focus {
+    box-shadow: var(--ck-focus-error-outer-shadow), 0 0;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_error .ck.ck-labeled-field-view__status {
+    display: block;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-disabled .ck.ck-input {
+    background-color: var(--ck-color-input-disabled-background);
+    border-color: var(--ck-color-input-disabled-border);
+    color: var(--ck-color-input-disabled-text);
+    opacity: var(--ck-disabled-opacity);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-disabled .ck.ck-label {
+    color: var(--ck-color-input-disabled-text);
+    opacity: var(--ck-disabled-opacity);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-disabled .ck.ck-labeled-field-view__status {
+    display: none;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty .ck.ck-label {
+    color: var(--ck-color-input-disabled-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty .ck.ck-input {
+    color: var(--ck-color-input-disabled-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty .ck.ck-labeled-field-view__status {
+    display: none;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty.ck-labeled-field-view_focused .ck.ck-label {
+    color: var(--ck-color-base-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty.ck-labeled-field-view_focused .ck.ck-input {
+    color: var(--ck-color-input-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty.ck-labeled-field-view_focused .ck.ck-labeled-field-view__status {
+    display: none;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty.ck-labeled-field-view_focused .ck.ck-input:focus {
+    border-color: var(--ck-color-focus-border);
+    box-shadow: var(--ck-focus-outer-shadow), 0 0;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty.ck-labeled-field-view_focused .ck.ck-input:focus + .ck.ck-labeled-field-view__status {
+    display: none;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty.ck-labeled-field-view_placeholder .ck.ck-label {
+    color: var(--ck-color-input-disabled-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty.ck-labeled-field-view_placeholder .ck.ck-input {
+    color: var(--ck-color-input-disabled-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty.ck-labeled-field-view_placeholder .ck.ck-labeled-field-view__status {
+    display: none;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty.ck-labeled-field-view_placeholder.ck-labeled-field-view_focused .ck.ck-label {
+    color: var(--ck-color-base-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty.ck-labeled-field-view_placeholder.ck-labeled-field-view_focused .ck.ck-input {
+    color: var(--ck-color-input-text);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty.ck-labeled-field-view_placeholder.ck-labeled-field-view_focused .ck.ck-labeled-field-view__status {
+    display: none;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty.ck-labeled-field-view_placeholder.ck-labeled-field-view_focused .ck.ck-input:focus {
+    border-color: var(--ck-color-focus-border);
+    box-shadow: var(--ck-focus-outer-shadow), 0 0;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty.ck-labeled-field-view_placeholder.ck-labeled-field-view_focused .ck.ck-input:focus + .ck.ck-labeled-field-view__status {
+    display: none;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty.ck-labeled-field-view_placeholder.ck-labeled-field-view_disabled .ck.ck-label {
+    color: var(--ck-color-input-disabled-text);
+    opacity: var(--ck-disabled-opacity);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty.ck-labeled-field-view_placeholder.ck-labeled-field-view_disabled .ck.ck-input {
+    background-color: var(--ck-color-input-disabled-background);
+    border-color: var(--ck-color-input-disabled-border);
+    color: var(--ck-color-input-disabled-text);
+    opacity: var(--ck-disabled-opacity);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty.ck-labeled-field-view_placeholder.ck-labeled-field-view_disabled .ck.ck-labeled-field-view__status {
+    display: none;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty.ck-labeled-field-view_placeholder.ck-labeled-field_view_disabled .ck.ck-label {
+    color: var(--ck-color-input-disabled-text);
+    opacity: var(--ck-disabled-opacity);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty.ck-labeled-field-view_placeholder.ck-labeled-field_view_disabled .ck.ck-input {
+    background-color: var(--ck-color-input-disabled-background);
+    border-color: var(--ck-color-input-disabled-border);
+    color: var(--ck-color-input-disabled-text);
+    opacity: var(--ck-disabled-opacity);
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty.ck-labeled-field-view_placeholder.ck-labeled-field_view_disabled .ck.ck-labeled-field-view__status {
+    display: none;
+}
+
+:root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty.ck-labeled-field-view_placeholder.ck-labeled-field_view_disabled .ck.ck-input:focus {
+    border-color: var(--ck-color-input-disabled-border);
+    box-shadow: var(--ck-focus-disabled-outer-shadow), 0 0;
+}

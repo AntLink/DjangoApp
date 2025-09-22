@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from .models import Taxonomy, Word
+from nifty.widgets import CKEditorWidget
 from .widgets import (
     TreeCheckboxSelectMultiple,
     TitleTextInput,
@@ -118,7 +119,8 @@ class PostForm(forms.ModelForm):
         widgets = {
             'title': TitleTextInput(attrs={'placeholder': _('Add title here'), 'style': 'font-size: 20px;height: 40px;'}),
             # 'content': RedactorWidget(allow_images_upload=True, allow_images_json=True, attrs={'placeholder': _('Add content here')}),
-            'content': QuillWidget(),
+            # 'content': QuillWidget(),
+            'content': CKEditorWidget(),
             # 'created_at': SuitSplitDateTimeWidget,
             'user': UserSelectInput,
             'image': ImageHideInput,
