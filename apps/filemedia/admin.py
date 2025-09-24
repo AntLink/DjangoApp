@@ -430,7 +430,7 @@ class ImageAdmin(Admin):
             mi.delete_all_image(path, img.unique_name)
 
             img.user = request.user
-            img.file = os.sep + 'media' + os.sep + 'images' + os.sep + path_date + os.sep + file_name
+            img.file = 'images' + os.sep + path_date + os.sep + file_name
             img.path = path_date
             img.unique_name = file_name
             img.size = self.humanbytes(file.size)
@@ -900,7 +900,7 @@ class FileAdmin(Admin):
             ManageFile().delete_file(path, file.unique_name)
 
             file.user = request.user
-            file.file = os.sep + 'media' + os.sep + 'files' + os.sep + path_date + os.sep + unix_name
+            file.file = 'files' + os.sep + path_date + os.sep + unix_name
             file.path = path_date
             file.name = files.name
             file.unique_name = unix_name
@@ -923,7 +923,7 @@ class FileAdmin(Admin):
             file = File()
             file.user = request.user
             file.name = files.name
-            file.file = os.sep + 'media' + os.sep + 'files' + os.sep + path_date + os.sep + unix_name
+            file.file = 'files' + os.sep + path_date + os.sep + unix_name
             file.path = path_date
             file.size = self.humanbytes(files.size)
             file.unique_name = unix_name

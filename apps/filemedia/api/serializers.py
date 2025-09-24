@@ -128,7 +128,7 @@ class MediaListSerializer(serializers.ModelSerializer):
 
     def get_imageUrls(self, obj):
         """Generate image URLs for different sizes with new folder structure"""
-        if obj.type != 'p':  # Only for images
+        if obj.file_type not in ['jpg', 'png', 'jpeg', 'gif', 'webp','bmp','webp','tiff']:
             return {}
 
         image_urls = {}
@@ -224,15 +224,23 @@ class MediaListSerializer(serializers.ModelSerializer):
         }
 
         # Only process if file is an image and file is available
-        if obj.type == 'p':
+        if obj.file_type in ['jpg', 'png', 'jpeg', 'gif', 'webp','bmp','webp','tiff']:
             try:
+                if obj.type == 'p':
                 # Build file path
-                file_path = os.path.join(
-                    settings.MEDIA_ROOT,
-                    'images',
-                    obj.path,
-                    obj.unique_name
-                )
+                    file_path = os.path.join(
+                        settings.MEDIA_ROOT,
+                        'images',
+                        obj.path,
+                        obj.unique_name
+                    )
+                else:
+                    file_path = os.path.join(
+                        settings.MEDIA_ROOT,
+                        'files',
+                        obj.path,
+                        obj.unique_name
+                    )
 
                 print(f"Path file: {file_path}")
                 print(f"File exists: {os.path.exists(file_path)}")
@@ -263,5 +271,7 @@ class MediaListSerializer(serializers.ModelSerializer):
                 traceback.print_exc()
                 metadata['metadataProcessingStatus'] = 'error'
                 metadata['analysisProcessingStatus'] = 'failed'
+        else:
+            metadata = []
 
         return metadata

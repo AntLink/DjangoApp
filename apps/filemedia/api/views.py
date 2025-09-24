@@ -193,6 +193,7 @@ class MediaViewSet(viewsets.ModelViewSet):
 
     def serve_thumbnail(self, request, media_id, size):
         """Serve thumbnail image file directly"""
+
         try:
             # Get media object
             media = get_object_or_404(Media, id=media_id)
@@ -212,6 +213,7 @@ class MediaViewSet(viewsets.ModelViewSet):
             # Get the original file path
             original_path = media.file.path
 
+
             # Construct thumbnail path based on your storage structure
             # Assuming thumbnails are stored in: media_root/thumbnail/{size}/filename
             file_dir = os.path.dirname(original_path)
@@ -223,6 +225,7 @@ class MediaViewSet(viewsets.ModelViewSet):
 
             # Alternative path if using different structure
             # thumb_path = os.path.join(settings.MEDIA_ROOT, 'thumbnail', str(size), file_name)
+
 
             # Check if thumbnail exists
             if not os.path.exists(thumb_path):
