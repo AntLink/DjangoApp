@@ -1,8 +1,8 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from .widgets import MCDatePickerWidget
-from users.widgets import ProfileImageWidget
-from filemedia.widgets import FileMediaPhoto
+from apps.users.widgets import ProfileImageWidget
+from apps.filemedia.widgets import FileMediaPhoto
 
 class UserProfileForm(forms.Form):
     def __init__(self, user, *args, **kwargs):

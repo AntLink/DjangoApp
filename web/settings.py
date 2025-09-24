@@ -14,7 +14,9 @@ import os
 from django.conf.locale.es import formats
 from django.utils.translation import gettext_lazy as _
 from nifty import VERSION
-
+# JWT Settings
+JWT_SECRET_KEY = '89asd7klasdoas'
+APPEND_SLASH = False
 formats.DATETIME_FORMAT = '%b. %d, %Y, %I:%M %p'
 
 # html to Pdf
@@ -46,11 +48,30 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'mptt',
+    'rest_framework',
+    'django_filters',
     'word',
-    'filemedia',
-    'users',
+    'apps.users',
+    'apps.filemedia',
     'debug_toolbar',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAdminUser',
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 50,
+
+}
 
 NIFTY_SETTING = {
     'VERSION': VERSION,

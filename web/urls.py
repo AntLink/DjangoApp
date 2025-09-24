@@ -22,7 +22,8 @@ from django.conf.urls.i18n import i18n_patterns
 
 urlpatterns = i18n_patterns(
     path('', nifty_site.urls),
-    path('doc/', include('django.contrib.admindocs.urls')),
+          path('doc/', include('django.contrib.admindocs.urls')),
+          path('filemedia/api/', include('apps.filemedia.api.urls')),
     prefix_default_language=False
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

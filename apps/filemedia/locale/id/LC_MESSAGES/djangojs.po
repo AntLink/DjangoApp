@@ -1,0 +1,158 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-02-28 16:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.js:455
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.min.js:1
+msgid "Drop files here to upload"
+msgstr "Drop file di sini untuk diunggah"
+
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.js:460
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.min.js:1
+msgid "Your browser does not support drag'n'drop file uploads."
+msgstr "Browser Anda tidak mendukung upload file drag & drop."
+
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.js:467
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.min.js:1
+msgid ""
+"Please use the fallback form below to upload your files like in the olden "
+"days."
+msgstr ""
+"Silakan gunakan formulir fallback di bawah ini untuk mengunggah file Anda "
+"seperti sebelumnya."
+
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.js:473
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.min.js:1
+msgid "File is too big"
+msgstr "File terlalu besar"
+
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.js:473
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.min.js:1
+msgid "Max filesize"
+msgstr "Ukuran file maksimal"
+
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.js:484
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.min.js:1
+msgid "Server responded with"
+msgstr "Server menanggapi dengan"
+
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.js:489
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.min.js:1
+msgid "Cancel upload"
+msgstr "Batalkan unggah"
+
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.js:494
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.min.js:1
+msgid "Upload canceled."
+msgstr "Unggahan dibatalkan"
+
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.js:499
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.min.js:1
+msgid "Are you sure you want to cancel this upload?"
+msgstr "Anda yakin ingin membatalkan unggahan ini?"
+
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.js:504
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.min.js:1
+msgid "Remove file"
+msgstr "Hapus file"
+
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.js:515
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.min.js:1
+msgid "You can not upload any more files."
+msgstr "Anda tidak dapat mengunggah file lagi."
+
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.js:1932
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.min.js:1
+msgid ""
+"This file can't be queued because it has already been processed or was "
+"rejected."
+msgstr "File ini tidak dapat diantrekan karena sudah diproses atau ditolak."
+
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.js:2952
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.min.js:1
+msgid ""
+"No Dropzone found for given element. This is probably because you're trying "
+"to access it before Dropzone had the time to initialize. Use the `init` "
+"option to setup any additional observers on your Dropzone."
+msgstr ""
+"Tidak ada Dropzone yang ditemukan untuk elemen tertentu. Ini mungkin karena "
+"Anda mencobauntuk mengaksesnya sebelum Dropzone memiliki waktu untuk "
+"menginisialisasi. Gunakan` init` opsi untuk menyiapkan pengamat tambahan di "
+"Dropzone Anda."
+
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.js:3184
+#: .\filemedia\static\admin\filemedia\js\dropzone\dropzone.min.js:1
+msgid ""
+"option provided. Please provide a CSS selector, a plain HTML element or a "
+"list of those."
+msgstr ""
+"opsi yang disediakan. Harap berikan pemilih CSS, elemen HTML biasa "
+"ataudaftar mereka."
+
+#: .\filemedia\static\admin\filemedia\js\files.js:45
+#: .\filemedia\static\admin\filemedia\js\files.min.js:1
+#: .\filemedia\static\admin\filemedia\js\images.js:87
+#: .\filemedia\static\admin\filemedia\js\images.js:158
+#: .\filemedia\static\admin\filemedia\js\images.min.js:1
+msgid "Change"
+msgstr "Ubah"
+
+#: .\filemedia\static\admin\filemedia\js\files.js:45
+#: .\filemedia\static\admin\filemedia\js\files.min.js:1
+#: .\filemedia\static\admin\filemedia\js\images.js:87
+#: .\filemedia\static\admin\filemedia\js\images.js:158
+#: .\filemedia\static\admin\filemedia\js\images.min.js:1
+#: .\filemedia\static\admin\filemedia\js\photo.js:153
+msgid "Delete"
+msgstr "Hapus"
+
+#: .\filemedia\static\admin\filemedia\js\files.js:45
+#: .\filemedia\static\admin\filemedia\js\files.min.js:1
+msgid "Download"
+msgstr "Unduh"
+
+#: .\filemedia\static\admin\filemedia\js\images.js:87
+#: .\filemedia\static\admin\filemedia\js\images.js:158
+#: .\filemedia\static\admin\filemedia\js\images.min.js:1
+msgid "View"
+msgstr "Lihat"
+
+#: .\filemedia\static\admin\filemedia\js\photo.js:103
+#: .\filemedia\static\admin\filemedia\js\photo.js:160
+#: .\filemedia\static\admin\filemedia\js\photo.js:252
+#: .\filemedia\static\admin\filemedia\js\photo.js:328
+#: .\filemedia\static\admin\filemedia\js\photo.min.js:1
+msgid "Name"
+msgstr "Nama"
+
+#: .\filemedia\static\admin\filemedia\js\photo.js:104
+#: .\filemedia\static\admin\filemedia\js\photo.js:161
+#: .\filemedia\static\admin\filemedia\js\photo.js:253
+#: .\filemedia\static\admin\filemedia\js\photo.js:329
+#: .\filemedia\static\admin\filemedia\js\photo.min.js:1
+msgid "Description"
+msgstr "Keterangan"
+
+#: .\filemedia\static\admin\filemedia\js\photo.js:105
+#: .\filemedia\static\admin\filemedia\js\photo.js:162
+#: .\filemedia\static\admin\filemedia\js\photo.js:254
+#: .\filemedia\static\admin\filemedia\js\photo.js:330
+#: .\filemedia\static\admin\filemedia\js\photo.min.js:1
+msgid "Insert"
+msgstr "Inputkan"

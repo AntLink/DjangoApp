@@ -1,6 +1,7 @@
 from django.forms import TextInput, Select, Textarea
 from django.utils.safestring import mark_safe
 from django import forms
+from django.urls import reverse_lazy
 import json
 from django.templatetags.static import static
 from . import utils
@@ -247,7 +248,7 @@ class CKEditorWidget(forms.Widget):
         js = (
             'niftyv2/vendors/ckeditor5/ckeditor5ai.js',
             'niftyv2/vendors/ckeditor5/premium-features.js',
-            'niftyv2/vendors/ckeditor5/ckbox.js',
+            'niftyv2/vendors/ckeditor5/ckboxcustom.js',
         )
 
     def __init__(self, attrs=None, config=None):
@@ -258,8 +259,9 @@ class CKEditorWidget(forms.Widget):
             'ai_model': "glm-4.5-flash",
             'ai_temperature': 0.8,
             'ai_top_p': 1,
-            'cloud_services_token_url': 'http://127.0.0.1:8089/static/niftyv2/vendors/ckeditor5/token',
-            'cloud_services_api_url': "https://api.ckbox.io",
+            # 'cloud_services_token_url': 'http://127.0.0.1:8080/static/niftyv2/vendors/ckeditor5/token',
+            'cloud_services_token_url': 'http://127.0.0.1:8080/filemedia/api/auth/token',
+            'cloud_services_api_url': 'http://127.0.0.1:8080/filemedia/api/',
             'placeholder': 'Type or paste your content here!',
             'license_key': '-',
             'initial_data': '',
@@ -285,10 +287,7 @@ class CKEditorWidget(forms.Widget):
         # Kode JavaScript yang terintegrasi
         html = f"""
         <textarea id="editor-{name}" name="{name}" hidden>{value}</textarea>
-        <script>
-        function getTheme() {{
-          return document.documentElement.getAttribute("data-bs-theme");
-        }}
+        <script>       
         document.addEventListener('DOMContentLoaded', function() {{
             const {{
                 ClassicEditor,
@@ -319,7 +318,6 @@ class CKEditorWidget(forms.Widget):
                 Heading,
                 Highlight,
                 HorizontalLine,
-                HtmlEmbed,
                 ImageBlock,
                 ImageCaption,
                 ImageEditing,
@@ -395,7 +393,19 @@ class CKEditorWidget(forms.Widget):
                         'showBlocks',
                         'findAndReplace',
                         '|',
-                        'heading',
+                        'insertImage',
+                        'ckbox',
+                        'mediaEmbed',
+                        'insertTable',
+                        'insertTableLayout',
+                        '|',
+                        'heading',                      
+                        'alignment',
+                        'bulletedList',
+                        'numberedList',
+                        'todoList',
+                        'outdent',
+                        'indent',
                         '|',
                         'fontSize',
                         'fontFamily',
@@ -417,23 +427,10 @@ class CKEditorWidget(forms.Widget):
                         'pageBreak',
                         'link',
                         'bookmark',
-                        'insertImage',
-                        'ckbox',
-                        'mediaEmbed',
-                        'insertTable',
-                        'insertTableLayout',
                         'highlight',
                         'blockQuote',
                         'codeBlock',
-                        'htmlEmbed',
-                        '|',
-                        'alignment',
-                        '|',
-                        'bulletedList',
-                        'numberedList',
-                        'todoList',
-                        'outdent',
-                        'indent'
+                        
                     ],
                     shouldNotGroupWhenFull: false,
                    
@@ -466,8 +463,7 @@ class CKEditorWidget(forms.Widget):
                     GeneralHtmlSupport,
                     Heading,
                     Highlight,
-                    HorizontalLine,
-                    HtmlEmbed,
+                    HorizontalLine,                   
                     ImageBlock,
                     ImageCaption,
                     ImageEditing,
@@ -561,11 +557,7 @@ class CKEditorWidget(forms.Widget):
                     ApiURL: config.cloud_services_api_url
                 }},
                  ckbox: {{                  
-                   theme: document.documentElement.getAttribute("data-bs-theme"),
-                   dialog: {{
-                        width: 600,
-                        height: 600,                     
-                    }},
+                   theme: document.documentElement.getAttribute("data-bs-theme")
                  }},
                 fontFamily: {{
                     supportAllValues: true
@@ -633,15 +625,12 @@ class CKEditorWidget(forms.Widget):
                     allow: [
                         {{
                             name: /^.*$/,
-                            styles: true,
+                            styles: false,
                             attributes: true,
-                            classes: true
+                            classes: false
                         }}
-                    ], disallow: [
-                            {{  name: 'div'}},
-                            {{  name: 'header'}},
-                            {{  name: 'footer'}}
-                        ]
+                    ], 
+                   
                 }},
                 image: {{
                     toolbar: [

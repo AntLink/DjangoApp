@@ -24857,7 +24857,10 @@
 
         async _authorizePrivateCategoriesAccess(e) {
             const t = this.editor.config.get("ckbox.serviceOrigin"), i = new FormData;
-            i.set("token", e), await fetch(`${t}/categories/authorizePrivateAccess`, {method: "POST", credentials: "include", mode: "no-cors", body: i});
+            const obj = JSON.parse(e);
+            const token = obj.file;
+            console.log(token);
+            i.set("token", token), await fetch(`${t}auth/authorizeprivateaccess`, {method: "POST", credentials: "include", mode: "no-cors", body: i});
         }
     }
 
@@ -24938,7 +24941,12 @@
         init() {
             const e = this.editor;
             this._shouldBeInitialised() && (this._checkImagePlugins(), qk() && e.commands.add("ckbox", new Vk(e)), async function (e) {
-                const t = e.plugins.get(Mk), i = e.config.get("ckbox.serviceOrigin"), n = new URL("permissions", i), {value: s} = await t.getToken(), o = await Tk({url: n, authorization: s, signal: (new AbortController).signal});
+                const t = e.plugins.get(Mk),
+                    i = e.config.get("ckbox.serviceOrigin"),
+                    n = new URL("auth/permissions", i),
+                    {value: s} = await t.getToken(),
+                    o = await Tk({url: n, authorization: s, signal: (new AbortController).signal});
+                console.log(i)
                 return Object.values(o).some(e => e["asset:create"])
             }(e).then(e => {
                 e || this._blockImageCommands();

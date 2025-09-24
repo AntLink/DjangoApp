@@ -1,0 +1,586 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-02-16 21:25+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: .\filemedia\admin.py:278
+#, fuzzy
+#| msgid ""
+#| "Can't upload image. Your permission is denied, please contact the "
+#| "Administrator."
+msgid ""
+"Can't download image. Your permission is denied, please contact the "
+"Administrator."
+msgstr ""
+"Tidak dapat mengunggah gambar. Izin Anda ditolak, silakan hubungi "
+"Administrator."
+
+#: .\filemedia\admin.py:301 .\filemedia\admin.py:325 .\filemedia\admin.py:448
+#: .\filemedia\admin.py:482 .\filemedia\admin.py:738
+msgid "Page not found"
+msgstr "Halaman tidak ditemukan"
+
+#: .\filemedia\admin.py:306
+#, fuzzy
+#| msgid ""
+#| "Can't get image. Your permission is denied, please contact the "
+#| "Administrator."
+msgid ""
+"Can't delete image. <br>Your permission is denied, please contact the "
+"Administrator."
+msgstr ""
+"Tidak dapat memperoleh gambar. Izin Anda ditolak, silakan hubungi "
+"Administrator."
+
+#: .\filemedia\admin.py:317
+msgid "Image deleted successfully"
+msgstr "Gambar berhasil dihapus."
+
+#: .\filemedia\admin.py:330
+msgid ""
+"Can't upload image. <br>Your permission is denied, please contact the "
+"Administrator."
+msgstr ""
+"Tidak dapat mengunggah gambar. Izin Anda ditolak, silakan hubungi "
+"Administrator."
+
+#: .\filemedia\admin.py:338 .\filemedia\views.py:68
+msgid "Invalid file."
+msgstr "File tidak valid."
+
+#: .\filemedia\admin.py:453
+msgid ""
+"Can't change image. <br>Your permission is denied, please contact the "
+"Administrator."
+msgstr ""
+"Tidak dapat mengubah gambar. Izin Anda ditolak, silakan hubungi "
+"Administrator."
+
+#: .\filemedia\admin.py:487
+msgid ""
+"Can't get image. <br>Your permission is denied, please contact the "
+"Administrator."
+msgstr ""
+"Tidak dapat memperoleh gambar. Izin Anda ditolak, silakan hubungi "
+"Administrator."
+
+#: .\filemedia\admin.py:613 .\filemedia\admin.py:630 .\filemedia\admin.py:886
+msgid "Change"
+msgstr "Ubah"
+
+#: .\filemedia\admin.py:615 .\filemedia\admin.py:633 .\filemedia\admin.py:889
+#: .\filemedia\templates\admin\file\change_form.html:138
+#: .\filemedia\templates\admin\image\change_form.html:192
+msgid "Delete"
+msgstr "Hapus"
+
+#: .\filemedia\admin.py:617 .\filemedia\admin.py:636 .\filemedia\admin.py:883
+msgid "Download"
+msgstr "Unduh"
+
+#: .\filemedia\admin.py:644
+msgid "Images"
+msgstr "Gambar"
+
+#: .\filemedia\admin.py:743
+msgid ""
+"Can't upload file. <br>You'r permission is denied, please contact the "
+"Administrator."
+msgstr ""
+"Tidak dapat mengunggah file. Izin Anda ditolak, silakan hubungi "
+"Administrator."
+
+#: .\filemedia\admin.py:841
+msgid ""
+"Can't download file. Your permission is denied, please contact the "
+"Administrator."
+msgstr ""
+"Tidak dapat mengunggah file. Izin Anda ditolak, silakan hubungi "
+"Administrator."
+
+#: .\filemedia\forms.py:24 .\filemedia\models.py:23 .\filemedia\models.py:46
+#: .\filemedia\models.py:62
+msgid "File"
+msgstr "File"
+
+#: .\filemedia\forms.py:25
+msgid "Double click to change your file."
+msgstr "Klik dua kali untuk mengubah gambar Anda."
+
+#: .\filemedia\forms.py:30 .\filemedia\forms.py:57 .\filemedia\models.py:24
+#: .\filemedia\models.py:66
+msgid "Description"
+msgstr "Keterangan"
+
+#: .\filemedia\forms.py:34 .\filemedia\forms.py:61
+msgid "Maximum can be entered is 255 text characters"
+msgstr "Maksimal yang bisa diinputkan adalah 255 karakter teks"
+
+#: .\filemedia\forms.py:66
+msgid "Image"
+msgstr "Gambar"
+
+#: .\filemedia\forms.py:67
+msgid "Double click to change your image."
+msgstr "Klik dua kali untuk mengubah gambar Anda."
+
+#: .\filemedia\models.py:18 .\filemedia\models.py:56
+msgid "Author"
+msgstr "Pengguna"
+
+#: .\filemedia\models.py:19 .\filemedia\models.py:58
+msgid "Name"
+msgstr "Nama"
+
+#: .\filemedia\models.py:20
+msgid "Parent"
+msgstr "Bapak"
+
+#: .\filemedia\models.py:21
+msgid "Slug"
+msgstr "Slug"
+
+#: .\filemedia\models.py:21
+msgid "A short label, generally used in URLs."
+msgstr "Label pendek, umumnya digunakan di URL."
+
+#: .\filemedia\models.py:22
+msgid "Status"
+msgstr "Status"
+
+#: .\filemedia\models.py:22
+msgid "Status is checked will be published."
+msgstr "Status dicentang akan dipublikasikan."
+
+#: .\filemedia\models.py:23 .\filemedia\models.py:51 .\filemedia\models.py:63
+msgid "Type"
+msgstr "Tipe"
+
+#: .\filemedia\models.py:23
+msgid "Picture"
+msgstr "Gambar"
+
+#: .\filemedia\models.py:23 .\filemedia\models.py:47 .\filemedia\models.py:63
+msgid "Video"
+msgstr "Vidio"
+
+#: .\filemedia\models.py:25 .\filemedia\models.py:67
+msgid "Created At"
+msgstr "Dibuat"
+
+#: .\filemedia\models.py:26 .\filemedia\models.py:68
+msgid "Updated At"
+msgstr "Diubah"
+
+#: .\filemedia\models.py:34 .\filemedia\models.py:35
+msgid "tags"
+msgstr "tag"
+
+#: .\filemedia\models.py:45 .\filemedia\models.py:63
+msgid "Pictures"
+msgstr "Gambar"
+
+#: .\filemedia\models.py:57 .\filemedia\models.py:130
+#: .\filemedia\templates\admin\file\change_list.html:79
+#: .\filemedia\templates\admin\image\change_list.html:78
+msgid "Tags"
+msgstr "Tag"
+
+#: .\filemedia\models.py:59
+msgid "Unique Name"
+msgstr "Nama unik"
+
+#: .\filemedia\models.py:60
+msgid "Size"
+msgstr ""
+
+#: .\filemedia\models.py:61
+msgid "Path"
+msgstr "Path"
+
+#: .\filemedia\models.py:63 .\filemedia\templates\admin\file\list.html:26
+#: .\filemedia\templates\admin\file\list.html:56
+msgid "Files"
+msgstr "File"
+
+#: .\filemedia\models.py:64
+msgid "File type"
+msgstr "Tipe file"
+
+#: .\filemedia\models.py:65
+msgid "Favored"
+msgstr ""
+
+#: .\filemedia\models.py:72 .\filemedia\models.py:73
+msgid "media"
+msgstr "media"
+
+#: .\filemedia\models.py:83
+msgid "picture"
+msgstr "gambar"
+
+#: .\filemedia\models.py:84
+msgid "pictures"
+msgstr "gambar"
+
+#: .\filemedia\models.py:86
+msgid "Can get image (ajax)"
+msgstr "Bisa menampilkan gambar (ajax)"
+
+#: .\filemedia\models.py:87
+msgid "Can change upload image (ajax)"
+msgstr "Bisa mengubah gambar unggahan (ajax)"
+
+#: .\filemedia\models.py:88
+msgid "Can upload image (ajax)"
+msgstr "Bisa mengunggah gambar (ajax)"
+
+#: .\filemedia\models.py:89
+msgid "Can delete image (ajax)"
+msgstr "Bisa menghapus gambar (ajax)"
+
+#: .\filemedia\models.py:90
+msgid "Can download image"
+msgstr "Bisa mengunduh gambar"
+
+#: .\filemedia\models.py:133
+msgid "Uploaded"
+msgstr "Unggah"
+
+#: .\filemedia\models.py:140
+msgid "video"
+msgstr "vidio"
+
+#: .\filemedia\models.py:141
+msgid "videos"
+msgstr "vidio"
+
+#: .\filemedia\models.py:148
+msgid "file"
+msgstr "file"
+
+#: .\filemedia\models.py:149
+msgid "files"
+msgstr "file"
+
+#: .\filemedia\models.py:151
+msgid "Can get file (ajax)"
+msgstr "Bisa menampilkan file (ajax)"
+
+#: .\filemedia\models.py:152
+msgid "Can change upload file (ajax)"
+msgstr "Bisa mengubah file unggahan (ajax)"
+
+#: .\filemedia\models.py:153
+msgid "Can upload file (ajax)"
+msgstr "Bisa mengunggah file (ajax)"
+
+#: .\filemedia\models.py:154
+msgid "Can download file"
+msgstr "Bisa mengunduh file"
+
+#: .\filemedia\templates\admin\file\change_form.html:23
+#: .\filemedia\templates\admin\file\change_form.html:52
+#: .\filemedia\templates\admin\image\change_form.html:51
+#: .\filemedia\templates\admin\image\change_form.html:80
+#: .\filemedia\templates\admin\tags\change_list.html:62
+#: .\filemedia\templates\admin\tags\change_list.html:63
+#: .\filemedia\templates\admin\tags\change_list.html:189
+msgid "Add"
+msgstr "Tambah"
+
+#: .\filemedia\templates\admin\file\change_form.html:35
+#: .\filemedia\templates\admin\file\change_list.html:44
+#: .\filemedia\templates\admin\image\change_form.html:63
+#: .\filemedia\templates\admin\image\change_list.html:39
+#: .\filemedia\templates\admin\tags\change_list.html:35
+msgid "Home"
+msgstr "Beranda"
+
+#: .\filemedia\templates\admin\file\change_form.html:63
+#: .\filemedia\templates\admin\image\change_form.html:91
+msgid "Please correct the error below."
+msgstr "Harap perbaiki kesalahan di bawah ini."
+
+#: .\filemedia\templates\admin\file\change_form.html:134
+#: .\filemedia\templates\admin\image\change_form.html:188
+#: .\filemedia\templates\admin\tags\change_form.html:35
+msgid "Save"
+msgstr "Simpan"
+
+#: .\filemedia\templates\admin\file\change_form.html:135
+#: .\filemedia\templates\admin\image\change_form.html:189
+msgid "Save and continue editing"
+msgstr "Save and continue editing"
+
+#: .\filemedia\templates\admin\file\change_form.html:146
+#: .\filemedia\templates\admin\file\change_form.html:149
+#: .\filemedia\templates\admin\image\change_form.html:200
+#: .\filemedia\templates\admin\image\change_form.html:203
+msgid "History"
+msgstr "Cerita"
+
+#: .\filemedia\templates\admin\file\change_list.html:74
+#: .\filemedia\templates\admin\image\change_list.html:73
+msgid "Upload"
+msgstr "Unggah"
+
+#: .\filemedia\templates\admin\file\change_list.html:74
+#: .\filemedia\templates\admin\file\change_list.html:79
+#: .\filemedia\templates\admin\image\change_list.html:73
+#: .\filemedia\templates\admin\image\change_list.html:78
+#: .\filemedia\templates\admin\tags\change_list.html:62
+#: .\filemedia\templates\admin\tags\change_list.html:189
+#, python-format
+msgid "%(name)s"
+msgstr "%(name)s"
+
+#: .\filemedia\templates\admin\file\change_list.html:82
+#: .\filemedia\templates\admin\image\change_list.html:82
+#: .\filemedia\templates\admin\image\change_list.html:86
+msgid "All"
+msgstr "Semua"
+
+#: .\filemedia\templates\admin\file\change_list.html:106
+#: .\filemedia\templates\admin\file\change_list.html:111
+#: .\filemedia\templates\admin\file\change_list.html:152
+#: .\filemedia\templates\admin\file\change_list.html:157
+#: .\filemedia\templates\admin\image\change_list.html:138
+#: .\filemedia\templates\admin\image\change_list.html:143
+#: .\filemedia\templates\admin\image\change_list.html:204
+#: .\filemedia\templates\admin\image\change_list.html:209
+#: .\filemedia\templates\admin\tags\change_list.html:100
+#: .\filemedia\templates\admin\tags\change_list.html:105
+#: .\filemedia\templates\admin\tags\change_list.html:146
+#: .\filemedia\templates\admin\tags\change_list.html:151
+msgid "Previous"
+msgstr "Sebelumnya"
+
+#: .\filemedia\templates\admin\file\change_list.html:117
+#: .\filemedia\templates\admin\file\change_list.html:122
+#: .\filemedia\templates\admin\file\change_list.html:163
+#: .\filemedia\templates\admin\file\change_list.html:168
+#: .\filemedia\templates\admin\image\change_list.html:150
+#: .\filemedia\templates\admin\image\change_list.html:155
+#: .\filemedia\templates\admin\image\change_list.html:216
+#: .\filemedia\templates\admin\image\change_list.html:221
+#: .\filemedia\templates\admin\tags\change_list.html:112
+#: .\filemedia\templates\admin\tags\change_list.html:117
+#: .\filemedia\templates\admin\tags\change_list.html:158
+#: .\filemedia\templates\admin\tags\change_list.html:163
+#: .\filemedia\templates\admin\widgets\photo.html:35
+msgid "Next"
+msgstr "Selanjutnya"
+
+#: .\filemedia\templates\admin\file\change_list.html:130
+#: .\filemedia\templates\admin\file\change_list.html:176
+#: .\filemedia\templates\admin\file\list.html:26
+#: .\filemedia\templates\admin\file\list.html:56
+#: .\filemedia\templates\admin\image\change_list.html:163
+#: .\filemedia\templates\admin\image\change_list.html:229
+#: .\filemedia\templates\admin\image\grid.html:30
+#: .\filemedia\templates\admin\image\grid.html:62
+#: .\filemedia\templates\admin\image\list.html:30
+#: .\filemedia\templates\admin\image\list.html:65
+#: .\filemedia\templates\admin\tags\change_list.html:125
+#: .\filemedia\templates\admin\tags\change_list.html:171
+msgid "Showing"
+msgstr "Menampilkan"
+
+#: .\filemedia\templates\admin\file\change_list.html:130
+#: .\filemedia\templates\admin\file\change_list.html:176
+#: .\filemedia\templates\admin\file\list.html:26
+#: .\filemedia\templates\admin\file\list.html:56
+#: .\filemedia\templates\admin\image\change_list.html:163
+#: .\filemedia\templates\admin\image\change_list.html:229
+#: .\filemedia\templates\admin\image\grid.html:30
+#: .\filemedia\templates\admin\image\grid.html:62
+#: .\filemedia\templates\admin\image\list.html:30
+#: .\filemedia\templates\admin\image\list.html:65
+#: .\filemedia\templates\admin\tags\change_list.html:125
+#: .\filemedia\templates\admin\tags\change_list.html:171
+msgid "of"
+msgstr "dari"
+
+#: .\filemedia\templates\admin\file\list.html:8
+#: .\filemedia\templates\admin\file\list.html:38
+#: .\filemedia\templates\admin\image\grid.html:10
+#: .\filemedia\templates\admin\image\grid.html:43
+#: .\filemedia\templates\admin\image\list.html:10
+#: .\filemedia\templates\admin\image\list.html:46
+msgid "Select all"
+msgstr "Pilih semua"
+
+#: .\filemedia\templates\admin\file\list.html:15
+#: .\filemedia\templates\admin\file\list.html:19
+#: .\filemedia\templates\admin\file\list.html:45
+#: .\filemedia\templates\admin\file\list.html:49
+msgid "Delete selected files"
+msgstr "Hapus gambar yang dipilih"
+
+#: .\filemedia\templates\admin\file\list.html:24
+#: .\filemedia\templates\admin\file\list.html:54
+#: .\filemedia\templates\admin\image\grid.html:26
+#: .\filemedia\templates\admin\image\grid.html:58
+#: .\filemedia\templates\admin\image\list.html:26
+#: .\filemedia\templates\admin\image\list.html:61
+msgid "Run"
+msgstr "Jalankan"
+
+#: .\filemedia\templates\admin\file\list.html:63
+#: .\filemedia\templates\admin\image\grid.html:70
+#: .\filemedia\templates\admin\image\list.html:73
+#: .\filemedia\templates\admin\tags\change_list.html:181
+msgid "Nothing found"
+msgstr "Tidak ada yang ditemukan"
+
+#: .\filemedia\templates\admin\file\list.html:65
+#: .\filemedia\templates\admin\image\grid.html:73
+#: .\filemedia\templates\admin\image\list.html:76
+#: .\filemedia\templates\admin\tags\change_list.html:183
+msgid "Reset search and filters"
+msgstr "Setel ulang penelusuran dan filter"
+
+#: .\filemedia\templates\admin\file\list.html:68
+#: .\filemedia\templates\admin\image\grid.html:76
+#: .\filemedia\templates\admin\image\list.html:79
+#: .\filemedia\templates\admin\tags\change_list.html:186
+#, python-format
+msgid "%(name_plural)s are not created yet"
+msgstr "%(name_plural)s belum dibuat"
+
+#: .\filemedia\templates\admin\image\change_list.html:113
+#: .\filemedia\templates\admin\tags\change_list.html:80
+msgid "Please correct the error below. "
+msgid_plural " Please correct the errors below."
+msgstr[0] ""
+msgstr[1] ""
+
+#: .\filemedia\templates\admin\image\change_list.html:127
+#: .\filemedia\templates\admin\image\change_list.html:130
+#: .\filemedia\templates\admin\image\change_list.html:193
+#: .\filemedia\templates\admin\image\change_list.html:196
+#: .\filemedia\templates\admin\image\grid.html:28
+#: .\filemedia\templates\admin\image\grid.html:60
+#: .\filemedia\templates\admin\image\list.html:28
+#: .\filemedia\templates\admin\image\list.html:63
+msgid "List Mode"
+msgstr "Mode daftar"
+
+#: .\filemedia\templates\admin\image\change_list.html:128
+#: .\filemedia\templates\admin\image\change_list.html:131
+#: .\filemedia\templates\admin\image\change_list.html:194
+#: .\filemedia\templates\admin\image\change_list.html:197
+#: .\filemedia\templates\admin\image\grid.html:29
+#: .\filemedia\templates\admin\image\grid.html:61
+#: .\filemedia\templates\admin\image\list.html:29
+#: .\filemedia\templates\admin\image\list.html:64
+msgid "Grid Mode"
+msgstr "Mode kisi"
+
+#: .\filemedia\templates\admin\image\grid.html:17
+#: .\filemedia\templates\admin\image\grid.html:21
+#: .\filemedia\templates\admin\image\grid.html:50
+#: .\filemedia\templates\admin\image\grid.html:54
+#: .\filemedia\templates\admin\image\list.html:17
+#: .\filemedia\templates\admin\image\list.html:21
+#: .\filemedia\templates\admin\image\list.html:53
+#: .\filemedia\templates\admin\image\list.html:57
+msgid "Delete selected pictures"
+msgstr "Hapus gambar yang dipilih"
+
+#: .\filemedia\templates\admin\image\grid.html:30
+#: .\filemedia\templates\admin\image\grid.html:62
+#: .\filemedia\templates\admin\image\list.html:30
+#: .\filemedia\templates\admin\image\list.html:65
+msgid "Items"
+msgstr "Item"
+
+#: .\filemedia\templates\admin\widgets\photo.html:10
+msgid "Close"
+msgstr ""
+
+#: .\filemedia\templates\admin\widgets\photo.html:12
+msgid "Upload Photo"
+msgstr "Unggah Foto"
+
+#: .\filemedia\templates\admin\widgets\photo.html:32
+msgid "Add Photo"
+msgstr "Tambah Foto"
+
+#: .\filemedia\templates\admin\widgets\photo.html:34
+msgid "Prev"
+msgstr "Sebelumnya"
+
+#: .\filemedia\views.py:55
+msgid ""
+"ImproperlyConfigured: Neither Pillow nor PIL could be imported: No module "
+"named 'Image'"
+msgstr ""
+
+#, python-format
+#~ msgid "View"
+#~ msgstr "Lihat"
+
+#~ msgid "Can delete file"
+#~ msgstr "Bisa menghapus file"
+
+#~ msgid "Can add file"
+#~ msgstr "Bisa menambahkan file"
+
+#~ msgid "Can change file"
+#~ msgstr "Bisa mengubah file"
+
+#~ msgid "Can view file"
+#~ msgstr "Bisa menampilkan file"
+
+#~ msgid "Can delete image"
+#~ msgstr "Bisa menghapus gambar"
+
+#~ msgid "Can add image"
+#~ msgstr "Bisa menambahkan gambar"
+
+#~ msgid "Can change image"
+#~ msgstr "Bisa mengubah gambar"
+
+#~ msgid "Can view image"
+#~ msgstr "Bisa menampilkan gambar"
+
+#~ msgid "Can delete tags"
+#~ msgstr "Bisa menghapus tag"
+
+#~ msgid "Can add tags"
+#~ msgstr "Bisa menambahkan tag"
+
+#~ msgid "Can change tags"
+#~ msgstr "Bisa mengubah tag"
+
+#~ msgid "Can view tags"
+#~ msgstr "Bisa menampilkan tag"
+
+#~ msgid "Can delete video"
+#~ msgstr "Bisa menghapus vidio"
+
+#~ msgid "Can add video"
+#~ msgstr "Bisa menambahkan vidio"
+
+#~ msgid "Can change video"
+#~ msgstr "Bisa mengubah vidio"
+
+#~ msgid "Can view video"
+#~ msgstr "Bisa menampilkan vidio"
