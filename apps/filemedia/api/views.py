@@ -21,8 +21,11 @@ from django.shortcuts import get_object_or_404
 from django.conf import settings
 from wsgiref.util import FileWrapper
 import mimetypes
+from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
+from rest_framework.permissions import IsAuthenticated
 
 logger = logging.getLogger(__name__)
+
 
 class AdminViewSet(viewsets.ViewSet):
     permission_classes = [AllowAny]
@@ -41,7 +44,6 @@ class AdminViewSet(viewsets.ViewSet):
         """
         try:
             # Import model di sini untuk menghindari circular import
-
 
             # Ambil semua kategori dari model
             categories = Category.objects.all().order_by('position')
@@ -95,7 +97,6 @@ class AdminViewSet(viewsets.ViewSet):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-
     @action(detail=False, methods=['get'])
     def environmentConfig(self, request):
         data = {
@@ -135,14 +136,15 @@ class AdminViewSet(viewsets.ViewSet):
         return Response(data)
 
     @action(detail=False, methods=['get'])
-    def images(self,request):
-        data = {"default":{"defaultQuality":80}}
+    def images(self, request):
+        data = {"default": {"defaultQuality": 80}}
         return Response(data)
 
     @action(detail=False, methods=['get'])
     def groups(self, request):
-        data = {"items":[{"id":"f437cd41039d","name":"Default","isDefault":True}]}
+        data = {"items": [{"id": "f437cd41039d", "name": "Default", "isDefault": True}]}
         return Response(data)
+
 
 class TagsViewSet(viewsets.ModelViewSet):
     queryset = Tags.objects.all()
@@ -171,6 +173,8 @@ class FolderViewSet(viewsets.ModelViewSet):
     filterset_fields = ['category', 'parent']
 
 
+
+@method_decorator(csrf_exempt, name='dispatch')
 class MediaViewSet(viewsets.ModelViewSet):
     queryset = Media.objects.all()
     serializer_class = MediaSerializer
@@ -178,6 +182,8 @@ class MediaViewSet(viewsets.ModelViewSet):
     filterset_fields = ['type', 'favored', 'category', 'folder']
     search_fields = ['name', 'description']
     ordering_fields = ['created_at', 'name', 'size']
+    permission_classes =  [AllowAny]  # biar tidak dicek login
+    authentication_classes = []
 
     def retrieve(self, request, *args, **kwargs):
         """Override retrieve method to handle thumbnail requests"""
@@ -213,7 +219,6 @@ class MediaViewSet(viewsets.ModelViewSet):
             # Get the original file path
             original_path = media.file.path
 
-
             # Construct thumbnail path based on your storage structure
             # Assuming thumbnails are stored in: media_root/thumbnail/{size}/filename
             file_dir = os.path.dirname(original_path)
@@ -225,7 +230,6 @@ class MediaViewSet(viewsets.ModelViewSet):
 
             # Alternative path if using different structure
             # thumb_path = os.path.join(settings.MEDIA_ROOT, 'thumbnail', str(size), file_name)
-
 
             # Check if thumbnail exists
             if not os.path.exists(thumb_path):
@@ -298,7 +302,7 @@ class MediaViewSet(viewsets.ModelViewSet):
         return self.serve_thumbnail(request, pk, size)
 
     def get_serializer_class(self):
-        if self.action in ['list', 'recent', 'trash','retrieve']:
+        if self.action in ['list', 'recent', 'trash', 'retrieve']:
             return MediaListSerializer
         return MediaSerializer
 
@@ -363,19 +367,84 @@ class MediaViewSet(viewsets.ModelViewSet):
         }
         return Response(response_data)
 
-    @action(detail=False, methods=['get'])
-    def trash(self, request):
-        """Get deleted media"""
-        trashed_media = Media.objects.filter(is_deleted=True)
-        serializer = self.get_serializer(trashed_media, many=True, context={'request': request})
+        # 🔥 Trash endpoint
 
-        response_data = {
-            'totalCount': trashed_media.count(),
-            'offset': 0,
-            'limit': trashed_media.count(),
-            'items': serializer.data
-        }
-        return Response(response_data)
+    @method_decorator(csrf_exempt)
+    @action( detail=False,methods=['get', 'post'],parser_classes=[JSONParser, FormParser, MultiPartParser])
+    def trash(self, request):
+        """
+        GET  -> ambil semua media di trash (is_deleted=True)
+        POST -> tandai media sebagai deleted (is_deleted=True)
+        """
+        if request.method == 'GET':
+            trashed_media = Media.objects.filter(is_deleted=True)
+            serializer = self.get_serializer(trashed_media, many=True, context={'request': request})
+            return Response({
+                'totalCount': trashed_media.count(),
+                'items': serializer.data
+            })
+
+        elif request.method == 'POST':
+            # Support JSON object {"ids": [1,2]} atau langsung array [1,2]
+            media_ids = request.data.get('ids')
+
+            if not media_ids:
+                try:
+                    body = request.body.decode('utf-8')
+                    media_ids = json.loads(body)
+                except Exception:
+                    media_ids = []
+
+            if not media_ids:
+                return Response({'error': 'Media IDs required'}, status=status.HTTP_400_BAD_REQUEST)
+
+            Media.objects.filter(id__in=media_ids).update(is_deleted=True)
+
+            return Response({'status': 'deleted', 'ids': media_ids})
+
+    # 🔥 Restore endpoint
+    @action(detail=False, methods=['post'], parser_classes=[JSONParser, FormParser, MultiPartParser])
+    def restore(self, request):
+        """
+        Restore media dari trash (is_deleted=False)
+        """
+        media_ids = request.data.get('ids')
+
+        if not media_ids:
+            try:
+                body = request.body.decode('utf-8')
+                media_ids = json.loads(body)
+            except Exception:
+                media_ids = []
+
+        if not media_ids:
+            return Response({'error': 'Media IDs required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        Media.objects.filter(id__in=media_ids).update(is_deleted=False)
+
+        return Response({'status': 'restored', 'ids': media_ids})
+
+    # 🔥 Permanent delete endpoint
+    @action(detail=False, methods=['delete'], parser_classes=[JSONParser, FormParser, MultiPartParser])
+    def purge(self, request):
+        """
+        Hapus permanen dari database
+        """
+        media_ids = request.data.get('ids')
+
+        if not media_ids:
+            try:
+                body = request.body.decode('utf-8')
+                media_ids = json.loads(body)
+            except Exception:
+                media_ids = []
+
+        if not media_ids:
+            return Response({'error': 'Media IDs required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        Media.objects.filter(id__in=media_ids).delete()
+
+        return Response({'status': 'purged', 'ids': media_ids})
 
 
 class MediahastagsViewSet(viewsets.ModelViewSet):
@@ -404,7 +473,7 @@ class AuthViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=['get'])
     def workspaces(self, request):
-        data = {"items": [{"id": "b31838d7db045edd5b6c", "name": "ckbox-demo-workspace-DGMh-pql"}]}
+        data = {"items": [{"id": 12, "name": "ckbox-demo-workspace-DGMh-pql"}]}
         return Response(data)
 
     @action(detail=False, methods=['get'])
@@ -419,7 +488,7 @@ class AuthViewSet(viewsets.ViewSet):
                 'auth': {
                     'ckbox': {
                         'role': 'admin',
-                        'workspaces': ['b31838d7db045edd5b6c']
+                        'workspaces': [12]
                     }
                 },
                 'jti': 'ntdvAIeckoD6TvC5VjeRrNxGik_QkMqda'

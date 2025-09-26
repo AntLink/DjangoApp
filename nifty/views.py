@@ -114,7 +114,7 @@ class MyAdminSite(AdminSite):
     def get_user_profile_view(self, request):
         from .forms import UserProfileForm
         from django.contrib.auth.models import User
-        from users.models import Profile
+        from apps.users.models import Profile
         from django.contrib import messages
         if not request.user.has_perm('admin.profile_change'):
             raise PermissionDenied(_("Can't change your profile. Your permission is denied, please contact the Administrator."))

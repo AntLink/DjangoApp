@@ -219,6 +219,7 @@ class MediaListSerializer(serializers.ModelSerializer):
             'width': None,
             'height': None,
             'blurHash': None,
+            'description':obj.description,
             'metadataProcessingStatus': 'success',
             'analysisProcessingStatus': 'queued'
         }
@@ -272,6 +273,8 @@ class MediaListSerializer(serializers.ModelSerializer):
                 metadata['metadataProcessingStatus'] = 'error'
                 metadata['analysisProcessingStatus'] = 'failed'
         else:
-            metadata = []
+            metadata = {
+                'description': obj.description,
+            }
 
         return metadata

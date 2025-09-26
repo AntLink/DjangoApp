@@ -450,6 +450,7 @@ class ImageAdmin(Admin):
             self.log_change(request, Image.objects.get(pk=img.pk), change_message)
         else:
             img = Image()
+            img.category_id = 1
             img.user = request.user
             img.name = file.name
             # img.file = os.sep + 'media' + os.sep + 'images' + os.sep + path_date + os.sep + file_name
@@ -921,6 +922,7 @@ class FileAdmin(Admin):
             self.log_change(request, File.objects.get(pk=file.pk), change_message)
         else:
             file = File()
+            file.category_id = 2
             file.user = request.user
             file.name = files.name
             file.file = 'files' + os.sep + path_date + os.sep + unix_name
