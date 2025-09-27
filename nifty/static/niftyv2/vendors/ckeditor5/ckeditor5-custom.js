@@ -1386,7 +1386,7 @@
             decorate(e) {
                 zt(this);
                 const t = this[e];
-                // if (!t) throw new I("observablemixin-cannot-decorate-undefined", this, {object: this, methodName: e});
+                if (!t) throw new I("observablemixin-cannot-decorate-undefined", this, {object: this, methodName: e});
                 this.on(e, (e, i) => {
                     e.return = t.apply(this, i);
                 }), this[e] = function (...t) {
@@ -15044,67 +15044,67 @@
             this._context = e.context || new Jn({language: r, translations: s}), this._context._addEditor(this, !e.context);
             const a = Array.from(t.builtinPlugins || []);
             this.config = new Yt(o, n), this.config.define("plugins", a), this.config.define(this._context._getEditorConfig()), function (e) {
-                // let t = e.get("licenseKey");
-                // !t && window.CKEDITOR_GLOBAL_LICENSE_KEY && (t = window.CKEDITOR_GLOBAL_LICENSE_KEY, e.set("licenseKey", t));
-                // if (!t) throw new I("license-key-missing")
+                let t = e.get("licenseKey");
+                !t && window.CKEDITOR_GLOBAL_LICENSE_KEY && (t = window.CKEDITOR_GLOBAL_LICENSE_KEY, e.set("licenseKey", t));
+                if (!t) throw new I("license-key-missing")
             }(this.config), this.plugins = new Kn(this, a, this._context.plugins), this.locale = this._context.locale, this.t = this.locale.t, this._readOnlyLocks = new Set, this.commands = new Gn, this.set("state", "initializing"), this.once("ready", () => this.state = "ready", {priority: "high"}), this.once("destroy", () => this.state = "destroyed", {priority: "high"}), this.model = new wc, this.on("change:isReadOnly", () => {
                 this.model.document.isReadOnly = this.isReadOnly;
             });
             const l = new vs;
             this.data = new qa(this.model, l), this.editing = new xa(this.model, l), this.editing.view.document.bind("isReadOnly").to(this), this.conversion = new $a([this.editing.downcastDispatcher, this.data.downcastDispatcher], this.data.upcastDispatcher), this.conversion.addAlias("dataDowncast", this.data.downcastDispatcher), this.conversion.addAlias("editingDowncast", this.editing.downcastDispatcher), this.keystrokes = new Yn(this), this.keystrokes.listenTo(this.editing.view.document), this.accessibility = new ed(this), function (e) {
-                // const t = e.config.get("licenseKey"), i = window[Symbol.for("cke distribution")] || "sh";
+                const t = e.config.get("licenseKey"), i = window[Symbol.for("cke distribution")] || "sh";
 
-                // function n(t) {
-                //     e.enableReadOnlyMode(Symbol("invalidLicense"));
-                // }
+                function n(t) {
+                    // e.enableReadOnlyMode(Symbol("invalidLicense")), e._showLicenseError(t);
+                    e.enableReadOnlyMode(Symbol("invalidLicense"));
+                }
 
-                // if ("GPL" == t) return void ("cloud" == i && n("distributionChannel"));
-                // const s = function (e) {
-                //     const t = e.split(".");
-                //     console.log('key',t);
-                //     // return 3 != t.length ? null : t[1]
-                //     return t[1]
-                // }(t);
-                // // if (!s) return void n("invalid");
-                // const o = In(s);
-                // if (!o) return void n("invalid");
-                // if (!function (e) {
-                //     return ["exp", "jti", "vc"].every(t => t in e)
-                // }(o)) return void n("invalid");
-                // if (o.distributionChannel && !an(o.distributionChannel).includes(i)) return void n("distributionChannel");
-                // if (Pn(function (e) {
-                //     const t = Object.getOwnPropertyNames(e).sort().filter(t => "vc" != t && null != e[t]).map(t => e[t]);
-                //     return t
-                // }(o)) != o.vc.toLowerCase()) return void n("invalid");
-                // if (new Date(1e3 * o.exp) < M) return void n("expired");
-                // const r = o.licensedHosts;
-                // if (r && r.length > 0 && !function (e) {
-                //     const {hostname: t} = new URL(window.location.href);
-                //     if (e.includes(t)) return true;
-                //     const i = t.split(".");
-                //     return e.filter(e => e.includes("*")).map(e => e.split(".")).filter(e => e.length <= i.length).map(e => Array(i.length - e.length).fill("*" === e[0] ? "*" : "").concat(e)).some(e => i.every((t, i) => e[i] === t || "*" === e[i]))
-                // }(r)) return void n("domainLimit");
-                // if (["evaluation", "trial"].includes(o.licenseType) && 1e3 * o.exp < Date.now()) return void n("expired");
-                // if (["development", "evaluation", "trial"].includes(o.licenseType)) {
-                //     const {licenseType: e} = o;
-                //     window.CKEDITOR_WARNING_SUPPRESSIONS = window.CKEDITOR_WARNING_SUPPRESSIONS || {}, window.CKEDITOR_WARNING_SUPPRESSIONS[e] || (!function (e) {
-                //         const t = e[0].toUpperCase() + e.slice(1), i = "evaluation" === e ? "an" : "a";
-                //     }(e), window.CKEDITOR_WARNING_SUPPRESSIONS[e] = true);
-                // }
-                // if (["evaluation", "trial"].includes(o.licenseType)) {
-                //     const t = o.licenseType, i = setTimeout(() => {
-                //         n(`${t}Limit`);
-                //     }, 6e5);
-                //     e.on("destroy", () => {
-                //         clearTimeout(i);
-                //     });
-                // }
-
-                e.once("ready", () => {
+                if ("GPL" == t) return void ("cloud" == i && n("distributionChannel"));
+                const s = function (e) {
+                    const t = e.split(".");
+                    return 3 != t.length ? null : t[1]
+                }(t);
+                if (!s) return void n("invalid");
+                const o = In(s);
+                if (!o) return void n("invalid");
+                if (!function (e) {
+                    return ["exp", "jti", "vc"].every(t => t in e)
+                }(o)) return void n("invalid");
+                if (o.distributionChannel && !an(o.distributionChannel).includes(i)) return void n("distributionChannel");
+                if (Pn(function (e) {
+                    const t = Object.getOwnPropertyNames(e).sort().filter(t => "vc" != t && null != e[t]).map(t => e[t]);
+                    return t
+                }(o)) != o.vc.toLowerCase()) return void n("invalid");
+                if (new Date(1e3 * o.exp) < M) return void n("expired");
+                const r = o.licensedHosts;
+                if (r && r.length > 0 && !function (e) {
+                    const {hostname: t} = new URL(window.location.href);
+                    if (e.includes(t)) return true;
+                    const i = t.split(".");
+                    return e.filter(e => e.includes("*")).map(e => e.split(".")).filter(e => e.length <= i.length).map(e => Array(i.length - e.length).fill("*" === e[0] ? "*" : "").concat(e)).some(e => i.every((t, i) => e[i] === t || "*" === e[i]))
+                }(r)) return void n("domainLimit");
+                if (["evaluation", "trial"].includes(o.licenseType) && 1e3 * o.exp < Date.now()) return void n("expired");
+                if (["development", "evaluation", "trial"].includes(o.licenseType)) {
+                    const {licenseType: e} = o;
+                    window.CKEDITOR_WARNING_SUPPRESSIONS = window.CKEDITOR_WARNING_SUPPRESSIONS || {}, window.CKEDITOR_WARNING_SUPPRESSIONS[e] || (!function (e) {
+                        const t = e[0].toUpperCase() + e.slice(1), i = "evaluation" === e ? "an" : "a";
+                    }(e), window.CKEDITOR_WARNING_SUPPRESSIONS[e] = true);
+                }
+                if (["evaluation", "trial"].includes(o.licenseType)) {
+                    const t = o.licenseType, i = setTimeout(() => {
+                        n(`${t}Limit`);
+                    }, 6e5);
+                    e.on("destroy", () => {
+                        clearTimeout(i);
+                    });
+                }
+                o.usageEndpoint && e.once("ready", () => {
                     const i = {requestId: A(), requestTime: Math.round(Date.now() / 1e3), license: t, editor: ld(e)};
                     e._sendUsageRequest(o.usageEndpoint, i).then(e => {
                         const {status: t, message: i} = e;
                         i && console.warn(i), "ok" != t && n("usageLimit");
+                    }, () => {
+                        V("license-key-validation-endpoint-not-reachable", {url: o.usageEndpoint});
                     });
                 }, {priority: "high"});
             }(this);
@@ -15172,7 +15172,6 @@
 
         // _showLicenseError(e, t) {
         //     setTimeout(() => {
-        //         console.log(e);
         //         if ("invalid" == e) throw new I("invalid-license-key");
         //         if ("expired" == e) throw new I("license-key-expired");
         //         if ("domainLimit" == e) throw new I("license-key-domain-limit");
@@ -15187,11 +15186,12 @@
         // }
 
         // async _sendUsageRequest(e, t) {
+        //     // const i = new Headers({"Content-Type": "application/json"}), n = await fetch(new URL(e), {method: "POST", headers: i, body: JSON.stringify(t)});
+        //     // if (!n.ok) throw new Error(`HTTP Response: ${n.status}`);
+        //     // return n.json();
         //     console.log(e);
-        //     const i = new Headers({"Content-Type": "application/json"}), n = await fetch(new URL(e), {method: "POST", headers: i, body: JSON.stringify(t)});
-        //     if (!n.ok) throw new Error(`HTTP Response: ${n.status}`);
-        //     return n.json()
-        //     // return {"status":"ok","verification":"caaab74e"}
+        //     console.log(t);
+        //     return {"status":"ok","verification":"6f854967"}
         // }
     }
 
@@ -17297,7 +17297,6 @@
             const t = e.config.get("licenseKey");
             if ("GPL" == t) return true;
             const i = In(t.split(".")[1]);
-
             return !i || !i.whiteLabel
         }
 
@@ -24803,7 +24802,8 @@
             const e = this.editor, t = !!e.config.get("ckbox"), i = !!window.CKBox;
             if (!t && !i) return;
             console.log(e.config.get("cloudServices.ApiURL"));
-            e.config.define("ckbox", {serviceOrigin: e.config.get("cloudServices.ApiURL"), defaultUploadCategories: null, ignoreDataId: false, language: e.locale.uiLanguage, theme: "lark", tokenUrl: e.config.get("cloudServices.tokenUrl")});
+            e.config.define("ckbox", {serviceOrigin: "http://127.0.0.1:8090/api", defaultUploadCategories: null, ignoreDataId: false, language: e.locale.uiLanguage, theme: "lark", tokenUrl: e.config.get("cloudServices.tokenUrl")});
+            // e.config.define("ckbox", {serviceOrigin: e.config.get("cloudServices.ApiURL"), defaultUploadCategories: null, ignoreDataId: false, language: e.locale.uiLanguage, theme: "lark", tokenUrl: e.config.get("cloudServices.tokenUrl")});
             const n = e.plugins.get("CloudServices"), s = e.config.get("cloudServices.tokenUrl"), o = e.config.get("ckbox.tokenUrl");
             if (!o) throw new I("ckbox-plugin-missing-token-url", this);
             this._token = o == s ? Promise.resolve(n.token) : n.registerTokenUrl(o), this._token = this._token.then(async e => (await this._authorizePrivateCategoriesAccess(e.value), e));
@@ -24857,8 +24857,7 @@
 
         async _authorizePrivateCategoriesAccess(e) {
             const t = this.editor.config.get("ckbox.serviceOrigin"), i = new FormData;
-            console.log('token:', e);
-            i.set("token", e), await fetch(`${t}auth/authorizeprivateaccess`, {method: "POST", credentials: "include", mode: "no-cors", body: i});
+            i.set("token", e), await fetch(`${t}/auth/authorizeprivateaccess`, {method: "POST", credentials: "include", mode: "no-cors", body: i});
         }
     }
 
@@ -24939,12 +24938,7 @@
         init() {
             const e = this.editor;
             this._shouldBeInitialised() && (this._checkImagePlugins(), qk() && e.commands.add("ckbox", new Vk(e)), async function (e) {
-                const t = e.plugins.get(Mk),
-                    i = e.config.get("ckbox.serviceOrigin"),
-                    n = new URL("auth/permissions", i),
-                    {value: s} = await t.getToken(),
-                    o = await Tk({url: n, authorization: s, signal: (new AbortController).signal});
-                console.log(i)
+                const t = e.plugins.get(Mk), i = e.config.get("ckbox.serviceOrigin"), n = new URL("/api/auth/permissions", i), {value: s} = await t.getToken(), o = await Tk({url: n, authorization: 'Bearer ' + s,"Content-Type": "application/json", signal: (new AbortController).signal});
                 return Object.values(o).some(e => e["asset:create"])
             }(e).then(e => {
                 e || this._blockImageCommands();
@@ -26123,117 +26117,27 @@
 
     const EC = {autoRefresh: true}, SC = 36e5;
 
-    // class IC extends (Dt()) {
-    //     _refresh;
-    //     _options;
-    //     _tokenRefreshTimeout;
-    //     _isDestroyed = false;
-    //
-    //     constructor(e, t = {}) {
-    //         console.log();
-    //         if (super(), !e) throw new I("token-missing-token-url", this);
-    //         t.initValue && this._validateTokenValue(t.initValue), this.set("value", t.initValue), this._refresh = "function" == typeof e ? e : () => {
-    //             return t = e, new Promise((e, i) => {
-    //                 const n = new XMLHttpRequest;
-    //                 console.log('token url di load di sini');
-    //                 n.open("GET", t), n.addEventListener("load", () => {
-    //                     const t = n.status, s = n.response;
-    //                     return t < 200 || t > 299 ? i(new I("token-cannot-download-new-token", null)) : e(s)
-    //                 }), n.addEventListener("error", () => i(new Error("Network Error"))), n.addEventListener("abort", () => i(new Error("Abort"))), n.send();
-    //             });
-    //             var t;
-    //         }, this._options = {...EC, ...t};
-    //     }
-    //
-    //     init() {
-    //         return new Promise((e, t) => {
-    //             this.value ? (this._options.autoRefresh && this._registerRefreshTokenTimeout(), e(this)) : this.refreshToken().then(e).catch(t);
-    //         })
-    //     }
-    //
-    //     refreshToken() {
-    //         const e = this._options.autoRefresh;
-    //         return this._refresh().then(t => (this._validateTokenValue(t), this.set("value", t), e && this._registerRefreshTokenTimeout(), this)).catch(t => {
-    //             throw P("token-refresh-failed", {autoRefresh: e}), e && this._registerRefreshTokenTimeout(5e3), t
-    //         })
-    //     }
-    //
-    //     destroy() {
-    //         this._isDestroyed = true, clearTimeout(this._tokenRefreshTimeout);
-    //     }
-    //
-    //     _validateTokenValue(e) {
-    //         const t = "string" == typeof e, i = !/^".*"$/.test(e), n = t && 3 === e.split(".").length;
-    //         if (!i || !n) throw new I("token-not-in-jwt-format", this)
-    //     }
-    //
-    //     _registerRefreshTokenTimeout(e) {
-    //         if (clearTimeout(this._tokenRefreshTimeout), this._isDestroyed) return;
-    //         const t = e || this._getTokenRefreshTimeoutTime();
-    //         this._tokenRefreshTimeout = setTimeout(() => {
-    //             this.refreshToken();
-    //         }, t);
-    //     }
-    //
-    //     _getTokenRefreshTimeoutTime() {
-    //         try {
-    //             const [, e] = this.value.split("."), {exp: t} = JSON.parse(atob(e));
-    //             if (!t) return SC;
-    //             t > 2147483647 && console.warn("Token expiration time exceeds 32-bit integer range. This might cause unpredictable token refresh timing. Token expiration time should always be provided in seconds.", {tokenExpireTime: t});
-    //             return Math.floor((1e3 * t - Date.now()) / 2)
-    //         } catch {
-    //             return SC
-    //         }
-    //     }
-    //
-    //     static create(e, t = {}) {
-    //         return new IC(e, t).init()
-    //     }
-    // }
-
     class IC extends (Dt()) {
         _refresh;
         _options;
         _tokenRefreshTimeout;
         _isDestroyed = false;
-        _storageKey = 'jwt_token'; // Kunci untuk localStorage
 
         constructor(e, t = {}) {
-            super();
-            // Coba muat token dari localStorage saat inisialisasi
-            const storedToken = localStorage.getItem(this._storageKey);
-            // console.log('token baru',storedToken)
-            if (storedToken) {
-                t.initValue = storedToken;
-            }else{
-                t.initValue = e
-            }
-
-            t.initValue && this._validateTokenValue(t.initValue),
-                this.set("value", t.initValue),
-
-                // Ubah refresh function untuk menggunakan localStorage
-                this._refresh = "function" == typeof e ? e : () => {
-                    // Jika tidak ada refresh function, kembalikan token dari localStorage
-                    return new Promise((resolve, reject) => {
-                        const token = localStorage.getItem(this._storageKey);
-                        if (token) {
-                            resolve(token);
-                        } else {
-                            reject(new Error("No token found in localStorage"));
-                        }
-                    });
-                };
-
-            this._options = {...EC, ...t};
+            if (super(), !e) throw new I("token-missing-token-url", this);
+            t.initValue && this._validateTokenValue(t.initValue), this.set("value", t.initValue), this._refresh = "function" == typeof e ? e : () => {
+                return t = e, new Promise((e, i) => {
+                    const n = new XMLHttpRequest;
+                    n.open("GET", t), n.addEventListener("load", () => {
+                        const t = n.status, s = n.response;
+                        return t < 200 || t > 299 ? i(new I("token-cannot-download-new-token", null)) : e(s)
+                    }), n.addEventListener("error", () => i(new Error("Network Error"))), n.addEventListener("abort", () => i(new Error("Abort"))), n.send();
+                });
+                var t;
+            }, this._options = {...EC, ...t};
         }
 
         init() {
-            const ed= new Un()
-            // console.log('meong garong',ed);
-            // this.setToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU4OTcxODMzLCJpYXQiOjE3NTg5NTAyMzMsImp0aSI6ImQ5ZDlhYjYxYjljNTQxMDFhNDk0MmExNmM2Mjg1ZWE4IiwidXNlcl9pZCI6IjEiLCJhdWQiOiJ6QkdwbENKOGs5RHM1U0wwY3lubyIsInN1YiI6IjEiLCJhdXRoIjp7ImNrYm94Ijp7InJvbGUiOiJhZG1pbiIsIndvcmtzcGFjZXMiOlsxMl19fX0.Q49EoVQ0vINdoTg1fKc61DBGwZKUPqcT5vk4LdDTbOU')
-            // this.setToken(ed.jwt_token)
-            // this._removeTokenFromLocalStorage()
             return new Promise((e, t) => {
                 this.value ? (this._options.autoRefresh && this._registerRefreshTokenTimeout(), e(this)) : this.refreshToken().then(e).catch(t);
             })
@@ -26241,29 +26145,17 @@
 
         refreshToken() {
             const e = this._options.autoRefresh;
-            return this._refresh().then(t => {
-                this._validateTokenValue(t);
-                this.set("value", t);
-                this._saveTokenToLocalStorage(t); // Simpan token baru ke localStorage
-                e && this._registerRefreshTokenTimeout();
-                return this;
-            }).catch(t => {
-                throw P("token-refresh-failed", {autoRefresh: e}),
-                e && this._registerRefreshTokenTimeout(5e3),
-                    t;
+            return this._refresh().then(t => (this._validateTokenValue(t), this.set("value", t), e && this._registerRefreshTokenTimeout(), this)).catch(t => {
+                throw P("token-refresh-failed", {autoRefresh: e}), e && this._registerRefreshTokenTimeout(5e3), t
             })
         }
 
         destroy() {
-            this._isDestroyed = true;
-            clearTimeout(this._tokenRefreshTimeout);
-            this._removeTokenFromLocalStorage(); // Hapus token dari localStorage
+            this._isDestroyed = true, clearTimeout(this._tokenRefreshTimeout);
         }
 
         _validateTokenValue(e) {
-            const t = "string" == typeof e,
-                i = !/^".*"$/.test(e),
-                n = t && 3 === e.split(".").length;
+            const t = "string" == typeof e, i = !/^".*"$/.test(e), n = t && 3 === e.split(".").length;
             if (!i || !n) throw new I("token-not-in-jwt-format", this)
         }
 
@@ -26277,8 +26169,7 @@
 
         _getTokenRefreshTimeoutTime() {
             try {
-                const [, e] = this.value.split("."),
-                    {exp: t} = JSON.parse(atob(e));
+                const [, e] = this.value.split("."), {exp: t} = JSON.parse(atob(e));
                 if (!t) return SC;
                 t > 2147483647 && console.warn("Token expiration time exceeds 32-bit integer range. This might cause unpredictable token refresh timing. Token expiration time should always be provided in seconds.", {tokenExpireTime: t});
                 return Math.floor((1e3 * t - Date.now()) / 2)
@@ -26287,70 +26178,10 @@
             }
         }
 
-        // Metode untuk menyimpan token ke localStorage
-        _saveTokenToLocalStorage(token) {
-            try {
-                localStorage.setItem(this._storageKey, token);
-                // console.log('Token saved to localStorage');
-            } catch (error) {
-                console.error('Failed to save token to localStorage:', error);
-            }
-        }
-
-        // Metode untuk memuat token dari localStorage
-        _loadTokenFromLocalStorage() {
-            try {
-                const token = localStorage.getItem(this._storageKey);
-                if (token) {
-                    this.set("value", token);
-                    console.log('Token loaded from localStorage');
-                    return token;
-                }
-            } catch (error) {
-                console.error('Failed to load token from localStorage:', error);
-            }
-            return null;
-        }
-
-        // Metode untuk menghapus token dari localStorage
-        _removeTokenFromLocalStorage() {
-            try {
-                localStorage.removeItem(this._storageKey);
-                console.log('Token removed from localStorage');
-            } catch (error) {
-                console.error('Failed to remove token from localStorage:', error);
-            }
-        }
-
-        // Metode untuk memeriksa apakah token ada di localStorage
-        hasTokenInLocalStorage() {
-            return !!localStorage.getItem(this._storageKey);
-        }
-
-        // Metode untuk menyimpan token secara manual
-        setToken(token) {
-            this._validateTokenValue(token);
-            this.set("value", token);
-            this._saveTokenToLocalStorage(token);
-            if (this._options.autoRefresh) {
-                this._registerRefreshTokenTimeout();
-            }
-            return this;
-        }
-
-        // Metode untuk menghapus token secara manual
-        clearToken() {
-            this.set("value", null);
-            this._removeTokenFromLocalStorage();
-            clearTimeout(this._tokenRefreshTimeout);
-            return this;
-        }
-
         static create(e, t = {}) {
             return new IC(e, t).init()
         }
     }
-
 
     const PC = /^data:(\S*?);base64,/;
 
@@ -26449,8 +26280,6 @@
         }
 
         createToken(e, t) {
-            console.log('create token 1',e)
-            console.log('create token 2',t)
             return new IC(e, t)
         }
 

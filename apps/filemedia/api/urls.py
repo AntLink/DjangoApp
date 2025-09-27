@@ -8,13 +8,22 @@ from .views import (
 )
 
 router = DefaultRouter(trailing_slash=False)
-router.register(r'admin', AdminViewSet,basename='admin')
+# router.register(r'admin', AdminViewSet,basename='admin')
+# router.register(r'tags', TagsViewSet)
+# router.register(r'categories', CategoryViewSet)
+# router.register(r'folders', FolderViewSet)
+# router.register(r'media', MediaViewSet)
+# router.register(r'mediahastags', MediahastagsViewSet)
+# router.register(r'auth', AuthViewSet, basename='auth')  # Tambahkan ini
+
+
+router.register(r'auth', AuthViewSet, basename='auth')
+router.register(r'admin', AdminViewSet, basename='admin')
 router.register(r'tags', TagsViewSet)
 router.register(r'categories', CategoryViewSet)
 router.register(r'folders', FolderViewSet)
 router.register(r'media', MediaViewSet)
 router.register(r'mediahastags', MediahastagsViewSet)
-router.register(r'auth', AuthViewSet, basename='auth')  # Tambahkan ini
 
 urlpatterns = [
     path('', include(router.urls)),

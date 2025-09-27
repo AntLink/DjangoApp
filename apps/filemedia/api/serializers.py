@@ -8,6 +8,52 @@ from django.conf import settings
 import blurhash
 from PIL import Image
 
+# serializers.py
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class CKBoxTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Tambahkan claim sesuai CKBox
+        token["aud"] = "zBGplCJ8k9Ds5SL0cyno"  # ganti pakai projectId/ClientId CKBox kamu
+        token["sub"] = str(user.id)
+        token["auth"] = {
+            "ckbox": {
+                "role": "admin",        # atau "user"
+                "workspaces": [12]      # workspace ID kamu
+            }
+        }
+
+        return token
+
+class CKBoxTokenRefreshSerializer(TokenRefreshSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Tambahkan claim sesuai CKBox
+        token["aud"] = "zBGplCJ8k9Ds5SL0cyno"
+        token["sub"] = str(user.id)
+        token["auth"] = {
+            "ckbox": {
+                "role": "admin",
+                "workspaces": [12]
+            }
+        }
+
+        return token
+
+
 class TagsSerializer(serializers.ModelSerializer):
     # Manual implementation for MPTT structure
     children = serializers.SerializerMethodField()

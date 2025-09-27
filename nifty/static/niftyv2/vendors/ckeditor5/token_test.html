@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CKEditor 5 with CKBox Integration</title>
+
+    <!-- Include CKEditor styles -->
+    <link rel="stylesheet" href="./ckeditor5.css">
+    <link rel="stylesheet" href="./premium-features.css" crossorigin>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        #container {
+            max-width: 2000px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px;
+
+        }
+
+
+        #editor {
+            min-height: 400px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .logout-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        .logout-button:hover {
+            background: #c82333;
+        }
+
+        .status-info {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 10px;
+            background: #333;
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            max-width: 400px;
+            word-wrap: break-word;
+        }
+
+        .ck-login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .ck-login-form {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            width: 350px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .ck-login-form h3 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #333;
+        }
+
+        .ck-form-group {
+            margin-bottom: 20px;
+        }
+
+        .ck-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .ck-form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .ck-form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        .ck-button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .ck-button-action {
+            background: #007cba;
+            color: white;
+        }
+
+        .ck-button-action:hover {
+            background: #005a87;
+        }
+
+        .ck-button-cancel {
+            background: #f1f1f1;
+            color: #333;
+        }
+
+        .ck-button-cancel:hover {
+            background: #e1e1e1;
+        }
+
+        .debug-info {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: monospace;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .test-api-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 4px;
+        }
+
+
+        .user-info {
+            margin-top: 10px;
+            padding: 10px;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .config-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+        }
+
+        .config-input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+<div id="container">
+    <div id="editor"></div>
+</div>
+
+<button class="logout-button" id="logout-button" style="display: none;">Logout</button>
+<div class="status-info" id="status-info">Status: Initializing...</div>
+
+<!-- Include CKEditor build -->
+<script src="./ckeditor5-custom.js"></script>
+<script src="./premium-features.js" crossorigin></script>
+<script src="./ckbox-custom.js"></script>
+<script>
+    // Global configuration
+    let config = {
+        baseUrl: 'http://127.0.0.1:8090'
+    };
+
+    // Save configuration
+    function saveConfig() {
+        const baseUrlInput = document.getElementById('base-url');
+        config.baseUrl = baseUrlInput.value.trim();
+        localStorage.setItem('ckeditor_config', JSON.stringify(config));
+        debugLog('Configuration saved: ' + JSON.stringify(config));
+    }
+
+    // Load configuration
+    function loadConfig() {
+        try {
+            const savedConfig = localStorage.getItem('ckeditor_config');
+            if (savedConfig) {
+                config = JSON.parse(savedConfig);
+                document.getElementById('base-url').value = config.baseUrl;
+                debugLog('Configuration loaded: ' + JSON.stringify(config));
+            }
+        } catch (e) {
+            debugLog('Error loading configuration: ' + e.message);
+        }
+    }
+
+    // Debug function to log to status
+    function debugLog(message) {
+        console.log(message);
+        const statusInfo = document.getElementById('status-info');
+        statusInfo.textContent = `Status: ${message}`;
+    }
+
+    function clearLocalStorage() {
+        localStorage.removeItem('ckeditor_token');
+        localStorage.removeItem('ckeditor_config');
+        document.getElementById('api-test-result').textContent = 'LocalStorage cleared';
+        document.getElementById('user-info').style.display = 'none';
+    }
+
+    // Enhanced Token Manager with server-driven token lifetimes
+    class SimpleTokenManager {
+        constructor(config = {}) {
+            this.config = {
+                tokenUrl: config.tokenUrl || '/api/auth/ckbox_login',
+                refreshTokenUrl: config.refreshTokenUrl || '/api/auth/ckbox_token_refresh',
+                ...config
+            };
+            this.token = null;
+            this.refreshToken = null;
+            this.tokenExpiry = null;
+            this.refreshTokenExpiry = null;
+            this.refreshTimeout = null;
+            this.isRefreshing = false;
+            this.refreshQueue = [];
+        }
+
+        getToken() {
+            const tokenData = localStorage.getItem('ckeditor_token');
+            debugLog(`Getting token from localStorage: ${tokenData ? 'Found' : 'Not found'}`);
+
+            if (tokenData) {
+                try {
+                    const parsed = JSON.parse(tokenData);
+                    this.token = parsed.token;
+                    this.refreshToken = parsed.refreshToken;
+                    this.tokenExpiry = parsed.expiry;
+                    this.refreshTokenExpiry = parsed.refreshExpiry;
+
+                    debugLog(`Token parsed. Valid: ${this.isTokenValid()}, Refresh valid: ${this.isRefreshTokenValid()}`);
+                    return this.token;
+                } catch (e) {
+                    debugLog(`Error parsing token data: ${e.message}`);
+                    this.clearToken();
+                }
+            }
+            return null;
+        }
+
+        saveToken(token, refreshToken, expiry, refreshExpiry) {
+            const tokenData = {
+                token,
+                refreshToken,
+                expiry,
+                refreshExpiry
+            };
+            localStorage.setItem('ckeditor_token', JSON.stringify(tokenData));
+            debugLog(`Token saved to localStorage. Access expires: ${new Date(expiry).toLocaleString()}, Refresh expires: ${new Date(refreshExpiry).toLocaleString()}`);
+
+            this.token = token;
+            this.refreshToken = refreshToken;
+            this.tokenExpiry = expiry;
+            this.refreshTokenExpiry = refreshExpiry;
+
+            this.setAutoRefresh();
+        }
+
+        clearToken() {
+            localStorage.removeItem('ckeditor_token');
+            this.token = null;
+            this.refreshToken = null;
+            this.tokenExpiry = null;
+            this.refreshTokenExpiry = null;
+            if (this.refreshTimeout) {
+                clearTimeout(this.refreshTimeout);
+                this.refreshTimeout = null;
+            }
+            debugLog('Token cleared');
+        }
+
+        isTokenValid() {
+            if (!this.tokenExpiry) return false;
+            // Add a small buffer (5 seconds) to account for network latency
+            const isValid = Date.now() < (this.tokenExpiry - 5000);
+            debugLog(`Token valid: ${isValid} (Current: ${new Date().toISOString()}, Expires: ${new Date(this.tokenExpiry).toISOString()})`);
+            return isValid;
+        }
+
+        isRefreshTokenValid() {
+            if (!this.refreshTokenExpiry) return false;
+            const isValid = Date.now() < this.refreshTokenExpiry;
+            debugLog(`Refresh token valid: ${isValid}`);
+            return isValid;
+        }
+
+        setAutoRefresh() {
+            if (this.refreshTimeout) {
+                clearTimeout(this.refreshTimeout);
+            }
+
+            if (!this.tokenExpiry) return;
+
+            // Try to refresh 30 seconds before expiry
+            const refreshTime = Math.max(0, this.tokenExpiry - Date.now() - 30 * 1000);
+
+            debugLog(`Auto-refresh scheduled in ${Math.round(refreshTime / 1000)} seconds`);
+
+            this.refreshTimeout = setTimeout(() => {
+                this.refreshAccessToken();
+            }, refreshTime);
+        }
+
+        async refreshAccessToken() {
+            // If already refreshing, return the same promise
+            if (this.isRefreshing) {
+                debugLog('Token refresh already in progress, adding to queue');
+                return new Promise((resolve, reject) => {
+                    this.refreshQueue.push({resolve, reject});
+                });
+            }
+
+            this.isRefreshing = true;
+            debugLog('Refreshing token...');
+
+            if (!this.refreshToken || !this.isRefreshTokenValid()) {
+                debugLog('Refresh token not valid, clearing token');
+                this.clearToken();
+                this.isRefreshing = false;
+                return null;
+            }
+
+            try {
+                const url = `${config.baseUrl}${this.config.refreshTokenUrl}`;
+                debugLog(`Refreshing token at: ${url}`);
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({refresh: this.refreshToken})
+                });
+
+                debugLog(`Refresh response status: ${response.status}`);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    debugLog('Refresh successful, saving new token');
+
+                    // Calculate expiry times based on server response
+                    const tokenExpiry = Date.now() + (data.access_token_lifetime * 1000);
+                    const refreshExpiry = Date.now() + (data.refresh_token_lifetime * 1000);
+
+                    this.saveToken(
+                        data.access,
+                        data.refresh || this.refreshToken, // Use new refresh token if provided, otherwise keep the old one
+                        tokenExpiry,
+                        refreshExpiry
+                    );
+
+                    // Resolve all queued promises
+                    this.refreshQueue.forEach(({resolve}) => resolve(this.token));
+                    this.refreshQueue = [];
+
+                    this.isRefreshing = false;
+                    return this.token;
+                } else {
+                    debugLog(`Refresh failed with status ${response.status}`);
+                    this.clearToken();
+
+                    // Reject all queued promises
+                    this.refreshQueue.forEach(({reject}) => reject(new Error('Token refresh failed')));
+                    this.refreshQueue = [];
+
+                    this.isRefreshing = false;
+                    return null;
+                }
+            } catch (error) {
+                debugLog(`Error refreshing token: ${error.message}`);
+                this.clearToken();
+
+                // Reject all queued promises
+                this.refreshQueue.forEach(({reject}) => reject(error));
+                this.refreshQueue = [];
+
+                this.isRefreshing = false;
+                return null;
+            }
+        }
+
+        async getTokenForCKBox() {
+            let token = this.getToken();
+
+            if (!token || !this.isTokenValid()) {
+                debugLog('Token not valid, attempting refresh...');
+                token = await this.refreshAccessToken();
+            }
+
+            if (!token) {
+                throw new Error('Unable to retrieve a token from the callback.');
+            }
+
+            return token;
+        }
+
+        async login(username, password) {
+            debugLog(`Attempting login for user: ${username}`);
+
+            try {
+                const url = `${config.baseUrl}${this.config.tokenUrl}`;
+                debugLog(`Login attempt at: ${url}`);
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({username, password})
+                });
+
+                debugLog(`Login response status: ${response.status}`);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    debugLog('Login successful, saving tokens');
+
+                    // Calculate expiry times based on server response
+                    const tokenExpiry = Date.now() + (data.access_token_lifetime * 1000);
+                    const refreshExpiry = Date.now() + (data.refresh_token_lifetime * 1000);
+
+                    this.saveToken(
+                        data.access,
+                        data.refresh,
+                        tokenExpiry,
+                        refreshExpiry
+                    );
+                    return true;
+                } else {
+                    let errorMessage = 'Login failed';
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.error || errorMessage;
+                    } catch (e) {
+                        errorMessage = await response.text();
+                    }
+                    debugLog(`Login failed: ${errorMessage}`);
+                    throw new Error(errorMessage);
+                }
+            } catch (error) {
+                debugLog(`Login error: ${error.message}`);
+                throw error;
+            }
+        }
+
+        logout() {
+            debugLog('Logging out...');
+            this.clearToken();
+        }
+    }
+
+    // Initialize token manager
+    let tokenManager;
+
+    function initializeTokenManager() {
+        tokenManager = new SimpleTokenManager({
+            tokenUrl: '/api/auth/ckbox_login',
+            refreshTokenUrl: '/api/auth/ckbox_token_refresh'
+        });
+    }
+
+    // Show login overlay
+    function showLoginOverlay() {
+        debugLog('Showing login overlay');
+
+        // Remove existing overlay
+        const existingOverlay = document.querySelector('.ck-login-overlay');
+        if (existingOverlay) {
+            existingOverlay.remove();
+        }
+
+        // Create new overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'ck-login-overlay';
+        overlay.innerHTML = `
+            <div class="ck-login-form">
+                <h3>Login to your System</h3>
+                <form id="ckeditor-login-form">
+                    <div class="ck-form-group">
+                        <label>Username:</label>
+                        <input type="text" id="ckeditor-username" value="antlink" required>
+                    </div>
+                    <div class="ck-form-group">
+                        <label>Password:</label>
+                        <input type="password" id="ckeditor-password" value="815m1ll4h" required>
+                    </div>
+                    <div class="ck-form-actions">
+                        <button type="button" class="ck-button ck-button-cancel" id="cancel-login">Cancel</button>
+                        <button type="submit" class="ck-button ck-button-action">Login</button>
+                    </div>
+                </form>
+                <div class="debug-info" id="login-debug"></div>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        // Handle form submission
+        document.getElementById('ckeditor-login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('ckeditor-username').value;
+            const password = document.getElementById('ckeditor-password').value;
+            const debugDiv = document.getElementById('login-debug');
+
+            debugDiv.textContent = 'Attempting login...';
+
+            try {
+                debugLog(`Login attempt with username: ${username}`);
+                await tokenManager.login(username, password);
+                debugDiv.textContent = 'Login successful! Reloading page...';
+                overlay.remove();
+                debugLog('Login successful, reloading page');
+
+                // Reload page to reinitialize editor with CKBox
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } catch (error) {
+                debugDiv.textContent = `Login failed: ${error.message}`;
+                debugLog(`Login failed: ${error.message}`);
+                alert(`Login failed: ${error.message}`);
+            }
+        });
+
+        // Handle cancel button
+        document.getElementById('cancel-login').addEventListener('click', () => {
+            overlay.remove();
+        });
+    }
+
+    // Create token URL function for CKBox
+    function createTokenUrlFunction() {
+        return async () => {
+            try {
+                debugLog('CKBox requesting token...');
+
+                // Coba dapatkan token dari manager terlebih dahulu
+                let token = await tokenManager.getTokenForCKBox();
+
+                // Jika token tidak tersedia atau tidak valid, coba login ke CKBox
+                if (!token || !tokenManager.isTokenValid()) {
+                    debugLog('Token not available, trying CKBox login...');
+                    const response = await fetch(`${config.baseUrl}/api/auth/ckbox_login/`, {
+                        method: 'POST',
+                        mode: 'cors',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            username: 'antlink',
+                            password: '815m1ll4h'
+                        })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+
+                        // Calculate expiry times based on server response
+                        const tokenExpiry = Date.now() + (data.access_token_lifetime * 1000);
+                        const refreshExpiry = Date.now() + (data.refresh_token_lifetime * 1000);
+
+                        // Save the token
+                        tokenManager.saveToken(
+                            data.access,
+                            data.refresh,
+                            tokenExpiry,
+                            refreshExpiry
+                        );
+
+                        token = data.access;
+                    } else {
+                        throw new Error('Failed to get CKBox token');
+                    }
+                }
+
+                console.log('CKBox token:', token);
+                debugLog('CKBox token obtained successfully');
+                return token;
+            } catch (error) {
+                debugLog(`CKBox token error: ${error.message}`);
+                showLoginOverlay();
+                throw error;
+            }
+        };
+    }
+
+    // Create token refresh function for CKBox
+    function createTokenRefreshFunction() {
+        return async (oldToken) => {
+            try {
+                debugLog('CKBox refreshing token...');
+                const newToken = await tokenManager.refreshAccessToken();
+                if (newToken) {
+                    debugLog('CKBox token refreshed successfully');
+                    return newToken;
+                }
+                throw new Error('Token refresh failed');
+            } catch (error) {
+                debugLog(`CKBox token refresh error: ${error.message}`);
+                showLoginOverlay();
+                throw error;
+            }
+        };
+    }
+
+    AI_API_KEY = "09ac094bc293454b94457cf556ee8616.opW0YYeFQce1AA0m"
+
+    // Initialize CKEditor
+    function initializeEditor() {
+        debugLog('Initializing CKEditor...');
+
+        // Extract CKEditor classes from window
+        const {
+            ClassicEditor, Alignment, Autoformat, AutoImage, AutoLink, Autosave, BalloonToolbar, BlockQuote, BlockToolbar, Bold,
+            Bookmark, CKBox, CKBoxImageEdit, CloudServices, Code, CodeBlock, Emoji, Essentials, FindAndReplace, FontBackgroundColor, FontColor, FontFamily,
+            FontSize, Fullscreen, GeneralHtmlSupport, Heading, Highlight, HorizontalLine, ImageBlock, ImageCaption, ImageEditing, ImageInline,
+            ImageInsert, ImageInsertViaUrl, ImageResize, ImageStyle, ImageTextAlternative, ImageToolbar, ImageUpload, ImageUtils, Indent,
+            IndentBlock, Italic, Link, LinkImage, List, ListProperties, MediaEmbed, Mention, PageBreak, Paragraph, PasteFromMarkdownExperimental, PasteFromOffice,
+            PictureEditing, PlainTableOutput, RemoveFormat, ShowBlocks, SourceEditing, SpecialCharacters, SpecialCharactersArrows, SpecialCharactersCurrency,
+            SpecialCharactersEssentials, SpecialCharactersLatin, SpecialCharactersMathematical, SpecialCharactersText, Strikethrough, Subscript, Superscript, Table,
+            TableCaption, TableCellProperties, TableColumnResize, TableLayout, TableProperties, TableToolbar, TextTransformation, TodoList, Underline
+        } = window.CKEDITOR;
+        const {AIAssistant, OpenAITextAdapter, SourceEditingEnhanced, ExportPdf, ExportWord, ImportWord, PasteFromOfficeEnhanced} = window.CKEDITOR_PREMIUM_FEATURES;
+        const LICENSE_KEY = 'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3NTk3MDg3OTksImp0aSI6ImIxN2U4MjU4LTk5ZDUtNDVmZi1iOWUzLTg4ZDQ3ZjU4NjgwYyIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiLCJzaCJdLCJ3aGl0ZUxhYmVsIjp0cnVlLCJsaWNlbnNlVHlwZSI6InRyaWFsIiwiZmVhdHVyZXMiOlsiKiJdLCJ2YyI6ImZlYjNiOWNlIn0.EmbwFs2lmAIeb0tVL7H4is7Stp-_Q8RWVZQMlpqdoo4tKuc8HTwwK_5cAL3sUxfx4F_SLE9mUWoJUmsVN736Sg';
+
+        // Create editor configuration
+        const editorConfig = {
+            toolbar: {
+                items: [
+                    'fullscreen', '|', 'undo', 'redo', '|', 'importWord', 'exportWord', 'exportPdf', 'SourceEditingEnhanced', '|', 'aiCommands', 'aiAssistant', '|', 'heading',
+                    'sourceEditing', 'showBlocks', 'findAndReplace', '|', 'insertImage', 'CKBox', 'mediaEmbed', '|',
+                    'insertTable', 'insertTableLayout', '|', 'alignment', 'bulletedList', 'numberedList',
+                    'todoList', 'outdent', 'indent', '|', 'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor',
+                    '|', 'bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript', 'code',
+                    'removeFormat', '|', 'emoji', 'specialCharacters', 'horizontalLine', 'pageBreak', 'link',
+                    'bookmark', 'highlight', 'blockQuote', 'codeBlock'
+                ],
+                shouldNotGroupWhenFull: false
+            },
+            plugins: [
+                AIAssistant, OpenAITextAdapter, SourceEditingEnhanced, Alignment, Autoformat, AutoImage, AutoLink, Autosave, BalloonToolbar, BlockQuote,
+                BlockToolbar, Bold, Bookmark, CKBox, CKBoxImageEdit, CloudServices, Code, CodeBlock, Emoji,
+                Essentials, FindAndReplace, FontBackgroundColor, FontColor, FontFamily, FontSize, Fullscreen,
+                GeneralHtmlSupport, Heading, Highlight, HorizontalLine, ImageBlock, ImageCaption, ImageEditing,
+                ImageInline, ImageInsert, ImageInsertViaUrl, ImageResize, ImageStyle, ImageTextAlternative,
+                ImageToolbar, ImageUpload, ImageUtils, Indent, IndentBlock, Italic, Link, LinkImage, List,
+                ListProperties, MediaEmbed, Mention, PageBreak, Paragraph, ExportPdf, ExportWord, ImportWord,
+                PasteFromMarkdownExperimental, PasteFromOffice, PictureEditing, PlainTableOutput, RemoveFormat,
+                ShowBlocks, SourceEditing, SpecialCharacters, SpecialCharactersArrows, SpecialCharactersCurrency,
+                SpecialCharactersEssentials, SpecialCharactersLatin, SpecialCharactersMathematical,
+                SpecialCharactersText, Strikethrough, Subscript, Superscript, Table, TableCaption,
+                TableCellProperties, TableColumnResize, TableLayout, TableProperties, TableToolbar,
+                TextTransformation, TodoList, Underline
+            ],
+            balloonToolbar: ['aiAssistant', '|', 'bold', 'italic', '|', 'link', 'insertImage', '|', 'bulletedList', 'numberedList', 'emoji', 'specialCharacters', 'horizontalLine', 'pageBreak', 'link'],
+            blockToolbar: ['fontSize', 'fontColor', 'fontBackgroundColor', '|', 'bold', 'italic', '|', 'link', 'insertImage', 'insertTable', 'insertTableLayout', '|', 'bulletedList', 'numberedList', 'outdent', 'indent'],
+            ai: {
+                openAI: {
+                    apiUrl: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
+                    requestParameters: {
+                        model: "glm-4.5-flash",
+                        stream: true,
+                        temperature: 0.8,
+                        top_p: 1
+                    },
+                    requestHeaders: {
+                        Authorization: 'Bearer ' + AI_API_KEY
+                    }
+                }
+            },
+
+            cloudServices: {
+                tokenUrl: createTokenUrlFunction(),
+                ApiURL: 'http://127.0.0.1:8090/api'
+            },
+            ckbox: {
+                tokenUrl: createTokenUrlFunction(),
+                onTokenRefresh: createTokenRefreshFunction()
+            },
+            fontFamily: {
+                supportAllValues: true
+            },
+            fontSize: {
+                options: [10, 12, 14, 'default', 18, 20, 22],
+                supportAllValues: true
+            },
+            fullscreen: {
+                onEnterCallback: container =>
+                    container.classList.add(
+                        'editor-container',
+                        'editor-container_classic-editor',
+                        'editor-container_include-block-toolbar',
+                        'editor-container_include-fullscreen',
+                        'main-container'
+                    )
+            },
+            heading: {
+                options: [
+                    {
+                        model: 'paragraph',
+                        title: 'Paragraph',
+                        class: 'ck-heading_paragraph'
+                    },
+                    {
+                        model: 'heading1',
+                        view: 'h1',
+                        title: 'Heading 1',
+                        class: 'ck-heading_heading1'
+                    },
+                    {
+                        model: 'heading2',
+                        view: 'h2',
+                        title: 'Heading 2',
+                        class: 'ck-heading_heading2'
+                    },
+                    {
+                        model: 'heading3',
+                        view: 'h3',
+                        title: 'Heading 3',
+                        class: 'ck-heading_heading3'
+                    },
+                    {
+                        model: 'heading4',
+                        view: 'h4',
+                        title: 'Heading 4',
+                        class: 'ck-heading_heading4'
+                    },
+                    {
+                        model: 'heading5',
+                        view: 'h5',
+                        title: 'Heading 5',
+                        class: 'ck-heading_heading5'
+                    },
+                    {
+                        model: 'heading6',
+                        view: 'h6',
+                        title: 'Heading 6',
+                        class: 'ck-heading_heading6'
+                    }
+                ]
+            },
+            htmlSupport: {
+                allow: [
+                    {
+                        name: /^.*$/,
+                        styles: true,
+                        attributes: true,
+                        classes: true
+                    }
+                ]
+            },
+            image: {
+                toolbar: [
+                    'toggleImageCaption',
+                    'imageTextAlternative',
+                    '|',
+                    'imageStyle:inline',
+                    'imageStyle:wrapText',
+                    'imageStyle:breakText',
+                    '|',
+                    'resizeImage',
+                    '|',
+                    'ckboxImageEdit'
+                ]
+            },
+            initialData:
+                '<h2>Congratulations on setting up CKEditor 5!</h2>',
+            licenseKey: LICENSE_KEY,
+            link: {
+                addTargetToExternalLinks: true,
+                defaultProtocol: 'https://',
+                decorators: {
+                    toggleDownloadable: {
+                        mode: 'manual',
+                        label: 'Downloadable',
+                        attributes: {
+                            download: 'file'
+                        }
+                    }
+                }
+            },
+            list: {
+                properties: {
+                    styles: true,
+                    startIndex: true,
+                    reversed: true
+                }
+            },
+            mention: {
+                feeds: [
+                    {
+                        marker: '@',
+                        feed: [
+                            /* See: https://ckeditor.com/docs/ckeditor5/latest/features/mentions.html */
+                        ]
+                    }
+                ]
+            },
+            placeholder: 'Type or paste your content here!',
+            table: {
+                contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
+            }
+        };
+
+        ClassicEditor.create(document.querySelector('#editor'), editorConfig)
+            .then(editor => {
+                debugLog('CKEditor initialized successfully');
+                window.currentEditor = editor;
+
+                // Show logout button if logged in
+                const token = tokenManager.getToken();
+                const logoutButton = document.getElementById('logout-button');
+                if (token && tokenManager.isTokenValid()) {
+                    logoutButton.style.display = 'block';
+                }
+
+                // Handle CKBox errors
+                editor.plugins.get('CKBox').on('error:token', (evt, data) => {
+                    debugLog(`CKBox token error: ${JSON.stringify(data)}`);
+                    showLoginOverlay();
+                });
+            })
+            .catch(error => {
+                debugLog(`Error initializing CKEditor: ${error.message}`);
+            });
+    }
+
+    // Initialize on page load
+    //document.addEventListener('DOMContentLoaded', () => {
+    // Load configuration first
+    loadConfig();
+    initializeTokenManager();
+    initializeEditor();
+    const token = tokenManager.getToken();
+    const logoutButton = document.getElementById('logout-button');
+    if (!token && !tokenManager.isTokenValid()) {
+        showLoginOverlay();
+    }
+    logoutButton.addEventListener('click', () => {
+        tokenManager.logout();
+        logoutButton.style.display = 'none';
+        location.reload();
+    });
+    /**
+     debugLog('DOM loaded, checking authentication...');
+
+     const token = tokenManager.getToken();
+     console.log('format token', token);
+     const logoutButton = document.getElementById('logout-button');
+
+
+     if (token && tokenManager.isTokenValid()) {
+     debugLog('User authenticated, initializing editor with CKBox...');
+     logoutButton.style.display = 'block';
+     initializeEditor();
+     }else {
+     debugLog('User not authenticated, showing login form...');
+     logoutButton.style.display = 'none';
+
+     // Show login form immediately
+     showLoginOverlay();
+
+     // Initialize editor without CKBox first
+     const {
+     ClassicEditor,
+     Essentials,
+     Paragraph,
+     Bold,
+     Italic,
+     Underline,
+     Strikethrough,
+     Code,
+     Link,
+     List,
+     Indent,
+     IndentBlock,
+     BlockQuote,
+     Heading,
+     FontSize,
+     FontFamily,
+     FontColor,
+     FontBackgroundColor,
+     Alignment,
+     Table,
+     TableToolbar,
+     ImageUpload,
+     MediaEmbed,
+     SourceEditing,
+     Fullscreen,
+     FindAndReplace
+     } = window.CKEDITOR;
+
+     ClassicEditor
+     .create(document.querySelector('#editor'), {
+     plugins: [
+     Essentials,
+     Paragraph,
+     Bold,
+     Italic,
+     Underline,
+     Strikethrough,
+     Code,
+     Link,
+     List,
+     Indent,
+     IndentBlock,
+     BlockQuote,
+     Heading,
+     FontSize,
+     FontFamily,
+     FontColor,
+     FontBackgroundColor,
+     Alignment,
+     Table,
+     TableToolbar,
+     ImageUpload,
+     MediaEmbed,
+     SourceEditing,
+     Fullscreen,
+     FindAndReplace
+     ],
+     toolbar: [
+     'heading', '|', 'bold', 'italic', 'underline', 'strikethrough', '|',
+     'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+     'link', 'bulletedList', 'numberedList', 'outdent', 'indent', '|',
+     'blockQuote', 'insertTable', '|', 'sourceEditing', 'fullscreen', '|',
+     'findAndReplace'
+     ]
+     })
+     .then(editor => {
+     debugLog('CKEditor initialized without CKBox');
+     window.currentEditor = editor;
+     })
+     .catch(error => {
+     debugLog(`Error initializing CKEditor without CKBox: ${error.message}`);
+     });
+
+
+    // Logout button handler
+    logoutButton.addEventListener('click', () => {
+        tokenManager.logout();
+        logoutButton.style.display = 'none';
+        location.reload();
+    });
+    // });
+     }*/
+</script>
+</body>
+</html>

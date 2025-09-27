@@ -252,14 +252,16 @@ class CKEditorWidget(forms.Widget):
     def __init__(self, attrs=None, config=None):
         # Konfigurasi default
         default_config = {
-            'ai_api_key': '1b4818209ba04b069314ba81be1ff1c2.xx6qQKiR9qnWCPTD',
+            'ai_api_key': '09ac094bc293454b94457cf556ee8616.opW0YYeFQce1AA0m',
             'ai_api_url': 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
             'ai_model': "glm-4.5-flash",
             'ai_temperature': 0.8,
             'ai_top_p': 1,
-            # 'cloud_services_token_url': 'http://127.0.0.1:8080/static/niftyv2/vendors/ckeditor5/token',
-            'cloud_services_token_url': 'http://127.0.0.1:8090/filemedia/api/auth/token',
-            'cloud_services_api_url': 'http://127.0.0.1:8090/filemedia/api/',
+            'cloud_services_token_url': 'http://127.0.0.1:8090/static/niftyv2/vendors/ckeditor5/token',
+
+            'jwt_token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU4OTcxODMzLCJpYXQiOjE3NTg5NTAyMzMsImp0aSI6ImQ5ZDlhYjYxYjljNTQxMDFhNDk0MmExNmM2Mjg1ZWE4IiwidXNlcl9pZCI6IjEiLCJhdWQiOiJ6QkdwbENKOGs5RHM1U0wwY3lubyIsInN1YiI6IjEiLCJhdXRoIjp7ImNrYm94Ijp7InJvbGUiOiJhZG1pbiIsIndvcmtzcGFjZXMiOlsxMl19fX0.Q49EoVQ0vINdoTg1fKc61DBGwZKUPqcT5vk4LdDTbOU',
+            # 'cloud_services_token_url': 'http://127.0.0.1:8090/api/auth/token',
+            'cloud_services_api_url': 'http://127.0.0.1:8090/api/',
             'placeholder': 'Type or paste your content here!',
             'license_key': '-',
             'initial_data': '',
@@ -284,6 +286,8 @@ class CKEditorWidget(forms.Widget):
         html = f"""
         <textarea id="editor-{name}" name="{name}" hidden>{value}</textarea>
         <script>
+        
+
         document.addEventListener('DOMContentLoaded', function() {{
             const {{
                 ClassicEditor,Alignment,Autoformat,AutoImage,AutoLink,Autosave,BalloonToolbar,BlockQuote,BlockToolbar,Bold,
@@ -295,17 +299,15 @@ class CKEditorWidget(forms.Widget):
                 SpecialCharactersEssentials,SpecialCharactersLatin,SpecialCharactersMathematical,SpecialCharactersText,Strikethrough,Subscript,Superscript,Table,
                 TableCaption,TableCellProperties,TableColumnResize,TableLayout,TableProperties,TableToolbar,TextTransformation,TodoList, Underline
             }} = window.CKEDITOR;
-            const {{ AIAssistant, OpenAITextAdapter }} = window.CKEDITOR_PREMIUM_FEATURES;
-
+            const {{ AIAssistant, OpenAITextAdapter,SourceEditingEnhanced,ExportPdf, ExportWord, ImportWord,PasteFromOfficeEnhanced }} = window.CKEDITOR_PREMIUM_FEATURES;
             const config = {js_config};
-
             const editorConfig = {{
                 ui: {{ viewportOffset: {{ top: 53 }} }},
                 toolbar: {{
                     items: [
-                        'fullscreen','|','undo','redo','|','aiCommands','aiAssistant','|',
-                        'sourceEditing','showBlocks','findAndReplace','|','insertImage','ckbox','mediaEmbed',
-                        'insertTable','insertTableLayout','|','heading','alignment','bulletedList','numberedList',
+                        'fullscreen','|','undo','redo','|','importWord','exportWord','exportPdf','SourceEditingEnhanced','|','aiCommands','aiAssistant','|','heading',
+                        'sourceEditing','showBlocks','findAndReplace','|','insertImage','CKBox','mediaEmbed','|',
+                        'insertTable','insertTableLayout','|','alignment','bulletedList','numberedList',
                         'todoList','outdent','indent','|','fontSize','fontFamily','fontColor','fontBackgroundColor',
                         '|','bold','italic','underline','strikethrough','subscript','superscript','code',
                         'removeFormat','|','emoji','specialCharacters','horizontalLine','pageBreak','link',
@@ -314,34 +316,50 @@ class CKEditorWidget(forms.Widget):
                     shouldNotGroupWhenFull: false
                 }},
                 plugins: [
-                    AIAssistant, Alignment, Autoformat, AutoImage, AutoLink, Autosave, BalloonToolbar, BlockQuote,
+                    AIAssistant,OpenAITextAdapter,SourceEditingEnhanced, Alignment, Autoformat, AutoImage, AutoLink, Autosave, BalloonToolbar, BlockQuote,
                     BlockToolbar, Bold, Bookmark, CKBox, CKBoxImageEdit, CloudServices, Code, CodeBlock, Emoji,
                     Essentials, FindAndReplace, FontBackgroundColor, FontColor, FontFamily, FontSize, Fullscreen,
                     GeneralHtmlSupport, Heading, Highlight, HorizontalLine, ImageBlock, ImageCaption, ImageEditing,
                     ImageInline, ImageInsert, ImageInsertViaUrl, ImageResize, ImageStyle, ImageTextAlternative,
                     ImageToolbar, ImageUpload, ImageUtils, Indent, IndentBlock, Italic, Link, LinkImage, List,
-                    ListProperties, MediaEmbed, Mention, OpenAITextAdapter, PageBreak, Paragraph,
+                    ListProperties, MediaEmbed, Mention, PageBreak, Paragraph,ExportPdf,ExportWord,ImportWord,
                     PasteFromMarkdownExperimental, PasteFromOffice, PictureEditing, PlainTableOutput, RemoveFormat,
                     ShowBlocks, SourceEditing, SpecialCharacters, SpecialCharactersArrows, SpecialCharactersCurrency,
                     SpecialCharactersEssentials, SpecialCharactersLatin, SpecialCharactersMathematical,
                     SpecialCharactersText, Strikethrough, Subscript, Superscript, Table, TableCaption,
                     TableCellProperties, TableColumnResize, TableLayout, TableProperties, TableToolbar,
-                    TextTransformation, TodoList, Underline
+                    TextTransformation, TodoList, Underline,
                 ],
+                balloonToolbar: ['aiAssistant', '|', 'bold', 'italic', '|', 'link', 'insertImage', '|', 'bulletedList', 'numberedList','emoji','specialCharacters','horizontalLine','pageBreak','link'],
+                blockToolbar: ['fontSize','fontColor','fontBackgroundColor','|','bold','italic','|','link','insertImage','insertTable','insertTableLayout','|','bulletedList','numberedList','outdent','indent'],
                 ckbox: {{
-                    theme: document.documentElement.getAttribute("data-bs-theme"),
-                    toolbar: {{
-                        trash: [ 'restore', 'delete' ]   
-                    }}
+                    theme: document.documentElement.getAttribute("data-bs-theme")
                 }},
                 licenseKey: config.license_key,
                 cloudServices: {{
-                    tokenUrl: config.cloud_services_token_url,
+                    // tokenUrl: config.cloud_services_token_url,
+                    tokenUrl: config.jwt_token,
                     ApiURL: config.cloud_services_api_url
+                }},
+                image: {{
+                    toolbar: ['toggleImageCaption','imageTextAlternative','|','imageStyle:inline','imageStyle:wrapText','imageStyle:breakText','|','resizeImage','|','ckboxImageEdit']
+                }},
+                ai: {{
+                    openAI: {{
+                        apiUrl: config.ai_api_url,
+                        requestParameters: {{
+                            model: config.ai_model,
+                            stream: true,
+                            temperature: config.temperature,
+                            top_p: 1
+                        }},
+                        requestHeaders: {{
+                            Authorization: 'Bearer ' + config.ai_api_key
+                        }}
+                    }}
                 }},
                 placeholder: config.placeholder
             }};
-
             ClassicEditor.create(document.querySelector('#editor-{name}'), editorConfig);
         }});
         </script>

@@ -3,60 +3,32 @@ from django_filters.rest_framework import DjangoFilterBackend
 from ..models import Tags, Category, Folder, Media, Mediahastags
 from .serializers import TagsSerializer, CategorySerializer, FolderSerializer, MediaSerializer, MediahastagsSerializer, MediaListSerializer
 from .pagination import CustomPagination
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+import jwt
+import datetime
+from django.conf import settings
+from rest_framework import status, views
+from rest_framework.decorators import action
+
+from rest_framework.permissions import AllowAny
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 import json
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
-import mimetypes
-from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
-from django.contrib.auth import  get_user_model
-from rest_framework import serializers
-from .serializers import CKBoxTokenObtainPairSerializer, CKBoxTokenRefreshSerializer
-from rest_framework_simplejwt.settings import api_settings
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.decorators import action
-from django.contrib.auth import authenticate
-from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth.models import User
-from django.conf import settings
-import jwt
-import datetime
 import logging
 import os
-from PIL import Image
-from django.http import FileResponse, Http404
-from rest_framework.views import APIView
+from django.http import HttpResponse, Http404
+from django.shortcuts import get_object_or_404
+from django.conf import settings
+from wsgiref.util import FileWrapper
+import mimetypes
+from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
+from rest_framework.permissions import IsAuthenticated
 
 logger = logging.getLogger(__name__)
-User = get_user_model()
 
-from rest_framework_simplejwt.views import TokenObtainPairView
-
-
-class CKBoxTokenObtainPairView(TokenObtainPairView):
-    serializer_class = CKBoxTokenObtainPairSerializer
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('username', 'password', 'email')
-        extra_kwargs = {'password': {'write_only': True}}
-
-    def create(self, validated_data):
-        user = User.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            password=validated_data['password']
-        )
-        return user
 
 class AdminViewSet(viewsets.ViewSet):
     permission_classes = [AllowAny]
-    authentication_classes = []
 
     @action(detail=False, methods=['get'])
     def categories(self, request):
@@ -71,6 +43,8 @@ class AdminViewSet(viewsets.ViewSet):
         }
         """
         try:
+            # Import model di sini untuk menghindari circular import
+
             # Ambil semua kategori dari model
             categories = Category.objects.all().order_by('position')
 
@@ -127,10 +101,35 @@ class AdminViewSet(viewsets.ViewSet):
     def environmentConfig(self, request):
         data = {
             "allowedExtensions": [
-                "avi", "mov", "webm", "mp4", "mp3", "flac", "aac", "ogg",
-                "7z", "rar", "zip", "gz", "jpeg", "jpg", "png", "gif",
-                "bmp", "webp", "tiff", "doc", "docx", "ppt", "pptx",
-                "xls", "xlsx", "odt", "pdf", "txt", "svg"
+                "avi",
+                "mov",
+                "webm",
+                "mp4",
+                "mp3",
+                "flac",
+                "aac",
+                "ogg",
+                "7z",
+                "rar",
+                "zip",
+                "gz",
+                "jpeg",
+                "jpg",
+                "png",
+                "gif",
+                "bmp",
+                "webp",
+                "tiff",
+                "doc",
+                "docx",
+                "ppt",
+                "pptx",
+                "xls",
+                "xlsx",
+                "odt",
+                "pdf",
+                "txt",
+                "svg"
             ],
             "isAllowedExtensionsEnabled": True
         }
@@ -146,13 +145,13 @@ class AdminViewSet(viewsets.ViewSet):
         data = {"items": [{"id": "f437cd41039d", "name": "Default", "isDefault": True}]}
         return Response(data)
 
+
 class TagsViewSet(viewsets.ModelViewSet):
     queryset = Tags.objects.all()
     serializer_class = TagsSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['type', 'status']
     search_fields = ['name', 'description']
-    permission_classes = [IsAuthenticated]
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -162,10 +161,9 @@ class CategoryViewSet(viewsets.ModelViewSet):
     """
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    pagination_class = CustomPagination
+    pagination_class = CustomPagination  # Cukup ini saja!
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['is_private']
-    permission_classes = [IsAuthenticated]
 
 
 class FolderViewSet(viewsets.ModelViewSet):
@@ -173,9 +171,10 @@ class FolderViewSet(viewsets.ModelViewSet):
     serializer_class = FolderSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['category', 'parent']
-    permission_classes = [IsAuthenticated]
 
 
+
+@method_decorator(csrf_exempt, name='dispatch')
 class MediaViewSet(viewsets.ModelViewSet):
     queryset = Media.objects.all()
     serializer_class = MediaSerializer
@@ -183,12 +182,8 @@ class MediaViewSet(viewsets.ModelViewSet):
     filterset_fields = ['type', 'favored', 'category', 'folder']
     search_fields = ['name', 'description']
     ordering_fields = ['created_at', 'name', 'size']
-    permission_classes = [IsAuthenticated]
-
-    def get_permissions(self):
-        if self.action in ["retrieve", "thumbnail_detail"]:
-            return [AllowAny()]  # tanpa auth untuk gambar
-        return super().get_permissions()
+    permission_classes =  [AllowAny]  # biar tidak dicek login
+    authentication_classes = []
 
     def retrieve(self, request, *args, **kwargs):
         """Override retrieve method to handle thumbnail requests"""
@@ -209,6 +204,13 @@ class MediaViewSet(viewsets.ModelViewSet):
             # Get media object
             media = get_object_or_404(Media, id=media_id)
             size_int = int(size)
+            # Validate size parameter
+            # try:
+            #     size_int = int(size)
+            #     if size_int not in [160, 320, 384, 280, 373, 507, 533, 538, 498, 480, 640, 800, 960, 1120, 1280, 1440, 1600,1920]:
+            #         return HttpResponse("Invalid size parameter", status=400)
+            # except ValueError:
+            #     return HttpResponse("Size must be a number", status=400)
 
             # Construct thumbnail path
             if not media.file:
@@ -218,6 +220,7 @@ class MediaViewSet(viewsets.ModelViewSet):
             original_path = media.file.path
 
             # Construct thumbnail path based on your storage structure
+            # Assuming thumbnails are stored in: media_root/thumbnail/{size}/filename
             file_dir = os.path.dirname(original_path)
             file_name = os.path.basename(original_path)
 
@@ -225,9 +228,13 @@ class MediaViewSet(viewsets.ModelViewSet):
             thumb_dir = os.path.join(file_dir, 'thumbnail', str(size))
             thumb_path = os.path.join(thumb_dir, file_name)
 
+            # Alternative path if using different structure
+            # thumb_path = os.path.join(settings.MEDIA_ROOT, 'thumbnail', str(size), file_name)
+
             # Check if thumbnail exists
             if not os.path.exists(thumb_path):
-                # If thumbnail doesn't exist, generate it on the fly
+                # If thumbnail doesn't exist, you might want to generate it on the fly
+                # or return the original image as fallback
                 return self.generate_or_fallback_thumbnail(media, thumb_path, size_int, original_path)
 
             # Serve the thumbnail file
@@ -360,8 +367,10 @@ class MediaViewSet(viewsets.ModelViewSet):
         }
         return Response(response_data)
 
+        # 🔥 Trash endpoint
+
     @method_decorator(csrf_exempt)
-    @action(detail=False, methods=['get', 'post'], parser_classes=[JSONParser, FormParser, MultiPartParser])
+    @action( detail=False,methods=['get', 'post'],parser_classes=[JSONParser, FormParser, MultiPartParser])
     def trash(self, request):
         """
         GET  -> ambil semua media di trash (is_deleted=True)
@@ -377,7 +386,7 @@ class MediaViewSet(viewsets.ModelViewSet):
 
         elif request.method == 'POST':
             # Support JSON object {"ids": [1,2]} atau langsung array [1,2]
-            media_ids = request.data
+            media_ids = request.data.get('ids')
 
             if not media_ids:
                 try:
@@ -393,6 +402,7 @@ class MediaViewSet(viewsets.ModelViewSet):
 
             return Response({'status': 'deleted', 'ids': media_ids})
 
+    # 🔥 Restore endpoint
     @action(detail=False, methods=['post'], parser_classes=[JSONParser, FormParser, MultiPartParser])
     def restore(self, request):
         """
@@ -414,6 +424,7 @@ class MediaViewSet(viewsets.ModelViewSet):
 
         return Response({'status': 'restored', 'ids': media_ids})
 
+    # 🔥 Permanent delete endpoint
     @action(detail=False, methods=['delete'], parser_classes=[JSONParser, FormParser, MultiPartParser])
     def purge(self, request):
         """
@@ -436,238 +447,18 @@ class MediaViewSet(viewsets.ModelViewSet):
         return Response({'status': 'purged', 'ids': media_ids})
 
 
-class MediaThumbnailView(APIView):
-    permission_classes = [AllowAny]  # Bisa diubah ke IsAuthenticated kalau private
-
-    def get(self, request, pk, size, format=None):
-        """
-        Endpoint: /api/media/<pk>/thumbs/<size>.webp
-        Contoh:   /api/media/367/thumbs/747x560.webp
-        """
-        try:
-            media = Media.objects.get(pk=pk)
-        except Media.DoesNotExist:
-            raise Http404("Media not found")
-
-
-        # Parse ukuran dari URL
-        try:
-            width, height = map(int, size.lower().replace(".webp", "").split("x"))
-        except ValueError:
-            raise Http404("Invalid size format, use WIDTHxHEIGHT.webp")
-
-        # Lokasi file asli dan thumbnail
-        src_path = media.file.path
-        thumb_rel_path = f"thumbnails/{pk}/{width}x{height}.webp"
-        thumb_path = os.path.join(settings.MEDIA_ROOT, thumb_rel_path)
-
-        # Kalau thumbnail belum ada → generate dulu
-        if not os.path.exists(thumb_path):
-            os.makedirs(os.path.dirname(thumb_path), exist_ok=True)
-
-            try:
-                with Image.open(src_path) as img:
-                    img.thumbnail((width, height))
-                    img.save(thumb_path, "WEBP")
-            except Exception as e:
-                raise Http404(f"Error generating thumbnail: {e}")
-
-        # Return thumbnail
-        return FileResponse(open(thumb_path, "rb"), content_type="image/webp")
-
-
 class MediahastagsViewSet(viewsets.ModelViewSet):
     queryset = Mediahastags.objects.all()
     serializer_class = MediahastagsSerializer
-    permission_classes = [IsAuthenticated]
 
 
-
+@method_decorator(csrf_exempt, name='dispatch')
 class AuthViewSet(viewsets.ViewSet):
     """
     ViewSet untuk endpoint autentikasi dan otorisasi
     """
-    permission_classes = [AllowAny]
+    permission_classes = [AllowAny]  # Tambahkan ini untuk bypass autentikasi
     authentication_classes = []
-
-    @action(detail=False, methods=['post'])
-    def login(self, request):
-        """
-        Endpoint untuk login user dan mendapatkan token JWT biasa
-        """
-        username = request.data.get('username')
-        password = request.data.get('password')
-
-        if not username or not password:
-            return Response(
-                {'error': 'Username and password are required'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        user = authenticate(username=username, password=password)
-
-        if not user:
-            return Response(
-                {'error': 'Invalid credentials'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-
-        refresh = RefreshToken.for_user(user)
-
-        # Ambil nilai lifetime dari settings SimpleJWT
-        access_lifetime = api_settings.ACCESS_TOKEN_LIFETIME
-        refresh_lifetime = api_settings.REFRESH_TOKEN_LIFETIME
-
-        return Response({
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-            'access_token_lifetime': int(access_lifetime.total_seconds()),
-            'refresh_token_lifetime': int(refresh_lifetime.total_seconds()),
-            'user': {
-                'id': user.id,
-                'username': user.username,
-                'email': user.email
-            }
-        })
-
-    @action(detail=False, methods=['post'])
-    def ckbox_login(self, request):
-        """
-        Endpoint untuk login user dan mendapatkan token JWT khusus CKBox
-        """
-        username = request.data.get('username')
-        password = request.data.get('password')
-
-        if not username or not password:
-            return Response(
-                {'error': 'Username and password are required'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        user = authenticate(username=username, password=password)
-
-        if not user:
-            return Response(
-                {'error': 'Invalid credentials'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-
-        # Gunakan custom serializer untuk CKBox
-        refresh = CKBoxTokenObtainPairSerializer.get_token(user)
-        access_token = refresh.access_token
-
-        # Ambil nilai lifetime dari settings SimpleJWT
-        access_lifetime = api_settings.ACCESS_TOKEN_LIFETIME
-        refresh_lifetime = api_settings.REFRESH_TOKEN_LIFETIME
-
-        return Response({
-            'refresh': str(refresh),
-            'access': str(access_token),
-            'access_token_lifetime': int(access_lifetime.total_seconds()),
-            'refresh_token_lifetime': int(refresh_lifetime.total_seconds()),
-            'user': {
-                'id': user.id,
-                'username': user.username,
-                'email': user.email
-            }
-        })
-
-    @action(detail=False, methods=['post'])
-    def ckbox_token_refresh(self, request):
-        """
-        Refresh token khusus untuk CKBox
-        """
-        refresh_token = request.data.get('refresh')
-
-        if not refresh_token:
-            return Response(
-                {'error': 'Refresh token is required'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        try:
-            refresh = RefreshToken(refresh_token)
-            user_id = refresh['user_id']
-            user = User.objects.get(id=user_id)
-
-            # Gunakan custom serializer untuk CKBox
-            access_token = CKBoxTokenRefreshSerializer.get_token(user)
-
-            # Ambil nilai lifetime dari settings SimpleJWT
-            access_lifetime = api_settings.ACCESS_TOKEN_LIFETIME
-            refresh_lifetime = api_settings.REFRESH_TOKEN_LIFETIME
-
-            return Response({
-                'access': str(access_token),
-                'token_type': 'Bearer',
-                'expires_in': access_lifetime.total_seconds(),
-                'access_token_lifetime': int(access_lifetime.total_seconds()),
-                'refresh_token_lifetime': int(refresh_lifetime.total_seconds())
-            })
-        except Exception as e:
-            return Response(
-                {'error': 'Invalid refresh token'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-
-    @action(detail=False, methods=['post'])
-    def token_refresh(self, request):
-        """
-        Refresh token umum (biasa)
-        """
-        refresh_token = request.data.get('refresh')
-
-        if not refresh_token:
-            return Response(
-                {'error': 'Refresh token is required'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        try:
-            refresh = RefreshToken(refresh_token)
-
-            # Ambil nilai lifetime dari settings SimpleJWT
-            access_lifetime = api_settings.ACCESS_TOKEN_LIFETIME
-
-            return Response({
-                'access': str(refresh.access_token),
-                'access_token_lifetime': int(access_lifetime.total_seconds())
-            })
-        except Exception as e:
-            return Response(
-                {'error': 'Invalid refresh token'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-
-    @action(detail=False, methods=['post'])
-    def register(self, request):
-        """
-        Endpoint untuk registrasi user baru
-        """
-        from .serializers import UserSerializer
-
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            refresh = RefreshToken.for_user(user)
-
-            # Ambil nilai lifetime dari settings SimpleJWT
-            access_lifetime = api_settings.ACCESS_TOKEN_LIFETIME
-            refresh_lifetime = api_settings.REFRESH_TOKEN_LIFETIME
-
-            return Response({
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
-                'access_token_lifetime': int(access_lifetime.total_seconds()),
-                'refresh_token_lifetime': int(refresh_lifetime.total_seconds()),
-                'user': {
-                    'id': user.id,
-                    'username': user.username,
-                    'email': user.email
-                }
-            }, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['get'])
     def limits(self, request):
@@ -687,7 +478,7 @@ class AuthViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=['get'])
     def token(self, request):
-        """Generate JWT token (untuk compatibility dengan existing code)"""
+        """Generate JWT token"""
         try:
             # Generate payload sesuai contoh
             payload = {
@@ -719,39 +510,37 @@ class AuthViewSet(viewsets.ViewSet):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+    @method_decorator(csrf_exempt)
     @action(detail=False, methods=['post'])
     def authorizeprivateaccess(self, request):
-        payload = {
-            "aud": "ckbox",
-            "sub": "ckbox-demo",  # contoh static
-            "iat": datetime.datetime.utcnow(),
-            "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=30),
-            "auth": {
-                "ckbox": {
-                    "role": "admin",  # bisa juga "user"
-                    "workspaces": ["default"]
-                }
-            }
-        }
+        """Authorize private access"""
+        token = request.data.get('token', '')
 
-        token = jwt.encode(payload, settings.CKBOX_SECRET, algorithm="HS256")
+        if not token:
+            return Response(
+                {'error': 'Token is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-        response = HttpResponse(status=204)
-        response.set_cookie(
-            key="CKBox-Auth",
-            value=token,
-            httponly=True,
-            secure=not settings.DEBUG,  # True di production
-            samesite="Strict",
-        )
-        return response
+        # secret_key = getattr(settings, 'JWT_SECRET_KEY', 'your-secret-key-here')
+        # try:
+        #     payload = jwt.decode(token, secret_key, algorithms=['HS256'])
+        # except jwt.ExpiredSignatureError:
+        #     return Response({'error': 'Token expired'}, status=status.HTTP_401_UNAUTHORIZED)
+        # except jwt.InvalidTokenError:
+        #     return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        return Response({
+            'status': 'authorized',
+            'message': 'Private access granted'
+        })
 
     @action(detail=False, methods=['get'])
     def permissions(self, request):
         """Get permissions"""
         try:
             # Get semua categories
-            from ..models import Category
+
             categories = Category.objects.all()
 
             # Build permissions response

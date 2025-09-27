@@ -4,6 +4,12 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
+:root[data-bs-theme="dark"] .ck .ck-ai-form__copy-button-wrapper {
+    background: #2d2d2d;
+}
+:root[data-bs-theme="dark"] .ck .ck-ai-form .ck-ai-form-content .ck-ai-form__content-area {
+    background: #2d2d2d;
+}
 :root[data-bs-theme="dark"] .ck-fullscreen__main-wrapper .ck-fullscreen__editable .ck.ck-editor__editable:not(.ck-editor__nested-editable) {
     background: #23292f;
 
