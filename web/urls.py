@@ -25,7 +25,11 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView,
 )
-from apps.filemedia.api.views import CKBoxTokenObtainPairView, MediaThumbnailView
+from apps.filemedia.api.views import (
+    CKBoxTokenObtainPairView,
+    MediaThumbnailView,
+    MediaSearchView
+)
 urlpatterns = i18n_patterns(
     path('', nifty_site.urls),
     path('doc/', include('django.contrib.admindocs.urls')),
@@ -34,6 +38,7 @@ urlpatterns = i18n_patterns(
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path("api/media/<int:pk>/thumbs/<path:size>", MediaThumbnailView.as_view(), name="media-thumbnail"),
+    path('api/search', MediaSearchView.as_view(), name='media-search'),
     path('api/', include('apps.filemedia.api.urls')),
     prefix_default_language=False
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

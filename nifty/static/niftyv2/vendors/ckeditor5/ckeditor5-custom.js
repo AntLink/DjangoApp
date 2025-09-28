@@ -24855,9 +24855,26 @@
             }
         }
 
+        // async _authorizePrivateCategoriesAccess(e) {
+        //     const t = this.editor.config.get("ckbox.serviceOrigin"), i = new FormData;
+        //     i.set("token", e), await fetch(`${t}/auth/authorizeprivateaccess`, {method: "POST", headers:{"Content-Type": "application/json"},credentials: "include", mode: "no-cors", body: i});
+        // }
+
         async _authorizePrivateCategoriesAccess(e) {
-            const t = this.editor.config.get("ckbox.serviceOrigin"), i = new FormData;
-            i.set("token", e), await fetch(`${t}/auth/authorizeprivateaccess`, {method: "POST", credentials: "include", mode: "no-cors", body: i});
+            const t = this.editor.config.get("ckbox.serviceOrigin");
+
+            await fetch(`${t}/auth/authorizeprivateaccess`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: 'Bearer ' + e,
+                },
+                credentials: "include",   // kalau memang mau kirim cookie
+                // mode: "no-cors",       // ⚠️ Hapus ini, karena kalau tetap "no-cors", responnya nggak bisa dibaca
+                body: JSON.stringify({
+                    token: e
+                })
+            });
         }
     }
 
@@ -24938,7 +24955,7 @@
         init() {
             const e = this.editor;
             this._shouldBeInitialised() && (this._checkImagePlugins(), qk() && e.commands.add("ckbox", new Vk(e)), async function (e) {
-                const t = e.plugins.get(Mk), i = e.config.get("ckbox.serviceOrigin"), n = new URL("/api/auth/permissions", i), {value: s} = await t.getToken(), o = await Tk({url: n, authorization: 'Bearer ' + s,"Content-Type": "application/json", signal: (new AbortController).signal});
+                const t = e.plugins.get(Mk), i = e.config.get("ckbox.serviceOrigin"), n = new URL("/api/auth/permissions", i), {value: s} = await t.getToken(), o = await Tk({url: n, authorization: 'Bearer ' + s, "Content-Type": "application/json", signal: (new AbortController).signal});
                 return Object.values(o).some(e => e["asset:create"])
             }(e).then(e => {
                 e || this._blockImageCommands();

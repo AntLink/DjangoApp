@@ -2,7 +2,7 @@ from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from ..models import Tags, Category, Folder, Media, Mediahastags
 from .serializers import TagsSerializer, CategorySerializer, FolderSerializer, MediaSerializer, MediahastagsSerializer, MediaListSerializer
-from .pagination import CustomPagination
+
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -11,12 +11,11 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 import mimetypes
 from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
-from django.contrib.auth import  get_user_model
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from .serializers import CKBoxTokenObtainPairSerializer, CKBoxTokenRefreshSerializer
+from .serializers import CKBoxTokenObtainPairSerializer
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.settings import api_settings
-from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.decorators import action
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -24,11 +23,22 @@ from django.contrib.auth.models import User
 from django.conf import settings
 import jwt
 import datetime
-import logging
 import os
 from PIL import Image
 from django.http import FileResponse, Http404
+from django.http import JsonResponse
+
+import logging
 from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.throttling import UserRateThrottle
+from django.db.models import Q
+from .serializers import MediaSearchSerializer, MediaSearchPayloadSerializer
+from .pagination import CustomPagination
+
+logger = logging.getLogger(__name__)
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -53,6 +63,7 @@ class UserSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+
 
 class AdminViewSet(viewsets.ViewSet):
     permission_classes = [AllowAny]
@@ -145,6 +156,7 @@ class AdminViewSet(viewsets.ViewSet):
     def groups(self, request):
         data = {"items": [{"id": "f437cd41039d", "name": "Default", "isDefault": True}]}
         return Response(data)
+
 
 class TagsViewSet(viewsets.ModelViewSet):
     queryset = Tags.objects.all()
@@ -449,7 +461,6 @@ class MediaThumbnailView(APIView):
         except Media.DoesNotExist:
             raise Http404("Media not found")
 
-
         # Parse ukuran dari URL
         try:
             width, height = map(int, size.lower().replace(".webp", "").split("x"))
@@ -476,59 +487,115 @@ class MediaThumbnailView(APIView):
         return FileResponse(open(thumb_path, "rb"), content_type="image/webp")
 
 
+
+class MediaSearchView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    throttle_classes = [UserRateThrottle]
+    throttle_scope = 'search'
+    pagination_class = CustomPagination
+
+    def post(self, request, *args, **kwargs):
+        search_phrase = request.data.get('searchPhrase', '')
+        filters = request.data.get('filters', {})
+        pagination_data = request.data.get('pagination', {})
+
+        # Base queryset
+        queryset = Media.objects.filter(is_deleted=False)
+
+        # Search filter
+        if search_phrase:
+            queryset = queryset.filter(
+                Q(name__icontains=search_phrase) |
+                Q(description__icontains=search_phrase) |
+                Q(tags__name__icontains=search_phrase)
+            ).distinct()
+
+        # Category filter
+        categories = filters.get('categories', {}).get('in', [])
+        if categories:
+            queryset = queryset.filter(category__id__in=categories)
+
+        # Extension filter
+        extensions = filters.get('extensions', {}).get('in', [])
+        if extensions:
+            ext_queries = [Q(name__iendswith=f'.{ext}') for ext in extensions]
+            queryset = queryset.filter(Q(*ext_queries))
+
+        # Tags filter
+        tags_in = filters.get('tags', {}).get('in', [])
+        if tags_in:
+            queryset = queryset.filter(tags__name__in=tags_in)
+
+        # Uploaded date filter
+        uploaded_at = filters.get('uploadedAt', {})
+        uploaded_from = uploaded_at.get('from')
+        if uploaded_from:
+            queryset = queryset.filter(created_at__gte=uploaded_from)
+
+        # Modified date filter
+        last_modified_at = filters.get('lastModifiedAt', {})
+        last_modified_from = last_modified_at.get('from')
+        last_modified_to = last_modified_at.get('to')
+        if last_modified_from and last_modified_to:
+            queryset = queryset.filter(updated_at__range=(last_modified_from, last_modified_to))
+        elif last_modified_from:
+            queryset = queryset.filter(updated_at__gte=last_modified_from)
+        elif last_modified_to:
+            queryset = queryset.filter(updated_at__lte=last_modified_to)
+
+        # Sorting
+        sort_by = pagination_data.get('sortBy', 'updated_at')
+        order = pagination_data.get('order', 'desc')
+
+        sort_mapping = {
+            'lastModifiedAt': 'updated_at',
+            'uploadedAt': 'created_at',
+            'name': 'name',
+            'size': 'size'
+        }
+        sort_field = sort_mapping.get(sort_by, 'updated_at')
+        if order == 'desc':
+            sort_field = f'-{sort_field}'
+        queryset = queryset.order_by(sort_field)
+
+        # Pagination
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(queryset, request)
+        context = {'request': request}
+        if page is not None:
+            serializer = MediaSearchSerializer(page, many=True, context=context)
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = MediaSearchSerializer(queryset, many=True, context=context)
+        return Response({
+            'items': serializer.data,
+            'limit': pagination_data.get('limit', 50),
+            'offset': pagination_data.get('offset', 0),
+            'totalCount': queryset.count()
+        }, status=status.HTTP_200_OK)
+
+
 class MediahastagsViewSet(viewsets.ModelViewSet):
     queryset = Mediahastags.objects.all()
     serializer_class = MediahastagsSerializer
     permission_classes = [IsAuthenticated]
 
 
-
 class AuthViewSet(viewsets.ViewSet):
     """
     ViewSet untuk endpoint autentikasi dan otorisasi
     """
-    permission_classes = [AllowAny]
-    authentication_classes = []
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
-    @action(detail=False, methods=['post'])
-    def login(self, request):
+    def get_permissions(self):
         """
-        Endpoint untuk login user dan mendapatkan token JWT biasa
+        Override untuk memberi permission berbeda per-action
         """
-        username = request.data.get('username')
-        password = request.data.get('password')
-
-        if not username or not password:
-            return Response(
-                {'error': 'Username and password are required'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        user = authenticate(username=username, password=password)
-
-        if not user:
-            return Response(
-                {'error': 'Invalid credentials'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-
-        refresh = RefreshToken.for_user(user)
-
-        # Ambil nilai lifetime dari settings SimpleJWT
-        access_lifetime = api_settings.ACCESS_TOKEN_LIFETIME
-        refresh_lifetime = api_settings.REFRESH_TOKEN_LIFETIME
-
-        return Response({
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-            'access_token_lifetime': int(access_lifetime.total_seconds()),
-            'refresh_token_lifetime': int(refresh_lifetime.total_seconds()),
-            'user': {
-                'id': user.id,
-                'username': user.username,
-                'email': user.email
-            }
-        })
+        if self.action in ['ckbox_login', 'register']:
+            return [AllowAny()]
+        return [IsAuthenticated()]
 
     @action(detail=False, methods=['post'])
     def ckbox_login(self, request):
@@ -590,25 +657,69 @@ class AuthViewSet(viewsets.ViewSet):
             user_id = refresh['user_id']
             user = User.objects.get(id=user_id)
 
-            # Gunakan custom serializer untuk CKBox
-            access_token = CKBoxTokenRefreshSerializer.get_token(user)
+            # Buat access baru
+            access_token = refresh.access_token
 
             # Ambil nilai lifetime dari settings SimpleJWT
             access_lifetime = api_settings.ACCESS_TOKEN_LIFETIME
             refresh_lifetime = api_settings.REFRESH_TOKEN_LIFETIME
 
             return Response({
+                'refresh': str(refresh),  # ⬅️ ditambahkan biar sama dengan login
                 'access': str(access_token),
-                'token_type': 'Bearer',
-                'expires_in': access_lifetime.total_seconds(),
                 'access_token_lifetime': int(access_lifetime.total_seconds()),
-                'refresh_token_lifetime': int(refresh_lifetime.total_seconds())
+                'refresh_token_lifetime': int(refresh_lifetime.total_seconds()),
+                'user': {  # ⬅️ ditambahkan biar sama dengan login
+                    'id': user.id,
+                    'username': user.username,
+                    'email': user.email
+                }
             })
-        except Exception as e:
+        except Exception:
             return Response(
                 {'error': 'Invalid refresh token'},
                 status=status.HTTP_401_UNAUTHORIZED
             )
+
+    @action(detail=False, methods=['post'])
+    def login(self, request):
+        """
+        Endpoint untuk login user dan mendapatkan token JWT biasa
+        """
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        if not username or not password:
+            return Response(
+                {'error': 'Username and password are required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user = authenticate(username=username, password=password)
+
+        if not user:
+            return Response(
+                {'error': 'Invalid credentials'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        refresh = RefreshToken.for_user(user)
+
+        # Ambil nilai lifetime dari settings SimpleJWT
+        access_lifetime = api_settings.ACCESS_TOKEN_LIFETIME
+        refresh_lifetime = api_settings.REFRESH_TOKEN_LIFETIME
+
+        return Response({
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+            'access_token_lifetime': int(access_lifetime.total_seconds()),
+            'refresh_token_lifetime': int(refresh_lifetime.total_seconds()),
+            'user': {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email
+            }
+        })
 
     @action(detail=False, methods=['post'])
     def token_refresh(self, request):
@@ -745,6 +856,33 @@ class AuthViewSet(viewsets.ViewSet):
             samesite="Strict",
         )
         return response
+
+    # @action(detail=False, methods=['post'])
+    # def authorizeprivateaccess(self, request):
+    #     payload = {
+    #         "aud": "ckbox",
+    #         "sub": "ckbox-demo",
+    #         "iat": datetime.datetime.utcnow(),
+    #         "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=30),
+    #         "auth": {
+    #             "ckbox": {
+    #                 "role": "admin",
+    #                 "workspaces": ["default"]
+    #             }
+    #         }
+    #     }
+    #
+    #     token = jwt.encode(payload, settings.CKBOX_SECRET, algorithm="HS256")
+    #
+    #     response = JsonResponse({"status": "ok"})
+    #     response.set_cookie(
+    #         key="CKBox-Auth",
+    #         value=token,
+    #         httponly=True,
+    #         secure=not settings.DEBUG,
+    #         samesite="Strict",
+    #     )
+    #     return response
 
     @action(detail=False, methods=['get'])
     def permissions(self, request):

@@ -19300,8 +19300,19 @@
         async [qE(1284)](e) {
             const t = qE;
             try {
-                const n = new FormData;
-                n[t(896)](t(655), e[t(440)]()), await fetch(this[t(1278)][t(532)] + t(1060), {method: t(334), credentials: t(900), mode: t(449), body: n})
+                // const n = new FormData;
+                // n[t(896)](t(655), e[t(440)]()), await fetch(this[t(1278)][t(532)] + t(1060), {method: t(334), credentials: t(900), mode: t(449), body: n})
+                await fetch(this[t(1278)][t(532)] + t(1060), {
+                    method: "POST",
+                    credentials: "include",  // biar cookie CKBox-Auth bisa ikut
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + n  // misalnya gini
+                    },
+                    body: JSON.stringify({
+                        token: n
+                    })
+                });
             } catch (e) {
             }
         }
@@ -19476,7 +19487,7 @@
                             const e = wS;
                             return p.get(e(934))
                         }
-                    }), search: (d = a, {search: (e, t) => d[wS(846)]("/search", e, {workspaceId: t})}), workspaces: (u = a, {
+                    }), search: (d = a, {search: (e, t) => d[wS(846)]("/api/search", e, {workspaceId: t})}), workspaces: (u = a, {
                         createWorkspace: e => {
                             const t = wS;
                             return u[t(846)](t(318), e)
@@ -23771,7 +23782,19 @@
                 })) ? await (null == n ? void 0 : n({assets: t})) : null == o || o({assets: t, conflictData: i[a(1184)]})
             }, isCheckingForConflicts: t
         }
-    }, SR = () => {
+    },DELETE = () => {
+        const e = qE, {t: t} = Hh(), {isDeleteDialogOpen: n, openDeleteDialog: o} = TS(),{isAnySelected: r, selectedAssets: a} = LS(), {checkPermissionForAnyCategory: i} = HS(), {mutateAsync: l, isPending: s} = X_(), c = i("asset:create"), {checkForConflicts: u, isCheckingForConflicts: d} = ER();
+
+        return c ? h[e(1079)](Td, {
+            disabled: !r,
+            icon: 'DeleteOutlineOutlined',
+            label: "Delete",
+            loading: s,
+            onClick: async () => {
+                console.log('ID DELETE',a);
+            }
+        }) : null;
+    },  SR = () => {
         const e = qE, {t: t} = Hh(), {isRestoreDialogOpen: n, openRestoreDialog: o} = TS(), {isAnySelected: r, selectedAssets: a} = LS(), {checkPermissionForAnyCategory: i} = HS(), {mutateAsync: l, isPending: s} = X_(), c = i("asset:create"), {checkForConflicts: u, isCheckingForConflicts: d} = ER();
         return c ? h[e(1079)](Td, {
             active: n, disabled: !r, icon: e(1247), label: t(e(492)), loading: d || s, onClick: () => u({
@@ -23823,7 +23846,7 @@
             m(v)
         }), [v, m]);
         const E = void 0 !== u && y ? 0 === u : !y && 0 === k;
-        return h[e(1079)](f.Fragment, null, h[e(1079)](PO, null, h[e(1079)](TO, null, h[e(1079)](WN, null, h[e(1079)](SR, null))), h[e(1079)](NO, {ref: a}, E ? h[e(1079)](CR, null) : C ? h[e(1079)](VA, {assetsCount: u && y ? u : g, pageNumber: c}) : f.createElement(qA, {containerEl: r}, v.map((({extension: t, id: n, lastModifiedAt: o, metadata: {blurHash: a, description: i, metadataProcessingStatus: l, thumbnailMetadata: s, height: c, width: u}, name: d}) => h[e(1079)](UA, {blurHash: a, containerEl: r, description: i, extension: t, height: c, id: n, key: n, lastModifiedAt: o, metadataProcessingStatus: l, thumbnailMetadata: s, name: d, width: u, disableChooseAction: !0}))))), h[e(1079)](AO, null, E || y ? null : h[e(1079)](NN, {onPageChange: x, pageNumber: c, pagesCount: k, hideChoose: !0}))), h[e(1079)](DR, null), h[e(1079)](NR, null))
+        return h[e(1079)](f.Fragment, null, h[e(1079)](PO, null, h[e(1079)](TO, null, h[e(1079)](WN, null, h[e(1079)](SR, null),h[e(1079)](DELETE, null))), h[e(1079)](NO, {ref: a}, E ? h[e(1079)](CR, null) : C ? h[e(1079)](VA, {assetsCount: u && y ? u : g, pageNumber: c}) : f.createElement(qA, {containerEl: r}, v.map((({extension: t, id: n, lastModifiedAt: o, metadata: {blurHash: a, description: i, metadataProcessingStatus: l, thumbnailMetadata: s, height: c, width: u}, name: d}) => h[e(1079)](UA, {blurHash: a, containerEl: r, description: i, extension: t, height: c, id: n, key: n, lastModifiedAt: o, metadataProcessingStatus: l, thumbnailMetadata: s, name: d, width: u, disableChooseAction: !0}))))), h[e(1079)](AO, null, E || y ? null : h[e(1079)](NN, {onPageChange: x, pageNumber: c, pagesCount: k, hideChoose: !0}))), h[e(1079)](DR, null), h[e(1079)](NR, null))
     }, TR = () => {
         const e = qE, {categories: t, view: n} = II();
         return h[e(1079)](Kd, {navbar: f.createElement(ST, null)}, f.createElement(yd, {match: null == n ? void 0 : n.id}, t[e(518)]((t => h[e(1079)](kd, {key: t.id, id: t.id}, h[e(1079)](hP, {category: t})))), h[e(1079)](kd, {id: bI.id}, h[e(1079)](DP, null)), h[e(1079)](kd, {id: hI.id}, h[e(1079)](wP, null)), f.createElement(kd, {id: mI.id}, h[e(1079)](AR, null)), (null == n ? void 0 : n[e(722)]) === e(351) ? h[e(1079)](kd, {id: gI.id}, f.createElement(wR, {initialSubView: null == n ? void 0 : n[e(1298)][e(1313)]})) : null, (null == n ? void 0 : n[e(722)]) === e(316) ? f.createElement(kd, {id: n.id}, h[e(1079)](kP, {key: n.id, folderId: n.id, estimatedAssetsCount: n.data.folderAssetsCount})) : null), f.createElement(zA, null), f.createElement(UT, null))

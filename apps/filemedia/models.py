@@ -56,7 +56,7 @@ class Category(models.Model):
     id = models.CharField(primary_key=True, max_length=50)  # pakai string sesuai contoh JSON
     name = models.CharField(max_length=255)
     position = models.IntegerField(default=0)
-    extensions = models.TextField(blank=True, null=True)
+    extensions = models.TextField(default="[]",blank=True, null=True)
     assets_count = models.IntegerField(default=0)
     total_assets_count = models.IntegerField(default=0)
     is_private = models.BooleanField(default=False)
