@@ -21,13 +21,14 @@ from nifty.modeladmin import Admin
 from nifty.views import nifty_site
 from django.contrib import admin
 from .handlers import ImagesUuidUploader, FileUuidUploader
-from .models import Image, Video, File, Tags, Media, Mediahastags
+from .models import Image, Video, File, Tags, Media, Mediahastags, FileManager
 from .forms import ImageForm, UploadForm, TagsForm, FileForm
 from .images import ManageImage, thumb
 from .files import ManageFile
 from .apitest import ApiAdmin
 from django.views.i18n import JavaScriptCatalog
-
+from django.urls import path, reverse
+from django.template.response import TemplateResponse
 TO_FIELD_VAR = '_to_field'
 IS_POPUP_VAR = '_popup'
 
@@ -1158,8 +1159,39 @@ class VideoAdmin(Admin):
         return self.model.objects.filter(type='v')
 
 
+class FileManagerAdmin(Admin):
+    change_list_template = 'admin/filemanager/file_manager.html'
+
+    def get_urls(self):
+        def wrap(view):
+            def wrapper(*args, **kwargs):
+                return self.admin_site.admin_view(view)(*args, **kwargs)
+
+            wrapper.model_admin = self
+            return update_wrapper(wrapper, view)
+
+        info = self.model._meta.app_label, self.model._meta.model_name
+
+        urlpatterns = [
+            path('', wrap(self.changelist_view), name='%s_%s_changelist' % info),
+            # path('add/', wrap(self.add_view), name='%s_%s_add' % info),
+
+        ]
+        return urlpatterns
+
+    def changelist_view(self, request, extra_context=None):
+        opts = self.model._meta
+        if not self.has_view_or_change_permission(request):
+            raise PermissionDenied
+
+
+        request.current_app = self.admin_site.name
+
+        return super(FileManagerAdmin, self).changelist_view(request, extra_context=extra_context)
+
 nifty_site.register(Tags, TagsAdmin)
 nifty_site.register(Image, ImageAdmin)
 # nifty_site.register(Video, VideoAdmin)
 nifty_site.register(File, FileAdmin)
-nifty_site.register(Media, ApiAdmin)
+nifty_site.register(FileManager, FileManagerAdmin)
+# nifty_site.register(Media, ApiAdmin)

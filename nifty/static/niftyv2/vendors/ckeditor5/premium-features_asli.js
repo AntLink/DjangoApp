@@ -22,8 +22,7 @@
  */
 !function(_0x88e76d, _0x5e7480) {
     'object' == typeof exports && 'undefined' != typeof module ? _0x5e7480(exports, require('ckeditor5')) : 'function' == typeof define && define['amd'] ? define(['exports', 'ckeditor5'], _0x5e7480) : _0x5e7480((_0x88e76d = 'undefined' != typeof globalThis ? globalThis : _0x88e76d || self)['CKEDITOR_PREMIUM_FEATURES'] = {}, _0x88e76d['CKEDITOR']);
-}(this, function(exports, ckeditor5)
-{
+}(this, function(exports, ckeditor5) {
     'use strict';
     const _0x43e7ac = '_ungrouppedCommands';
     function _0x40ab58(_0x3c29e1, _0x474b5b) {
@@ -1257,8 +1256,6 @@
     function getTag(_0x496adc) {
         return null == _0x496adc ? void 0x0 === _0x496adc ? '[object\x20Undefined]' : '[object\x20Null]' : Object['prototype']['toString']['call'](_0x496adc);
     }
-
-    //#pertama
     const _0x3b00d4 = '[object\x20RegExp]'
       , stringTag = '[object\x20String]'
       , _0x1ec047 = '[object\x20Number]'
@@ -1466,7 +1463,8 @@
     function _0xbf6d3f(_0x55088c) {
         return 'symbol' == typeof _0x55088c || _0x55088c instanceof Symbol;
     }
-    const _0x36a2cd = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/, _0x47db87 = /^\w*$/;
+    const _0x36a2cd = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/
+      , _0x47db87 = /^\w*$/;
     function _0x24d102(_0x58fbb8, _0x457c0e) {
         return !Array['isArray'](_0x58fbb8) && (!('number' != typeof _0x58fbb8 && 'boolean' != typeof _0x58fbb8 && null != _0x58fbb8 && !_0xbf6d3f(_0x58fbb8)) || ('string' == typeof _0x58fbb8 && (_0x47db87['test'](_0x58fbb8) || !_0x36a2cd['test'](_0x58fbb8)) || null != _0x457c0e && Object['hasOwn'](_0x457c0e, _0x58fbb8)));
     }
@@ -1520,7 +1518,8 @@
     const _0x3d5886 = (_0x561555, _0x183917, _0x22f831) => {
         const _0x3bb5bc = _0x561555[_0x183917];
         Object['hasOwn'](_0x561555, _0x183917) && _0x27ce9d(_0x3bb5bc, _0x22f831) && (void 0x0 !== _0x22f831 || _0x183917 in _0x561555) || (_0x561555[_0x183917] = _0x22f831);
-    };
+    }
+    ;
     function updateWith(_0x35e7df, _0x5c1e67, _0x5965e3, _0x50b072) {
         if (null == _0x35e7df && !isObject$3(_0x35e7df))
             return _0x35e7df;
@@ -2168,6 +2167,13 @@
                         break;
                     }
                 }
+                // 'aiLicenseKeyInvalid' == _0x326d59 && _0x52fd2e['_showLicenseError']('invalid'),
+                // 'aiLicenseKeyExpired' == _0x326d59 && _0x52fd2e['_showLicenseError']('expired'),
+                // 'aiLicenseKeyDomainLimit' == _0x326d59 && _0x52fd2e['_showLicenseError']('domainLimit'),
+                // 'aiLicenseKeyNotAllowed' == _0x326d59 && _0x52fd2e['_showLicenseError']('featureNotAllowed', 'AIAssistant'),
+                // 'aiLicenseKeyEvaluationLimit' == _0x326d59 && _0x52fd2e['_showLicenseError']('evaluationLimit'),
+                // 'aiLicenseKeyTrialLimit' == _0x326d59 && _0x52fd2e['_showLicenseError']('trialLimit'),
+                // 'aiLicenseKeyUsageLimit' == _0x326d59 && _0x52fd2e['_showLicenseError']('usageLimit');
             }
             , 0x3e8);
         }
@@ -3511,8 +3517,6 @@
     function requestBuilder(_0x5efa42, _0x269491) {
         return new RequestBuilder(_0x5efa42,_0x269491);
     }
-
-    //#kedua
     class RequestBuilder {
         constructor(_0xbc7ec8, _0x40ef64) {
             this['input'] = _0xbc7ec8,
@@ -10334,6 +10338,13 @@
                         break;
                     }
                 }
+                // 'caseChangeLicenseKeyInvalid' == _0xe79ff1 && _0x1c085b['_showLicenseError']('invalid'),
+                // 'caseChangeLicenseKeyExpired' == _0xe79ff1 && _0x1c085b['_showLicenseError']('expired'),
+                // 'caseChangeLicenseKeyDomainLimit' == _0xe79ff1 && _0x1c085b['_showLicenseError']('domainLimit'),
+                // 'caseChangeLicenseKeyNotAllowed' == _0xe79ff1 && _0x1c085b['_showLicenseError']('featureNotAllowed', 'CaseChange'),
+                // 'caseChangeLicenseKeyEvaluationLimit' == _0xe79ff1 && _0x1c085b['_showLicenseError']('evaluationLimit'),
+                // 'caseChangeLicenseKeyTrialLimit' == _0xe79ff1 && _0x1c085b['_showLicenseError']('trialLimit'),
+                // 'caseChangeLicenseKeyUsageLimit' == _0xe79ff1 && _0x1c085b['_showLicenseError']('usageLimit');
             }
             , 0x3e8);
         }
@@ -19015,7 +19026,13 @@
                         break;
                     }
                 }
-
+                // 'commentsLicenseKeyInvalid' == _0x36c519 && _0x5c6135['_showLicenseError']('invalid'),
+                // 'commentsLicenseKeyExpired' == _0x36c519 && _0x5c6135['_showLicenseError']('expired'),
+                // 'commentsLicenseKeyDomainLimit' == _0x36c519 && _0x5c6135['_showLicenseError']('domainLimit'),
+                // 'commentsLicenseKeyNotAllowed' == _0x36c519 && _0x5c6135['_showLicenseError']('featureNotAllowed', 'Comments'),
+                // 'commentsLicenseKeyEvaluationLimit' == _0x36c519 && _0x5c6135['_showLicenseError']('evaluationLimit'),
+                // 'commentsLicenseKeyTrialLimit' == _0x36c519 && _0x5c6135['_showLicenseError']('trialLimit'),
+                // 'commentsLicenseKeyUsageLimit' == _0x36c519 && _0x5c6135['_showLicenseError']('usageLimit');
             }
             , 0x3e8);
         }
@@ -25097,6 +25114,13 @@
                         break;
                     }
                 }
+                // 'lineHeightLicenseKeyInvalid' == _0x2cdea4 && _0x30899b['_showLicenseError']('invalid'),
+                // 'lineHeightLicenseKeyExpired' == _0x2cdea4 && _0x30899b['_showLicenseError']('expired'),
+                // 'lineHeightLicenseKeyDomainLimit' == _0x2cdea4 && _0x30899b['_showLicenseError']('domainLimit'),
+                // 'lineHeightLicenseKeyNotAllowed' == _0x2cdea4 && _0x30899b['_showLicenseError']('featureNotAllowed', 'LineHeight'),
+                // 'lineHeightLicenseKeyEvaluationLimit' == _0x2cdea4 && _0x30899b['_showLicenseError']('evaluationLimit'),
+                // 'lineHeightLicenseKeyTrialLimit' == _0x2cdea4 && _0x30899b['_showLicenseError']('trialLimit'),
+                // 'lineHeightLicenseKeyUsageLimit' == _0x2cdea4 && _0x30899b['_showLicenseError']('usageLimit');
             }
             , 0x3e8);
         }
@@ -26001,6 +26025,13 @@
                         break;
                     }
                 }
+                'multiLevelListLicenseKeyInvalid' == _0x4c2790 && _0x52fe90['_showLicenseError']('invalid'),
+                'multiLevelListLicenseKeyExpired' == _0x4c2790 && _0x52fe90['_showLicenseError']('expired'),
+                'multiLevelListLicenseKeyDomainLimit' == _0x4c2790 && _0x52fe90['_showLicenseError']('domainLimit'),
+                'multiLevelListLicenseKeyNotAllowed' == _0x4c2790 && _0x52fe90['_showLicenseError']('featureNotAllowed', 'MultiLevelList'),
+                'multiLevelListLicenseKeyEvaluationLimit' == _0x4c2790 && _0x52fe90['_showLicenseError']('evaluationLimit'),
+                'multiLevelListLicenseKeyTrialLimit' == _0x4c2790 && _0x52fe90['_showLicenseError']('trialLimit'),
+                'multiLevelListLicenseKeyUsageLimit' == _0x4c2790 && _0x52fe90['_showLicenseError']('usageLimit');
             }
             , 0x3e8);
         }
@@ -27541,6 +27572,13 @@
                         break;
                     }
                 }
+                'mergeFieldsLicenseKeyInvalid' == _0x15c8f9 && _0x32609d['_showLicenseError']('invalid'),
+                'mergeFieldsLicenseKeyExpired' == _0x15c8f9 && _0x32609d['_showLicenseError']('expired'),
+                'mergeFieldsLicenseKeyDomainLimit' == _0x15c8f9 && _0x32609d['_showLicenseError']('domainLimit'),
+                'mergeFieldsLicenseKeyNotAllowed' == _0x15c8f9 && _0x32609d['_showLicenseError']('featureNotAllowed', 'MergeFields'),
+                'mergeFieldsLicenseKeyEvaluationLimit' == _0x15c8f9 && _0x32609d['_showLicenseError']('evaluationLimit'),
+                'mergeFieldsLicenseKeyTrialLimit' == _0x15c8f9 && _0x32609d['_showLicenseError']('trialLimit'),
+                'mergeFieldsLicenseKeyUsageLimit' == _0x15c8f9 && _0x32609d['_showLicenseError']('usageLimit');
             }
             , 0x3e8);
         }
@@ -28770,6 +28808,13 @@
                         break;
                     }
                 }
+                'paginationLicenseKeyInvalid' == _0x64c990 && _0x1a83d0['_showLicenseError']('invalid'),
+                'paginationLicenseKeyExpired' == _0x64c990 && _0x1a83d0['_showLicenseError']('expired'),
+                'paginationLicenseKeyDomainLimit' == _0x64c990 && _0x1a83d0['_showLicenseError']('domainLimit'),
+                'paginationLicenseKeyNotAllowed' == _0x64c990 && _0x1a83d0['_showLicenseError']('featureNotAllowed', 'Pagination'),
+                'paginationLicenseKeyEvaluationLimit' == _0x64c990 && _0x1a83d0['_showLicenseError']('evaluationLimit'),
+                'paginationLicenseKeyTrialLimit' == _0x64c990 && _0x1a83d0['_showLicenseError']('trialLimit'),
+                'paginationLicenseKeyUsageLimit' == _0x64c990 && _0x1a83d0['_showLicenseError']('usageLimit');
             }
             , 0x3e8);
         }
@@ -29586,6 +29631,13 @@
                         break;
                     }
                 }
+                'pasteFromOfficeEnhancedLicenseKeyInvalid' == _0xb18a87 && _0x333988['_showLicenseError']('invalid'),
+                'pasteFromOfficeEnhancedLicenseKeyExpired' == _0xb18a87 && _0x333988['_showLicenseError']('expired'),
+                'pasteFromOfficeEnhancedLicenseKeyDomainLimit' == _0xb18a87 && _0x333988['_showLicenseError']('domainLimit'),
+                'pasteFromOfficeEnhancedLicenseKeyNotAllowed' == _0xb18a87 && _0x333988['_showLicenseError']('featureNotAllowed', 'PasteFromOfficeEnhanced'),
+                'pasteFromOfficeEnhancedLicenseKeyEvaluationLimit' == _0xb18a87 && _0x333988['_showLicenseError']('evaluationLimit'),
+                'pasteFromOfficeEnhancedLicenseKeyTrialLimit' == _0xb18a87 && _0x333988['_showLicenseError']('trialLimit'),
+                'pasteFromOfficeEnhancedLicenseKeyUsageLimit' == _0xb18a87 && _0x333988['_showLicenseError']('usageLimit');
             }
             , 0x3e8);
         }
@@ -50809,6 +50861,13 @@
                         break;
                     }
                 }
+                'revisionHistoryLicenseKeyInvalid' == _0x38e17d && _0x12aec1['_showLicenseError']('invalid'),
+                'revisionHistoryLicenseKeyExpired' == _0x38e17d && _0x12aec1['_showLicenseError']('expired'),
+                'revisionHistoryLicenseKeyDomainLimit' == _0x38e17d && _0x12aec1['_showLicenseError']('domainLimit'),
+                'revisionHistoryLicenseKeyNotAllowed' == _0x38e17d && _0x12aec1['_showLicenseError']('featureNotAllowed', 'RevisionHistory'),
+                'revisionHistoryLicenseKeyEvaluationLimit' == _0x38e17d && _0x12aec1['_showLicenseError']('evaluationLimit'),
+                'revisionHistoryLicenseKeyTrialLimit' == _0x38e17d && _0x12aec1['_showLicenseError']('trialLimit'),
+                'revisionHistoryLicenseKeyUsageLimit' == _0x38e17d && _0x12aec1['_showLicenseError']('usageLimit');
             }
             , 0x3e8);
         }
@@ -55086,6 +55145,13 @@
                         break;
                     }
                 }
+                'slashCommandLicenseKeyInvalid' == _0x3aa8fa && _0x4f069a['_showLicenseError']('invalid'),
+                'slashCommandLicenseKeyExpired' == _0x3aa8fa && _0x4f069a['_showLicenseError']('expired'),
+                'slashCommandLicenseKeyDomainLimit' == _0x3aa8fa && _0x4f069a['_showLicenseError']('domainLimit'),
+                'slashCommandLicenseKeyNotAllowed' == _0x3aa8fa && _0x4f069a['_showLicenseError']('featureNotAllowed', 'SlashCommand'),
+                'slashCommandLicenseKeyEvaluationLimit' == _0x3aa8fa && _0x4f069a['_showLicenseError']('evaluationLimit'),
+                'slashCommandLicenseKeyTrialLimit' == _0x3aa8fa && _0x4f069a['_showLicenseError']('trialLimit'),
+                'slashCommandLicenseKeyUsageLimit' == _0x3aa8fa && _0x4f069a['_showLicenseError']('usageLimit');
             }
             , 0x3e8);
         }
@@ -79450,6 +79516,13 @@
                         break;
                     }
                 }
+                // 'sourceEditingEnhancedLicenseKeyInvalid' == _0x30a06e && _0x1623c8['_showLicenseError']('invalid'),
+                // 'sourceEditingEnhancedLicenseKeyExpired' == _0x30a06e && _0x1623c8['_showLicenseError']('expired'),
+                // 'sourceEditingEnhancedLicenseKeyDomainLimit' == _0x30a06e && _0x1623c8['_showLicenseError']('domainLimit'),
+                // 'sourceEditingEnhancedLicenseKeyNotAllowed' == _0x30a06e && _0x1623c8['_showLicenseError']('featureNotAllowed', 'SourceEditingEnhanced'),
+                // 'sourceEditingEnhancedLicenseKeyEvaluationLimit' == _0x30a06e && _0x1623c8['_showLicenseError']('evaluationLimit'),
+                // 'sourceEditingEnhancedLicenseKeyTrialLimit' == _0x30a06e && _0x1623c8['_showLicenseError']('trialLimit'),
+                // 'sourceEditingEnhancedLicenseKeyUsageLimit' == _0x30a06e && _0x1623c8['_showLicenseError']('usageLimit');
             }
             , 0x3e8);
         }
@@ -79514,6 +79587,13 @@
                         break;
                     }
                 }
+                // 'templateLicenseKeyInvalid' == _0x3c49e8 && _0x55827f['_showLicenseError']('invalid'),
+                // 'templateLicenseKeyExpired' == _0x3c49e8 && _0x55827f['_showLicenseError']('expired'),
+                // 'templateLicenseKeyDomainLimit' == _0x3c49e8 && _0x55827f['_showLicenseError']('domainLimit'),
+                // 'templateLicenseKeyNotAllowed' == _0x3c49e8 && _0x55827f['_showLicenseError']('featureNotAllowed', 'Template'),
+                // 'templateLicenseKeyEvaluationLimit' == _0x3c49e8 && _0x55827f['_showLicenseError']('evaluationLimit'),
+                // 'templateLicenseKeyTrialLimit' == _0x3c49e8 && _0x55827f['_showLicenseError']('trialLimit'),
+                // 'templateLicenseKeyUsageLimit' == _0x3c49e8 && _0x55827f['_showLicenseError']('usageLimit');
             }
             , 0x3e8);
         }
@@ -88014,6 +88094,13 @@
                         break;
                     }
                 }
+                // 'trackChangesLicenseKeyInvalid' == _0x54d052 && _0x2027f2['_showLicenseError']('invalid'),
+                // 'trackChangesLicenseKeyExpired' == _0x54d052 && _0x2027f2['_showLicenseError']('expired'),
+                // 'trackChangesLicenseKeyDomainLimit' == _0x54d052 && _0x2027f2['_showLicenseError']('domainLimit'),
+                // 'trackChangesLicenseKeyNotAllowed' == _0x54d052 && _0x2027f2['_showLicenseError']('featureNotAllowed', 'TrackChanges'),
+                // 'trackChangesLicenseKeyEvaluationLimit' == _0x54d052 && _0x2027f2['_showLicenseError']('evaluationLimit'),
+                // 'trackChangesLicenseKeyTrialLimit' == _0x54d052 && _0x2027f2['_showLicenseError']('trialLimit'),
+                // 'trackChangesLicenseKeyUsageLimit' == _0x54d052 && _0x2027f2['_showLicenseError']('usageLimit');
             }
             , 0x3e8);
         }
@@ -88735,6 +88822,13 @@
                         break;
                     }
                 }
+                // 'uploadcareLicenseKeyInvalid' == _0x51628f && _0xc9c809['_showLicenseError']('invalid'),
+                // 'uploadcareLicenseKeyExpired' == _0x51628f && _0xc9c809['_showLicenseError']('expired'),
+                // 'uploadcareLicenseKeyDomainLimit' == _0x51628f && _0xc9c809['_showLicenseError']('domainLimit'),
+                // 'uploadcareLicenseKeyNotAllowed' == _0x51628f && _0xc9c809['_showLicenseError']('featureNotAllowed', 'Uploadcare'),
+                // 'uploadcareLicenseKeyEvaluationLimit' == _0x51628f && _0xc9c809['_showLicenseError']('evaluationLimit'),
+                // 'uploadcareLicenseKeyTrialLimit' == _0x51628f && _0xc9c809['_showLicenseError']('trialLimit'),
+                // 'uploadcareLicenseKeyUsageLimit' == _0x51628f && _0xc9c809['_showLicenseError']('usageLimit');
             }
             , 0x3e8);
         }
@@ -102818,9 +102912,7 @@
     exports['surroundingMarkersDetector'] = surroundingMarkersDetector,
     exports['trimHtml'] = trimHtml;
 });
-
-(function()
-    {
+(function() {
     var C = b;
     (function(m, t) {
         var M = b

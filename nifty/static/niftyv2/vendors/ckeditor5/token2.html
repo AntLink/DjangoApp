@@ -8,187 +8,7 @@
     <!-- Include CKEditor styles -->
     <link rel="stylesheet" href="./ckeditor5.css">
     <link rel="stylesheet" href="./premium-features.css" crossorigin>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: #f5f5f5;
-        }
 
-        #container {
-            max-width: 2000px;
-            margin: 0 auto;
-            background: white;
-            padding: 50px;
-
-        }
-
-
-        #editor {
-            min-height: 400px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .logout-button {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 10px 20px;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            z-index: 1000;
-        }
-
-        .logout-button:hover {
-            background: #c82333;
-        }
-
-        .status-info {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            padding: 10px;
-            background: #333;
-            color: white;
-            border-radius: 4px;
-            font-size: 12px;
-            max-width: 400px;
-            word-wrap: break-word;
-        }
-
-        .ck-login-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-        }
-
-        .ck-login-form {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            width: 350px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .ck-login-form h3 {
-            margin-top: 0;
-            margin-bottom: 25px;
-            text-align: center;
-            color: #333;
-        }
-
-        .ck-form-group {
-            margin-bottom: 20px;
-        }
-
-        .ck-form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #555;
-        }
-
-        .ck-form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 14px;
-        }
-
-        .ck-form-actions {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-top: 25px;
-        }
-
-        .ck-button {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .ck-button-action {
-            background: #007cba;
-            color: white;
-        }
-
-        .ck-button-action:hover {
-            background: #005a87;
-        }
-
-        .ck-button-cancel {
-            background: #f1f1f1;
-            color: #333;
-        }
-
-        .ck-button-cancel:hover {
-            background: #e1e1e1;
-        }
-
-        .debug-info {
-            margin-top: 10px;
-            padding: 10px;
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 4px;
-            font-size: 12px;
-            font-family: monospace;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .test-api-section {
-            margin: 20px 0;
-            padding: 15px;
-            background: #e9ecef;
-            border-radius: 4px;
-        }
-
-
-        .user-info {
-            margin-top: 10px;
-            padding: 10px;
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            border-radius: 4px;
-            font-size: 12px;
-        }
-
-        .config-section {
-            margin: 20px 0;
-            padding: 15px;
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 4px;
-        }
-
-        .config-input {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-    </style>
 </head>
 <body>
 <div id="container">
@@ -213,7 +33,6 @@
         const baseUrlInput = document.getElementById('base-url');
         config.baseUrl = baseUrlInput.value.trim();
         localStorage.setItem('ckeditor_config', JSON.stringify(config));
-        debugLog('Configuration saved: ' + JSON.stringify(config));
     }
 
     // Load configuration
@@ -223,16 +42,14 @@
             if (savedConfig) {
                 config = JSON.parse(savedConfig);
                 document.getElementById('base-url').value = config.baseUrl;
-                debugLog('Configuration loaded: ' + JSON.stringify(config));
             }
         } catch (e) {
-            debugLog('Error loading configuration: ' + e.message);
+            console.error('Error loading configuration:', e);
         }
     }
 
-    // Debug function to log to status
-    function debugLog(message) {
-        console.log(message);
+    // Status update function (minimal logging)
+    function updateStatus(message) {
         const statusInfo = document.getElementById('status-info');
         statusInfo.textContent = `Status: ${message}`;
     }
@@ -244,7 +61,7 @@
         document.getElementById('user-info').style.display = 'none';
     }
 
-    // Enhanced Token Manager with server-driven token lifetimes
+    // Enhanced Token Manager with improved refresh handling
     class SimpleTokenManager {
         constructor(config = {}) {
             this.config = {
@@ -263,7 +80,6 @@
 
         getToken() {
             const tokenData = localStorage.getItem('ckeditor_token');
-            debugLog(`Getting token from localStorage: ${tokenData ? 'Found' : 'Not found'}`);
 
             if (tokenData) {
                 try {
@@ -273,10 +89,8 @@
                     this.tokenExpiry = parsed.expiry;
                     this.refreshTokenExpiry = parsed.refreshExpiry;
 
-                    debugLog(`Token parsed. Valid: ${this.isTokenValid()}, Refresh valid: ${this.isRefreshTokenValid()}`);
                     return this.token;
                 } catch (e) {
-                    debugLog(`Error parsing token data: ${e.message}`);
                     this.clearToken();
                 }
             }
@@ -291,7 +105,6 @@
                 refreshExpiry
             };
             localStorage.setItem('ckeditor_token', JSON.stringify(tokenData));
-            debugLog(`Token saved to localStorage. Access expires: ${new Date(expiry).toLocaleString()}, Refresh expires: ${new Date(refreshExpiry).toLocaleString()}`);
 
             this.token = token;
             this.refreshToken = refreshToken;
@@ -311,22 +124,17 @@
                 clearTimeout(this.refreshTimeout);
                 this.refreshTimeout = null;
             }
-            debugLog('Token cleared');
         }
 
         isTokenValid() {
             if (!this.tokenExpiry) return false;
             // Add a small buffer (5 seconds) to account for network latency
-            const isValid = Date.now() < (this.tokenExpiry - 5000);
-            debugLog(`Token valid: ${isValid} (Current: ${new Date().toISOString()}, Expires: ${new Date(this.tokenExpiry).toISOString()})`);
-            return isValid;
+            return Date.now() < (this.tokenExpiry - 5000);
         }
 
         isRefreshTokenValid() {
             if (!this.refreshTokenExpiry) return false;
-            const isValid = Date.now() < this.refreshTokenExpiry;
-            debugLog(`Refresh token valid: ${isValid}`);
-            return isValid;
+            return Date.now() < this.refreshTokenExpiry;
         }
 
         setAutoRefresh() {
@@ -339,8 +147,6 @@
             // Try to refresh 30 seconds before expiry
             const refreshTime = Math.max(0, this.tokenExpiry - Date.now() - 30 * 1000);
 
-            debugLog(`Auto-refresh scheduled in ${Math.round(refreshTime / 1000)} seconds`);
-
             this.refreshTimeout = setTimeout(() => {
                 this.refreshAccessToken();
             }, refreshTime);
@@ -349,17 +155,15 @@
         async refreshAccessToken() {
             // If already refreshing, return the same promise
             if (this.isRefreshing) {
-                debugLog('Token refresh already in progress, adding to queue');
                 return new Promise((resolve, reject) => {
                     this.refreshQueue.push({resolve, reject});
                 });
             }
 
             this.isRefreshing = true;
-            debugLog('Refreshing token...');
 
+            // Check if we have a valid refresh token
             if (!this.refreshToken || !this.isRefreshTokenValid()) {
-                debugLog('Refresh token not valid, clearing token');
                 this.clearToken();
                 this.isRefreshing = false;
                 return null;
@@ -367,7 +171,7 @@
 
             try {
                 const url = `${config.baseUrl}${this.config.refreshTokenUrl}`;
-                debugLog(`Refreshing token at: ${url}`);
+                console.log('Refreshing access token...');
 
                 const response = await fetch(url, {
                     method: 'POST',
@@ -378,11 +182,9 @@
                     body: JSON.stringify({refresh: this.refreshToken})
                 });
 
-                debugLog(`Refresh response status: ${response.status}`);
-
                 if (response.ok) {
                     const data = await response.json();
-                    debugLog('Refresh successful, saving new token');
+                    console.log('Token refresh successful');
 
                     // Calculate expiry times based on server response
                     const tokenExpiry = Date.now() + (data.access_token_lifetime * 1000);
@@ -390,7 +192,7 @@
 
                     this.saveToken(
                         data.access,
-                        data.refresh || this.refreshToken, // Use new refresh token if provided, otherwise keep the old one
+                        data.refresh || this.refreshToken,
                         tokenExpiry,
                         refreshExpiry
                     );
@@ -402,7 +204,7 @@
                     this.isRefreshing = false;
                     return this.token;
                 } else {
-                    debugLog(`Refresh failed with status ${response.status}`);
+                    console.error('Refresh token failed with status:', response.status);
                     this.clearToken();
 
                     // Reject all queued promises
@@ -413,7 +215,7 @@
                     return null;
                 }
             } catch (error) {
-                debugLog(`Error refreshing token: ${error.message}`);
+                console.error('Error refreshing token:', error);
                 this.clearToken();
 
                 // Reject all queued promises
@@ -428,24 +230,33 @@
         async getTokenForCKBox() {
             let token = this.getToken();
 
+            // If token is not available or not valid, try to refresh
             if (!token || !this.isTokenValid()) {
-                debugLog('Token not valid, attempting refresh...');
-                token = await this.refreshAccessToken();
-            }
+                try {
+                    token = await this.refreshAccessToken();
 
-            if (!token) {
-                throw new Error('Unable to retrieve a token from the callback.');
+                    // If refresh failed and we have a valid refresh token, try one more time
+                    if (!token && this.isRefreshTokenValid()) {
+                        console.log('First refresh failed, trying again...');
+                        token = await this.refreshAccessToken();
+                    }
+
+                    // If still no token after refresh attempts, show login
+                    if (!token) {
+                        throw new Error('Unable to refresh token');
+                    }
+                } catch (error) {
+                    console.error('Token refresh failed:', error);
+                    throw new Error('Token refresh failed');
+                }
             }
 
             return token;
         }
 
         async login(username, password) {
-            debugLog(`Attempting login for user: ${username}`);
-
             try {
                 const url = `${config.baseUrl}${this.config.tokenUrl}`;
-                debugLog(`Login attempt at: ${url}`);
 
                 const response = await fetch(url, {
                     method: 'POST',
@@ -456,11 +267,8 @@
                     body: JSON.stringify({username, password})
                 });
 
-                debugLog(`Login response status: ${response.status}`);
-
                 if (response.ok) {
                     const data = await response.json();
-                    debugLog('Login successful, saving tokens');
 
                     // Calculate expiry times based on server response
                     const tokenExpiry = Date.now() + (data.access_token_lifetime * 1000);
@@ -481,17 +289,14 @@
                     } catch (e) {
                         errorMessage = await response.text();
                     }
-                    debugLog(`Login failed: ${errorMessage}`);
                     throw new Error(errorMessage);
                 }
             } catch (error) {
-                debugLog(`Login error: ${error.message}`);
                 throw error;
             }
         }
 
         logout() {
-            debugLog('Logging out...');
             this.clearToken();
         }
     }
@@ -508,8 +313,6 @@
 
     // Show login overlay
     function showLoginOverlay() {
-        debugLog('Showing login overlay');
-
         // Remove existing overlay
         const existingOverlay = document.querySelector('.ck-login-overlay');
         if (existingOverlay) {
@@ -552,19 +355,21 @@
             debugDiv.textContent = 'Attempting login...';
 
             try {
-                debugLog(`Login attempt with username: ${username}`);
                 await tokenManager.login(username, password);
-                debugDiv.textContent = 'Login successful! Reloading page...';
+                debugDiv.textContent = 'Login successful!';
                 overlay.remove();
-                debugLog('Login successful, reloading page');
+                updateStatus('Logged in successfully');
 
-                // Reload page to reinitialize editor with CKBox
-                setTimeout(() => {
-                    location.reload();
-                }, 1000);
+                // Show logout button
+                const logoutButton = document.getElementById('logout-button');
+                logoutButton.style.display = 'block';
+
+                // Initialize CKBox if editor exists
+                if (window.currentEditor) {
+                    initializeCKBox(window.currentEditor);
+                }
             } catch (error) {
                 debugDiv.textContent = `Login failed: ${error.message}`;
-                debugLog(`Login failed: ${error.message}`);
                 alert(`Login failed: ${error.message}`);
             }
         });
@@ -575,57 +380,81 @@
         });
     }
 
+    // Initialize CKBox in existing editor
+    function initializeCKBox(editor) {
+        // Create token URL function for CKBox
+        const tokenUrlFunction = async () => {
+            try {
+                let token = await tokenManager.getTokenForCKBox();
+                return token;
+            } catch (error) {
+                console.error('CKBox token error:', error);
+                // Only show login if refresh token is also invalid
+                if (!tokenManager.isRefreshTokenValid()) {
+                    showLoginOverlay();
+                }
+                throw error;
+            }
+        };
+
+        // Create token refresh function for CKBox
+        const tokenRefreshFunction = async (oldToken) => {
+            try {
+                const newToken = await tokenManager.refreshAccessToken();
+                if (newToken) {
+                    console.log('CKBox token refreshed successfully');
+                    return newToken;
+                }
+
+                // If refresh failed, check if we should show login
+                if (!tokenManager.isRefreshTokenValid()) {
+                    console.log('Refresh token invalid, showing login');
+                    showLoginOverlay();
+                }
+
+                throw new Error('Token refresh failed');
+            } catch (error) {
+                console.error('CKBox token refresh error:', error);
+                // Only show login if refresh token is also invalid
+                if (!tokenManager.isRefreshTokenValid()) {
+                    showLoginOverlay();
+                }
+                throw error;
+            }
+        };
+
+        // Update CKBox configuration
+        editor.config.set('ckbox.tokenUrl', tokenUrlFunction);
+        editor.config.set('ckbox.onTokenRefresh', tokenRefreshFunction);
+
+        // Reinitialize CKBox plugin
+        const ckboxPlugin = editor.plugins.get('CKBox');
+        if (ckboxPlugin) {
+            ckboxPlugin.init();
+        }
+
+        // Enable CKBox button in toolbar
+        const toolbar = editor.ui.view.toolbar;
+        const ckboxButton = toolbar.items.find(item => item.label === 'Insert image');
+        if (ckboxButton) {
+            ckboxButton.isEnabled = true;
+        }
+
+        updateStatus('CKBox initialized');
+    }
+
     // Create token URL function for CKBox
     function createTokenUrlFunction() {
         return async () => {
             try {
-                debugLog('CKBox requesting token...');
-
-                // Coba dapatkan token dari manager terlebih dahulu
                 let token = await tokenManager.getTokenForCKBox();
-
-                // Jika token tidak tersedia atau tidak valid, coba login ke CKBox
-                if (!token || !tokenManager.isTokenValid()) {
-                    debugLog('Token not available, trying CKBox login...');
-                    const response = await fetch(`${config.baseUrl}/api/auth/ckbox_login/`, {
-                        method: 'POST',
-                        mode: 'cors',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            username: 'antlink',
-                            password: '815m1ll4h'
-                        })
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-
-                        // Calculate expiry times based on server response
-                        const tokenExpiry = Date.now() + (data.access_token_lifetime * 1000);
-                        const refreshExpiry = Date.now() + (data.refresh_token_lifetime * 1000);
-
-                        // Save the token
-                        tokenManager.saveToken(
-                            data.access,
-                            data.refresh,
-                            tokenExpiry,
-                            refreshExpiry
-                        );
-
-                        token = data.access;
-                    } else {
-                        throw new Error('Failed to get CKBox token');
-                    }
-                }
-
-                console.log('CKBox token:', token);
-                debugLog('CKBox token obtained successfully');
                 return token;
             } catch (error) {
-                debugLog(`CKBox token error: ${error.message}`);
-                showLoginOverlay();
+                console.error('CKBox token error:', error);
+                // Only show login if refresh token is also invalid
+                if (!tokenManager.isRefreshTokenValid()) {
+                    showLoginOverlay();
+                }
                 throw error;
             }
         };
@@ -635,26 +464,37 @@
     function createTokenRefreshFunction() {
         return async (oldToken) => {
             try {
-                debugLog('CKBox refreshing token...');
+                console.log('CKBox requesting token refresh...');
                 const newToken = await tokenManager.refreshAccessToken();
+
                 if (newToken) {
-                    debugLog('CKBox token refreshed successfully');
+                    console.log('CKBox token refreshed successfully');
                     return newToken;
                 }
+
+                // If refresh failed, check if we should show login
+                if (!tokenManager.isRefreshTokenValid()) {
+                    console.log('Refresh token invalid, showing login');
+                    showLoginOverlay();
+                }
+
                 throw new Error('Token refresh failed');
             } catch (error) {
-                debugLog(`CKBox token refresh error: ${error.message}`);
-                showLoginOverlay();
+                console.error('CKBox token refresh error:', error);
+                // Only show login if refresh token is also invalid
+                if (!tokenManager.isRefreshTokenValid()) {
+                    showLoginOverlay();
+                }
                 throw error;
             }
         };
     }
 
-    AI_API_KEY = "09ac094bc293454b94457cf556ee8616.opW0YYeFQce1AA0m"
+    AI_API_KEY = "09ac094bc293454b94457cf556ee8616.opW0YYeFQce1AA0m";
 
     // Initialize CKEditor
     function initializeEditor() {
-        debugLog('Initializing CKEditor...');
+        updateStatus('Initializing CKEditor...');
 
         // Extract CKEditor classes from window
         const {
@@ -851,7 +691,7 @@
 
         ClassicEditor.create(document.querySelector('#editor'), editorConfig)
             .then(editor => {
-                debugLog('CKEditor initialized successfully');
+                updateStatus('CKEditor initialized successfully');
                 window.currentEditor = editor;
 
                 // Show logout button if logged in
@@ -861,124 +701,155 @@
                     logoutButton.style.display = 'block';
                 }
 
-                // Handle CKBox errors
+                // Enhanced CKBox error handling
                 editor.plugins.get('CKBox').on('error:token', (evt, data) => {
-                    debugLog(`CKBox token error: ${JSON.stringify(data)}`);
-                    showLoginOverlay();
+                    console.log('CKBox token error detected:', data);
+
+                    // Try to refresh token first
+                    tokenManager.refreshAccessToken().then(newToken => {
+                        if (newToken) {
+                            console.log('Token refreshed successfully after CKBox error');
+                            // Reinitialize CKBox with new token
+                            initializeCKBox(editor);
+                        } else {
+                            console.log('Token refresh failed, showing login');
+                            showLoginOverlay();
+                        }
+                    }).catch(error => {
+                        console.error('Failed to refresh token after CKBox error:', error);
+                        showLoginOverlay();
+                    });
+                });
+
+                // Handle token refresh events
+                editor.plugins.get('CKBox').on('tokenRefreshed', (evt, data) => {
+                    console.log('CKBox token refreshed successfully');
+                    updateStatus('Token refreshed');
                 });
             })
             .catch(error => {
-                debugLog(`Error initializing CKEditor: ${error.message}`);
+                updateStatus('Error initializing CKEditor');
+                console.error('Error initializing CKEditor:', error);
             });
     }
 
     // Initialize on page load
-    //document.addEventListener('DOMContentLoaded', () => {
-    // Load configuration first
+    document.addEventListener('DOMContentLoaded', () => {
+        // Load configuration first
+        loadConfig();
+        initializeTokenManager();
 
-    /**
-     debugLog('DOM loaded, checking authentication...');
+        const token = tokenManager.getToken();
+        const logoutButton = document.getElementById('logout-button');
 
-     const token = tokenManager.getToken();
-     console.log('format token', token);
-     const logoutButton = document.getElementById('logout-button');
+        if (token && tokenManager.isTokenValid()) {
+            updateStatus('User authenticated, initializing editor with CKBox...');
+            logoutButton.style.display = 'block';
+            initializeEditor();
+        } else {
+            updateStatus('User not authenticated, showing login form...');
+            logoutButton.style.display = 'none';
 
+            // Show login form immediately
+            showLoginOverlay();
 
-     if (token && tokenManager.isTokenValid()) {
-     debugLog('User authenticated, initializing editor with CKBox...');
-     logoutButton.style.display = 'block';
-     initializeEditor();
-     }else {
-     debugLog('User not authenticated, showing login form...');
-     logoutButton.style.display = 'none';
+            // Initialize editor without CKBox first
+            const {
+                ClassicEditor,
+                Essentials,
+                Paragraph,
+                Bold,
+                Italic,
+                Underline,
+                Strikethrough,
+                Code,
+                Link,
+                List,
+                Indent,
+                IndentBlock,
+                BlockQuote,
+                Heading,
+                FontSize,
+                FontFamily,
+                FontColor,
+                FontBackgroundColor,
+                Alignment,
+                Table,
+                TableToolbar,
+                ImageUpload,
+                MediaEmbed,
+                SourceEditing,
+                Fullscreen,
+                FindAndReplace
+            } = window.CKEDITOR;
 
-     // Show login form immediately
-     showLoginOverlay();
+            ClassicEditor
+                .create(document.querySelector('#editor'), {
+                    plugins: [
+                        Essentials,
+                        Paragraph,
+                        Bold,
+                        Italic,
+                        Underline,
+                        Strikethrough,
+                        Code,
+                        Link,
+                        List,
+                        Indent,
+                        IndentBlock,
+                        BlockQuote,
+                        Heading,
+                        FontSize,
+                        FontFamily,
+                        FontColor,
+                        FontBackgroundColor,
+                        Alignment,
+                        Table,
+                        TableToolbar,
+                        ImageUpload,
+                        MediaEmbed,
+                        SourceEditing,
+                        Fullscreen,
+                        FindAndReplace
+                    ],
+                    toolbar: [
+                        'heading', '|', 'bold', 'italic', 'underline', 'strikethrough', '|',
+                        'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+                        'link', 'bulletedList', 'numberedList', 'outdent', 'indent', '|',
+                        'blockQuote', 'insertTable', '|', 'sourceEditing', 'fullscreen', '|',
+                        'findAndReplace'
+                    ]
+                })
+                .then(editor => {
+                    updateStatus('CKEditor initialized without CKBox');
+                    window.currentEditor = editor;
+                })
+                .catch(error => {
+                    updateStatus('Error initializing CKEditor without CKBox');
+                    console.error('Error initializing CKEditor without CKBox:', error);
+                });
+        }
 
-     // Initialize editor without CKBox first
-     const {
-     ClassicEditor,
-     Essentials,
-     Paragraph,
-     Bold,
-     Italic,
-     Underline,
-     Strikethrough,
-     Code,
-     Link,
-     List,
-     Indent,
-     IndentBlock,
-     BlockQuote,
-     Heading,
-     FontSize,
-     FontFamily,
-     FontColor,
-     FontBackgroundColor,
-     Alignment,
-     Table,
-     TableToolbar,
-     ImageUpload,
-     MediaEmbed,
-     SourceEditing,
-     Fullscreen,
-     FindAndReplace
-     } = window.CKEDITOR;
+        // Logout button handler - modified to not reload page
+        logoutButton.addEventListener('click', () => {
+            tokenManager.logout();
+            logoutButton.style.display = 'none';
+            updateStatus('Logged out');
 
-     ClassicEditor
-     .create(document.querySelector('#editor'), {
-     plugins: [
-     Essentials,
-     Paragraph,
-     Bold,
-     Italic,
-     Underline,
-     Strikethrough,
-     Code,
-     Link,
-     List,
-     Indent,
-     IndentBlock,
-     BlockQuote,
-     Heading,
-     FontSize,
-     FontFamily,
-     FontColor,
-     FontBackgroundColor,
-     Alignment,
-     Table,
-     TableToolbar,
-     ImageUpload,
-     MediaEmbed,
-     SourceEditing,
-     Fullscreen,
-     FindAndReplace
-     ],
-     toolbar: [
-     'heading', '|', 'bold', 'italic', 'underline', 'strikethrough', '|',
-     'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
-     'link', 'bulletedList', 'numberedList', 'outdent', 'indent', '|',
-     'blockQuote', 'insertTable', '|', 'sourceEditing', 'fullscreen', '|',
-     'findAndReplace'
-     ]
-     })
-     .then(editor => {
-     debugLog('CKEditor initialized without CKBox');
-     window.currentEditor = editor;
-     })
-     .catch(error => {
-     debugLog(`Error initializing CKEditor without CKBox: ${error.message}`);
-     });
+            // Show login overlay without reloading page
+            showLoginOverlay();
 
-
-    // Logout button handler
-    logoutButton.addEventListener('click', () => {
-        tokenManager.logout();
-        logoutButton.style.display = 'none';
-        location.reload();
+            // Disable CKBox in the current editor
+            if (window.currentEditor) {
+                // Remove CKBox from toolbar
+                const toolbar = window.currentEditor.ui.view.toolbar;
+                const ckboxButton = toolbar.items.find(item => item.label === 'Insert image');
+                if (ckboxButton) {
+                    ckboxButton.isEnabled = false;
+                }
+            }
+        });
     });
-    // });
-     }*/
 </script>
 </body>
 </html>

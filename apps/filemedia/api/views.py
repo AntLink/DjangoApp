@@ -12,7 +12,6 @@ from django.shortcuts import get_object_or_404
 import mimetypes
 from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
 from django.contrib.auth import get_user_model
-from rest_framework import serializers
 from .serializers import CKBoxTokenObtainPairSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.settings import api_settings
@@ -26,18 +25,17 @@ import datetime
 import os
 from PIL import Image
 from django.http import FileResponse, Http404
-from django.http import JsonResponse
-
 import logging
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.throttling import UserRateThrottle
 from django.db.models import Q
-from .serializers import MediaSearchSerializer, MediaSearchPayloadSerializer
+from .serializers import MediaSearchSerializer
 from .pagination import CustomPagination
 
+# views.py
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 logger = logging.getLogger(__name__)
 
 logger = logging.getLogger(__name__)
@@ -50,24 +48,45 @@ class CKBoxTokenObtainPairView(TokenObtainPairView):
     serializer_class = CKBoxTokenObtainPairSerializer
 
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('username', 'password', 'email')
-        extra_kwargs = {'password': {'write_only': True}}
-
-    def create(self, validated_data):
-        user = User.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            password=validated_data['password']
-        )
-        return user
-
-
 class AdminViewSet(viewsets.ViewSet):
     permission_classes = [AllowAny]
-    authentication_classes = []
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    @action(detail=False, methods=['get','post'])
+    def permissions(self, request):
+        """Get permissions"""
+        try:
+            # Get semua categories
+            from ..models import Category
+            categories = Category.objects.all()
+
+            # Build permissions response
+            permissions_data = {
+                'items': [{
+                    "id": "0e0e66ca4edc",
+                    "groupId": "0e0e66ca4edc",
+                    "permissionsList": {
+                        "category:access": True,
+                        "asset:create": True,
+                        "asset:delete": True,
+                        "asset:metadata:modify": True,
+                        "asset:overwrite": True,
+                        "folder:create": True,
+                        "folder:delete": True,
+                        "folder:metadata:modify": True
+                    }
+                }]
+            }
+
+            return Response(permissions_data)
+
+        except Exception as e:
+            logger.error(f"Error getting permissions: {str(e)}")
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     @action(detail=False, methods=['get'])
     def categories(self, request):
@@ -165,6 +184,7 @@ class TagsViewSet(viewsets.ModelViewSet):
     filterset_fields = ['type', 'status']
     search_fields = ['name', 'description']
     permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -178,6 +198,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['is_private']
     permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
 
 class FolderViewSet(viewsets.ModelViewSet):
@@ -186,6 +207,7 @@ class FolderViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['category', 'parent']
     permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
 
 class MediaViewSet(viewsets.ModelViewSet):
@@ -196,6 +218,7 @@ class MediaViewSet(viewsets.ModelViewSet):
     search_fields = ['name', 'description']
     ordering_fields = ['created_at', 'name', 'size']
     permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def get_permissions(self):
         if self.action in ["retrieve", "thumbnail_detail"]:
@@ -485,7 +508,6 @@ class MediaThumbnailView(APIView):
 
         # Return thumbnail
         return FileResponse(open(thumb_path, "rb"), content_type="image/webp")
-
 
 
 class MediaSearchView(APIView):
@@ -793,7 +815,7 @@ class AuthViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=['get'])
     def workspaces(self, request):
-        data = {"items": [{"id": 12, "name": "ckbox-demo-workspace-DGMh-pql"}]}
+        data = {"items": [{"id": 12, "name": "Dangger"},{"id": 1, "name": "test 2"}]}
         return Response(data)
 
     @action(detail=False, methods=['get'])
@@ -857,33 +879,6 @@ class AuthViewSet(viewsets.ViewSet):
         )
         return response
 
-    # @action(detail=False, methods=['post'])
-    # def authorizeprivateaccess(self, request):
-    #     payload = {
-    #         "aud": "ckbox",
-    #         "sub": "ckbox-demo",
-    #         "iat": datetime.datetime.utcnow(),
-    #         "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=30),
-    #         "auth": {
-    #             "ckbox": {
-    #                 "role": "admin",
-    #                 "workspaces": ["default"]
-    #             }
-    #         }
-    #     }
-    #
-    #     token = jwt.encode(payload, settings.CKBOX_SECRET, algorithm="HS256")
-    #
-    #     response = JsonResponse({"status": "ok"})
-    #     response.set_cookie(
-    #         key="CKBox-Auth",
-    #         value=token,
-    #         httponly=True,
-    #         secure=not settings.DEBUG,
-    #         samesite="Strict",
-    #     )
-    #     return response
-
     @action(detail=False, methods=['get'])
     def permissions(self, request):
         """Get permissions"""
@@ -916,3 +911,40 @@ class AuthViewSet(viewsets.ViewSet):
                 {'error': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+class SuperAdminWorkspacesTemplateView(APIView):
+    permission_classes = []  # kalau mau tanpa login, bisa pakai []
+
+    def get(self, request):
+        data = {
+            "categoriesTemplates": [
+                {
+                    "name": "Images",
+                    "extensions": ["jpeg", "jpg", "png", "gif", "bmp", "webp", "tiff"]
+                },
+                {
+                    "name": "Files",
+                    "extensions": [
+                        "jpg","png","jpeg","gif","webp","bmp","tiff",
+                        "avi","mov","webm","mp4","mp3","flac","aac","ogg",
+                        "7z","rar","zip","gz","doc","docx","ppt","pptx",
+                        "xls","xlsx","odt","pdf","txt"
+                    ]
+                },
+                {
+                    "name": "Documents",
+                    "extensions": ["doc","docx","ppt","pptx","xls","xlsx","odt","pdf","txt"]
+                }
+            ]
+        }
+        return Response(data, status=status.HTTP_200_OK)
+
+
+class WorkspaceMetadataView(APIView):
+    def get(self, request, *args, **kwargs):
+        # bisa ambil workspaceId dari query param kalau mau dinamis
+        workspace_id = request.GET.get("workspaceId", "ws_12345")
+        data = {
+            "status": "ok"
+        }
+        return Response(data, status=status.HTTP_200_OK)

@@ -21,9 +21,7 @@
             margin: 0 auto;
             background: white;
             padding: 50px;
-
         }
-
 
         #editor {
             min-height: 400px;
@@ -162,7 +160,6 @@
             border-radius: 4px;
         }
 
-
         .user-info {
             margin-top: 10px;
             padding: 10px;
@@ -188,6 +185,11 @@
             border-radius: 4px;
             box-sizing: border-box;
         }
+
+        /* Fix untuk masalah spasi */
+        .ck-editor__editable {
+            white-space: pre-wrap !important;
+        }
     </style>
 </head>
 <body>
@@ -199,9 +201,9 @@
 <div class="status-info" id="status-info">Status: Initializing...</div>
 
 <!-- Include CKEditor build -->
-<script src="./ckeditor5-custom.js"></script>
-<script src="./premium-features.js" crossorigin></script>
-<script src="./ckbox-custom.js"></script>
+<script src="./ckeditor5-custom.js" defer></script>
+<script src="./premium-features.js" crossorigin defer></script>
+<script src="./ckbox-custom.js" defer></script>
 <script>
     // Global configuration
     let config = {
@@ -235,13 +237,6 @@
         console.log(message);
         const statusInfo = document.getElementById('status-info');
         statusInfo.textContent = `Status: ${message}`;
-    }
-
-    function clearLocalStorage() {
-        localStorage.removeItem('ckeditor_token');
-        localStorage.removeItem('ckeditor_config');
-        document.getElementById('api-test-result').textContent = 'LocalStorage cleared';
-        document.getElementById('user-info').style.display = 'none';
     }
 
     // Enhanced Token Manager with server-driven token lifetimes
@@ -576,7 +571,6 @@
         });
     }
 
-
     // Create token URL function for CKBox
     function createTokenUrlFunction() {
         return async () => {
@@ -624,7 +618,6 @@
 
     AI_API_KEY = "09ac094bc293454b94457cf556ee8616.opW0YYeFQce1AA0m"
 
-
     // Update the CKEditor initialization to handle token refresh events
     function initializeEditor() {
         debugLog('Initializing CKEditor...');
@@ -638,10 +631,10 @@
             IndentBlock, Italic, Link, LinkImage, List, ListProperties, MediaEmbed, Mention, PageBreak, Paragraph, PasteFromMarkdownExperimental, PasteFromOffice,
             PictureEditing, PlainTableOutput, RemoveFormat, ShowBlocks, SourceEditing, SpecialCharacters, SpecialCharactersArrows, SpecialCharactersCurrency,
             SpecialCharactersEssentials, SpecialCharactersLatin, SpecialCharactersMathematical, SpecialCharactersText, Strikethrough, Subscript, Superscript, Table,
-            TableCaption, TableCellProperties, TableColumnResize, TableLayout, TableProperties, TableToolbar, TextTransformation, TodoList, Underline
+            TableCaption, TableCellProperties, TableColumnResize, TableLayout, TableProperties, TableToolbar, TextTransformation, TodoList, Underline, Typing
         } = window.CKEDITOR;
         const {AIAssistant, OpenAITextAdapter, SourceEditingEnhanced, ExportPdf, ExportWord, ImportWord, PasteFromOfficeEnhanced} = window.CKEDITOR_PREMIUM_FEATURES;
-        const LICENSE_KEY = 'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3NTk3MDg3OTksImp0aSI6ImIxN2U4MjU4LTk5ZDUtNDVmZi1iOWUzLTg4ZDQ3ZjU4NjgwYyIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiLCJzaCJdLCJ3aGl0ZUxhYmVsIjp0cnVlLCJsaWNlbnNlVHlwZSI6InRyaWFsIiwiZmVhdHVyZXMiOlsiKiJdLCJ2YyI6ImZlYjNiOWNlIn0.EmbwFs2lmAIeb0tVL7H4is7Stp-_Q8RWVZQMlpqdoo4tKuc8HTwwK_5cAL3sUxfx4F_SLE9mUWoJUmsVN736Sg';
+        const LICENSE_KEY = '-';
 
         // Create editor configuration
         const editorConfig = {
@@ -670,7 +663,7 @@
                 SpecialCharactersEssentials, SpecialCharactersLatin, SpecialCharactersMathematical,
                 SpecialCharactersText, Strikethrough, Subscript, Superscript, Table, TableCaption,
                 TableCellProperties, TableColumnResize, TableLayout, TableProperties, TableToolbar,
-                TextTransformation, TodoList, Underline
+                TextTransformation, TodoList, Underline, Typing
             ],
             balloonToolbar: ['aiAssistant', '|', 'bold', 'italic', '|', 'link', 'insertImage', '|', 'bulletedList', 'numberedList', 'emoji', 'specialCharacters', 'horizontalLine', 'pageBreak', 'link'],
             blockToolbar: ['fontSize', 'fontColor', 'fontBackgroundColor', '|', 'bold', 'italic', '|', 'link', 'insertImage', 'insertTable', 'insertTableLayout', '|', 'bulletedList', 'numberedList', 'outdent', 'indent'],
@@ -767,7 +760,7 @@
                         attributes: true,
                         classes: true
                     }
-                ]
+                ],
             },
             image: {
                 toolbar: [
@@ -819,6 +812,19 @@
             placeholder: 'Type or paste your content here!',
             table: {
                 contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
+            },
+            // Fix untuk masalah spasi
+            typing: {
+                transformations: {
+                    remove: [
+                        // Nonaktifkan transformasi yang mungkin mengganggu input spasi
+                        'symbols',
+                        'quotes',
+                        'mathematicalSymbols',
+                        'arrows',
+                        'miscellaneous'
+                    ]
+                }
             }
         };
 
@@ -875,19 +881,27 @@
                         editor.config.set('ckbox.tokenUrl', createTokenUrlFunction());
                     }
                 }, 5000); // Check every 5 seconds
+
+                // Fix untuk masalah spasi - tambahkan event listener untuk menangani input spasi
+                editor.editing.view.document.on('keydown', (event, data) => {
+                    if (data.domEvent.key === ' ') {
+                        // Pastikan spasi tidak dicegah oleh event handler lain
+                        data.domEvent.preventDefault = () => {};
+                    }
+                }, { priority: 'high' });
             })
             .catch(error => {
                 debugLog(`Error initializing CKEditor: ${error.message}`);
             });
     }
 
-    // Initialize on page load
-    document.addEventListener('DOMContentLoaded', () => {
+    // Initialize when the page is fully loaded
+    window.addEventListener('load', function() {
         // Load configuration first
         loadConfig();
         initializeTokenManager();
 
-        debugLog('DOM loaded, checking authentication...');
+        debugLog('Page fully loaded, checking authentication...');
 
         const token = tokenManager.getToken();
         console.log('format token', token);
@@ -931,7 +945,8 @@
                 MediaEmbed,
                 SourceEditing,
                 Fullscreen,
-                FindAndReplace
+                FindAndReplace,
+                Typing
             } = window.CKEDITOR;
 
             ClassicEditor
@@ -961,7 +976,8 @@
                         MediaEmbed,
                         SourceEditing,
                         Fullscreen,
-                        FindAndReplace
+                        FindAndReplace,
+                        Typing
                     ],
                     toolbar: [
                         'heading', '|', 'bold', 'italic', 'underline', 'strikethrough', '|',
@@ -969,11 +985,32 @@
                         'link', 'bulletedList', 'numberedList', 'outdent', 'indent', '|',
                         'blockQuote', 'insertTable', '|', 'sourceEditing', 'fullscreen', '|',
                         'findAndReplace'
-                    ]
+                    ],
+                    // Fix untuk masalah spasi
+                    typing: {
+                        transformations: {
+                            remove: [
+                                // Nonaktifkan transformasi yang mungkin mengganggu input spasi
+                                'symbols',
+                                'quotes',
+                                'mathematicalSymbols',
+                                'arrows',
+                                'miscellaneous'
+                            ]
+                        }
+                    }
                 })
                 .then(editor => {
                     debugLog('CKEditor initialized without CKBox');
                     window.currentEditor = editor;
+
+                    // Fix untuk masalah spasi - tambahkan event listener untuk menangani input spasi
+                    editor.editing.view.document.on('keydown', (event, data) => {
+                        if (data.domEvent.key === ' ') {
+                            // Pastikan spasi tidak dicegah oleh event handler lain
+                            data.domEvent.preventDefault = () => {};
+                        }
+                    }, { priority: 'high' });
                 })
                 .catch(error => {
                     debugLog(`Error initializing CKEditor without CKBox: ${error.message}`);

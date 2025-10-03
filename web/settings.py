@@ -15,6 +15,8 @@ from django.conf.locale.es import formats
 from django.utils.translation import gettext_lazy as _
 from nifty import VERSION
 
+from .ckeditor import *
+
 # JWT Settings
 JWT_SECRET_KEY = '89asd7klasdoas'
 APPEND_SLASH = False
@@ -59,15 +61,17 @@ INSTALLED_APPS = [
     'apps.users',
     'apps.filemedia',
     'debug_toolbar',
+    'ckbox.apps.CkboxConfig'
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAdminUser',
+        # 'rest_framework.permissions.IsAdminUser',
+        'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
@@ -76,14 +80,15 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 50,
+    'DEFAULT_ROUTER_TRAILING_SLASH': False,
 
 }
 
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
-    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=30),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=60),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
     'ALGORITHM': 'HS256',
@@ -120,7 +125,7 @@ NIFTY_SETTING = {
     'MENU': (
         # 'sites',
         {'label': _('Dashboard'), 'permissions': 'admin.index_view', 'icon': 'demo-pli-home', 'url': 'admin:index'},
-        {'app': 'filemedia', 'icon': 'demo-pli-layout-grid', 'models': ('filemedia.tags', 'filemedia.file', 'filemedia.image', 'filemedia.video',)},
+        {'app': 'filemedia', 'icon': 'demo-pli-layout-grid', 'models': ('filemedia.tags', 'filemedia.file', 'filemedia.image', 'filemedia.filemanager',)},
         {'app': 'word', 'icon': 'demo-psi-list-view', },
         {'app': 'users', 'icon': 'demo-pli-male', },
         '-',
@@ -177,7 +182,7 @@ NIFTY_SETTING = {
 ORS_ALLOWED_ORIGINS = [
     "*",  # tempat CKEditor jalan
 ]
-from corsheaders.defaults import default_headers,default_methods
+from corsheaders.defaults import default_headers, default_methods
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
@@ -195,7 +200,6 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
     "x-csrftoken",
     "x-requested-with",
 ]
-
 
 MIDDLEWARE = [
 

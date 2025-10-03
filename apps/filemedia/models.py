@@ -133,6 +133,24 @@ class Media(models.Model):
     def __str__(self):
         return self.name
 
+class FileManager(Media):
+    icon_model = 'demo-pli-file-pictures'
+
+    class Meta:
+        proxy = True
+        verbose_name = _('File Manager')
+        verbose_name_plural = _('File Manager')
+        permissions = (
+            ('get_image_ajax', _('Can get image (ajax)')),
+            ('change_image_ajax', _('Can change upload image (ajax)')),
+            ('upload_image_ajax', _('Can upload image (ajax)')),
+            ('delete_image_ajax', _('Can delete image (ajax)')),
+            ('download_image', _('Can download image')),
+        )
+
+    def datetime(self):
+        return self.created_at.strftime('%b. %d, %Y, %I:%M %p')
+
 
 class Image(Media):
     icon_model = 'demo-pli-file-pictures'

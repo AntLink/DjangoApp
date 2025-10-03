@@ -1,0 +1,5 @@
+
+/* Fix untuk masalah spasi */
+.ck-editor__editable {
+    white-space: pre-wrap !important;
+}

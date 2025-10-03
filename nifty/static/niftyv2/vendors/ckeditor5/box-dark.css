@@ -1,5 +1,6 @@
+
 /* Tema CKBox yang disesuaikan */
-.ckbox-theme-dark:not(#n) {
+:root[data-bs-theme="dark"] .ckbox-theme-default {
     /* Neutral colors adjusted to match #23292f (hsl(210, 15%, 16%)) */
     --ckbox-neutral-h: 210;
     --ckbox-neutral-s: 15%;
@@ -15,19 +16,6 @@
     --ckbox-neutral-l-95: 18%; /* Adjusted from 12% to match #23292f */
     --ckbox-neutral-l-98: 16%; /* Adjusted from 10% to match #23292f */
     --ckbox-neutral-l-100: 14%; /* Adjusted from 8% to match #23292f */
-
-    /* Action colors */
-    --ckbox-action-l-10: 98%;
-    --ckbox-action-l-20: 95%;
-    --ckbox-action-l-30: 90%;
-    --ckbox-action-l-40: 85%;
-    --ckbox-action-l-45: 75%;
-    --ckbox-action-l-50: 70%;
-    --ckbox-action-l-60: 65%;
-    --ckbox-action-l-70: 55%;
-    --ckbox-action-l-80: 45%;
-    --ckbox-action-l-90: 35%;
-    --ckbox-action-l-100: 7.5%;
 
     /* Danger colors */
     --ckbox-danger-l-10: 98%;
@@ -61,4 +49,5 @@
     /* Focus colors */
     --ckbox-focus-color-inner: transparent;
     --ckbox-focus-color-outer-hsl: var(--ckbox-warning-h) var(--ckbox-warning-s) 50%;
+    --bs-card-border-color: var(--bs-border-color) !important;
 }

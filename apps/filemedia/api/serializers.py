@@ -11,22 +11,39 @@ from rest_framework import serializers
 
 User = get_user_model()
 
+
 class CKBoxTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
 
         # Tambahkan claim sesuai CKBox
-        token["aud"] = "7f5a9e9e-3c23-4db0-bc6e-3f7dc70e3c6f"  # ganti pakai projectId/ClientId CKBox kamu
+        # token["aud"] = "7f5a9e9e-3c23-4db0-bc6e-3f7dc70e3c6f"  # ganti pakai projectId/ClientId CKBox kamu
+        token["aud"] = "33afd88411184049a891176def4d815d"  # ganti pakai projectId/ClientId CKBox kamu
         token["sub"] = str(user.id)
         token["auth"] = {
             "ckbox": {
-                "role": "admin",        # atau "user"
-                "workspaces": [12]      # workspace ID kamu
+                "role": "superadmin",  # atau "user"
+                "workspaces": [12,1]  # workspace ID kamu
             }
         }
 
         return token
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'password', 'email')
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data['email'],
+            password=validated_data['password']
+        )
+        return user
 
 
 class TagsSerializer(serializers.ModelSerializer):
@@ -111,6 +128,7 @@ class CategorySerializer(serializers.ModelSerializer):
     #         # Jika parsing gagal, kembalikan sebagai array dengan 1 elemen
     #         return [obj.extensions] if obj.extensions else []
 
+
 # class CategorySerializer(serializers.ModelSerializer):
 #     # Ubah nama field ke camelCase
 #     id = serializers.CharField(read_only=True)
@@ -178,6 +196,7 @@ class MediaSearchPayloadSerializer(serializers.Serializer):
                 raise serializers.ValidationError("limit must be between 1 and 100")
         return value
 
+
 class MediaSearchSerializer(serializers.ModelSerializer):
     """Serializer untuk pencarian media dengan format respons yang diinginkan"""
     id = serializers.CharField(source='pk')
@@ -216,7 +235,7 @@ class MediaSearchSerializer(serializers.ModelSerializer):
 
     def get_imageUrls(self, obj):
         """Generate image URLs for different sizes with new folder structure"""
-        if obj.file_type not in ['jpg', 'png', 'jpeg', 'gif', 'webp','bmp','webp','tiff']:
+        if obj.file_type not in ['jpg', 'png', 'jpeg', 'gif', 'webp', 'bmp', 'webp', 'tiff']:
             return {}
 
         image_urls = {}
@@ -228,7 +247,7 @@ class MediaSearchSerializer(serializers.ModelSerializer):
             filename = os.path.basename(obj.file.name)
             base, ext = os.path.splitext(filename)
             thumb_path = settings.MEDIA_ROOT + os.path.join(dirname, 'thumbnail')
-            if(os.path.exists(thumb_path)):
+            if (os.path.exists(thumb_path)):
                 sizes = os.listdir(thumb_path)
 
             # Generate URLs for each size with new folder structure
@@ -312,7 +331,7 @@ class MediaSearchSerializer(serializers.ModelSerializer):
         }
 
         # Only process if file is an image and file is available
-        if obj.file_type in ['jpg', 'png', 'jpeg', 'gif', 'webp','bmp','webp','tiff']:
+        if obj.file_type in ['jpg', 'png', 'jpeg', 'gif', 'webp', 'bmp', 'webp', 'tiff']:
             try:
                 # Build file path
                 if obj.type == 'p':
@@ -366,6 +385,7 @@ class MediaSearchSerializer(serializers.ModelSerializer):
 
         return metadata
 
+
 class MediaListSerializer(serializers.ModelSerializer):
     """Serializer khusus untuk aksi list dengan format respons yang diinginkan"""
     id = serializers.CharField(source='pk')
@@ -404,7 +424,7 @@ class MediaListSerializer(serializers.ModelSerializer):
 
     def get_imageUrls(self, obj):
         """Generate image URLs for different sizes with new folder structure"""
-        if obj.file_type not in ['jpg', 'png', 'jpeg', 'gif', 'webp','bmp','webp','tiff']:
+        if obj.file_type not in ['jpg', 'png', 'jpeg', 'gif', 'webp', 'bmp', 'webp', 'tiff']:
             return {}
 
         image_urls = {}
@@ -417,7 +437,7 @@ class MediaListSerializer(serializers.ModelSerializer):
             filename = os.path.basename(obj.file.name)
             base, ext = os.path.splitext(filename)
             thumb_path = settings.MEDIA_ROOT + os.path.join(dirname, 'thumbnail')
-            if(os.path.exists(thumb_path)):
+            if (os.path.exists(thumb_path)):
                 sizes = os.listdir(thumb_path)
 
             # Generate URLs for each size with new folder structure
@@ -495,16 +515,16 @@ class MediaListSerializer(serializers.ModelSerializer):
             'width': None,
             'height': None,
             'blurHash': None,
-            'description':obj.description,
+            'description': obj.description,
             'metadataProcessingStatus': 'success',
             'analysisProcessingStatus': 'queued'
         }
 
         # Only process if file is an image and file is available
-        if obj.file_type in ['jpg', 'png', 'jpeg', 'gif', 'webp','bmp','webp','tiff']:
+        if obj.file_type in ['jpg', 'png', 'jpeg', 'gif', 'webp', 'bmp', 'webp', 'tiff']:
             try:
                 if obj.type == 'p':
-                # Build file path
+                    # Build file path
                     file_path = os.path.join(
                         settings.MEDIA_ROOT,
                         'images',

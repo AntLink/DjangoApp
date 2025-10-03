@@ -15044,67 +15044,74 @@
             this._context = e.context || new Jn({language: r, translations: s}), this._context._addEditor(this, !e.context);
             const a = Array.from(t.builtinPlugins || []);
             this.config = new Yt(o, n), this.config.define("plugins", a), this.config.define(this._context._getEditorConfig()), function (e) {
-                let t = e.get("licenseKey");
-                !t && window.CKEDITOR_GLOBAL_LICENSE_KEY && (t = window.CKEDITOR_GLOBAL_LICENSE_KEY, e.set("licenseKey", t));
-                if (!t) throw new I("license-key-missing")
+                // let t = e.get("licenseKey");
+                // !t && window.CKEDITOR_GLOBAL_LICENSE_KEY && (t = window.CKEDITOR_GLOBAL_LICENSE_KEY, e.set("licenseKey", t));
+                // if (!t) throw new I("license-key-missing")
             }(this.config), this.plugins = new Kn(this, a, this._context.plugins), this.locale = this._context.locale, this.t = this.locale.t, this._readOnlyLocks = new Set, this.commands = new Gn, this.set("state", "initializing"), this.once("ready", () => this.state = "ready", {priority: "high"}), this.once("destroy", () => this.state = "destroyed", {priority: "high"}), this.model = new wc, this.on("change:isReadOnly", () => {
                 this.model.document.isReadOnly = this.isReadOnly;
             });
             const l = new vs;
             this.data = new qa(this.model, l), this.editing = new xa(this.model, l), this.editing.view.document.bind("isReadOnly").to(this), this.conversion = new $a([this.editing.downcastDispatcher, this.data.downcastDispatcher], this.data.upcastDispatcher), this.conversion.addAlias("dataDowncast", this.data.downcastDispatcher), this.conversion.addAlias("editingDowncast", this.editing.downcastDispatcher), this.keystrokes = new Yn(this), this.keystrokes.listenTo(this.editing.view.document), this.accessibility = new ed(this), function (e) {
-                const t = e.config.get("licenseKey"), i = window[Symbol.for("cke distribution")] || "sh";
-
-                function n(t) {
-                    // e.enableReadOnlyMode(Symbol("invalidLicense")), e._showLicenseError(t);
-                    e.enableReadOnlyMode(Symbol("invalidLicense"));
-                }
-
-                if ("GPL" == t) return void ("cloud" == i && n("distributionChannel"));
-                const s = function (e) {
-                    const t = e.split(".");
-                    return 3 != t.length ? null : t[1]
-                }(t);
-                if (!s) return void n("invalid");
-                const o = In(s);
-                if (!o) return void n("invalid");
-                if (!function (e) {
-                    return ["exp", "jti", "vc"].every(t => t in e)
-                }(o)) return void n("invalid");
-                if (o.distributionChannel && !an(o.distributionChannel).includes(i)) return void n("distributionChannel");
-                if (Pn(function (e) {
-                    const t = Object.getOwnPropertyNames(e).sort().filter(t => "vc" != t && null != e[t]).map(t => e[t]);
-                    return t
-                }(o)) != o.vc.toLowerCase()) return void n("invalid");
-                if (new Date(1e3 * o.exp) < M) return void n("expired");
-                const r = o.licensedHosts;
-                if (r && r.length > 0 && !function (e) {
-                    const {hostname: t} = new URL(window.location.href);
-                    if (e.includes(t)) return true;
-                    const i = t.split(".");
-                    return e.filter(e => e.includes("*")).map(e => e.split(".")).filter(e => e.length <= i.length).map(e => Array(i.length - e.length).fill("*" === e[0] ? "*" : "").concat(e)).some(e => i.every((t, i) => e[i] === t || "*" === e[i]))
-                }(r)) return void n("domainLimit");
-                if (["evaluation", "trial"].includes(o.licenseType) && 1e3 * o.exp < Date.now()) return void n("expired");
-                if (["development", "evaluation", "trial"].includes(o.licenseType)) {
-                    const {licenseType: e} = o;
-                    window.CKEDITOR_WARNING_SUPPRESSIONS = window.CKEDITOR_WARNING_SUPPRESSIONS || {}, window.CKEDITOR_WARNING_SUPPRESSIONS[e] || (!function (e) {
-                        const t = e[0].toUpperCase() + e.slice(1), i = "evaluation" === e ? "an" : "a";
-                    }(e), window.CKEDITOR_WARNING_SUPPRESSIONS[e] = true);
-                }
-                if (["evaluation", "trial"].includes(o.licenseType)) {
-                    const t = o.licenseType, i = setTimeout(() => {
-                        n(`${t}Limit`);
-                    }, 6e5);
-                    e.on("destroy", () => {
-                        clearTimeout(i);
-                    });
-                }
-                o.usageEndpoint && e.once("ready", () => {
+                // const t = e.config.get("licenseKey"), i = window[Symbol.for("cke distribution")] || "sh";
+                //
+                // function n(t) {
+                //     // e.enableReadOnlyMode(Symbol("invalidLicense")), e._showLicenseError(t);
+                //     e.enableReadOnlyMode(Symbol("invalidLicense"));
+                // }
+                //
+                // if ("GPL" == t) return void ("cloud" == i && n("distributionChannel"));
+                // const s = function (e) {
+                //     const t = e.split(".");
+                //     return 3 != t.length ? null : t[1]
+                // }(t);
+                // if (!s) return void n("invalid");
+                // const o = In(s);
+                // if (!o) return void n("invalid");
+                // if (!function (e) {
+                //     return ["exp", "jti", "vc"].every(t => t in e)
+                // }(o)) return void n("invalid");
+                // if (o.distributionChannel && !an(o.distributionChannel).includes(i)) return void n("distributionChannel");
+                // if (Pn(function (e) {
+                //     const t = Object.getOwnPropertyNames(e).sort().filter(t => "vc" != t && null != e[t]).map(t => e[t]);
+                //     return t
+                // }(o)) != o.vc.toLowerCase()) return void n("invalid");
+                // if (new Date(1e3 * o.exp) < M) return void n("expired");
+                // const r = o.licensedHosts;
+                // if (r && r.length > 0 && !function (e) {
+                //     const {hostname: t} = new URL(window.location.href);
+                //     if (e.includes(t)) return true;
+                //     const i = t.split(".");
+                //     return e.filter(e => e.includes("*")).map(e => e.split(".")).filter(e => e.length <= i.length).map(e => Array(i.length - e.length).fill("*" === e[0] ? "*" : "").concat(e)).some(e => i.every((t, i) => e[i] === t || "*" === e[i]))
+                // }(r)) return void n("domainLimit");
+                // if (["evaluation", "trial"].includes(o.licenseType) && 1e3 * o.exp < Date.now()) return void n("expired");
+                // if (["development", "evaluation", "trial"].includes(o.licenseType)) {
+                //     const {licenseType: e} = o;
+                //     window.CKEDITOR_WARNING_SUPPRESSIONS = window.CKEDITOR_WARNING_SUPPRESSIONS || {}, window.CKEDITOR_WARNING_SUPPRESSIONS[e] || (!function (e) {
+                //         const t = e[0].toUpperCase() + e.slice(1), i = "evaluation" === e ? "an" : "a";
+                //     }(e), window.CKEDITOR_WARNING_SUPPRESSIONS[e] = true);
+                // }
+                // if (["evaluation", "trial"].includes(o.licenseType)) {
+                //     const t = o.licenseType, i = setTimeout(() => {
+                //         n(`${t}Limit`);
+                //     }, 6e5);
+                //     e.on("destroy", () => {
+                //         clearTimeout(i);
+                //     });
+                // }
+                // o.usageEndpoint && e.once("ready", () => {
+                //     const i = {requestId: A(), requestTime: Math.round(Date.now() / 1e3), license: t, editor: ld(e)};
+                //     e._sendUsageRequest(o.usageEndpoint, i).then(e => {
+                //         const {status: t, message: i} = e;
+                //         i && console.warn(i), "ok" != t && n("usageLimit");
+                //     }, () => {
+                //         V("license-key-validation-endpoint-not-reachable", {url: o.usageEndpoint});
+                //     });
+                // }, {priority: "high"});
+                e.once("ready", () => {
                     const i = {requestId: A(), requestTime: Math.round(Date.now() / 1e3), license: t, editor: ld(e)};
                     e._sendUsageRequest(o.usageEndpoint, i).then(e => {
                         const {status: t, message: i} = e;
                         i && console.warn(i), "ok" != t && n("usageLimit");
-                    }, () => {
-                        V("license-key-validation-endpoint-not-reachable", {url: o.usageEndpoint});
                     });
                 }, {priority: "high"});
             }(this);
@@ -26163,7 +26170,7 @@
         refreshToken() {
             const e = this._options.autoRefresh;
             return this._refresh().then(t => (this._validateTokenValue(t), this.set("value", t), e && this._registerRefreshTokenTimeout(), this)).catch(t => {
-                throw P("token-refresh-failed", {autoRefresh: e}), e && this._registerRefreshTokenTimeout(5e3), t
+                throw P("token-refresh-failed", {autoRefresh: e}), e && this._registerRefreshTokenTimeout(1.5e4), t
             })
         }
 
@@ -27964,7 +27971,9 @@
         _getUrl() {
             const {definitionsUrl: e, version: t} = this.editor.config.get("emoji");
             if (!e || "cdn" === e) {
-                const e = new URL("https://cdn.ckeditor.com/ckeditor5/data/emoji/{version}/en.json".replace("{version}", (t || 16).toString()));
+                const conf = this.editor.config.get("emoji");
+                console.log('emoji url di sini ',conf.emojiLangURL);
+                const e = new URL(conf.emojiLangURL.replace("{version}", (t || 16).toString()));
                 return e.searchParams.set("editorVersion", B), e
             }
             return t && P("emoji-repository-redundant-version"), new URL(e)

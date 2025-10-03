@@ -28,18 +28,24 @@ from rest_framework_simplejwt.views import (
 from apps.filemedia.api.views import (
     CKBoxTokenObtainPairView,
     MediaThumbnailView,
-    MediaSearchView
+    MediaSearchView,
+    SuperAdminWorkspacesTemplateView,
+    WorkspaceMetadataView
 )
+
 urlpatterns = i18n_patterns(
     path('', nifty_site.urls),
     path('doc/', include('django.contrib.admindocs.urls')),
+    path('', include('ckbox.urls')),
     # path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/', CKBoxTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    path("api/media/<int:pk>/thumbs/<path:size>", MediaThumbnailView.as_view(), name="media-thumbnail"),
-    path('api/search', MediaSearchView.as_view(), name='media-search'),
-    path('api/', include('apps.filemedia.api.urls')),
+    # path('api/token/', CKBoxTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    # path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    # path("api/media/<int:pk>/thumbs/<path:size>", MediaThumbnailView.as_view(), name="media-thumbnail"),
+    # path('api/search', MediaSearchView.as_view(), name='media-search'),
+    # path('api/', include('apps.filemedia.api.urls')),
+    # path("superadmin/workspacesTemplate", SuperAdminWorkspacesTemplateView.as_view(), name="superadmin-workspaces-template"),
+    # path("workspaces/metadata", WorkspaceMetadataView.as_view(), name="workspace-metadata"),
     prefix_default_language=False
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

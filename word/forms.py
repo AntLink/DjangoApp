@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from .models import Taxonomy, Word
-from nifty.widgets import CKEditorWidget
+# from nifty.widgets import CKEditorWidget
+from nifty.ckeditor_widget import CKEditorWidget
 from .widgets import (
     TreeCheckboxSelectMultiple,
     TitleTextInput,

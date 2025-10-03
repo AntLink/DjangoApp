@@ -4,12 +4,42 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
+
+:root[data-bs-theme="dark"] .ck-ai-assistant-ui_theme {
+    --ck-color-button-default-hover-background: #f3ecff;
+    --ck-color-button-default-active-background: #f3ecff;
+    --ck-color-button-on-background: #f3ecff;
+    --ck-color-button-on-hover-background: #f3ecff;
+    --ck-color-button-on-active-background: #f3ecff;
+    --ck-color-button-on-disabled-background: #f3ecff;
+    --ck-color-button-on-color: #fefdff;
+    --ck-color-button-action-background: #4f2691;
+    --ck-color-button-action-hover-background: #6c34c9;
+    --ck-color-button-action-active-background: #6c34c9;
+    --ck-color-button-action-disabled-background: #ba9de6;
+    --ck-color-list-button-hover-background: #f3ecff;
+    --ck-ai-form-content-background: #f9f9f9;
+    --ck-ai-form-submit-button-text-color: var(--ck-color-button-on-color);
+    --ck-ai-form-submit-button-border-color: var(--ck-color-button-action-background);
+    --ck-ai-form-submit-button-disabled-border-color: var(--ck-color-button-action-disabled-background);
+    --ck-ai-toolbar-button-hover-color: var(--ck-color-button-on-color);
+    --ck-color-ai-selection: #e2d6f5;
+}
+
+
+:root[data-bs-theme="dark"] .ck-ai-assistant-ui_theme {
+    --ck-color-button-default-hover-background: #2d2d2d;
+    --ck-color-button-on-background: #2d2d2d;
+}
+
 :root[data-bs-theme="dark"] .ck .ck-ai-form__copy-button-wrapper {
     background: #2d2d2d;
 }
+
 :root[data-bs-theme="dark"] .ck .ck-ai-form .ck-ai-form-content .ck-ai-form__content-area {
     background: #2d2d2d;
 }
+
 :root[data-bs-theme="dark"] .ck-fullscreen__main-wrapper .ck-fullscreen__editable .ck.ck-editor__editable:not(.ck-editor__nested-editable) {
     background: #23292f;
 
@@ -1160,4 +1190,109 @@
 :root[data-bs-theme="dark"] .ck.ck-editor__editable .ck.ck-form__row .ck.ck-labeled-field-view.ck-labeled-field-view_empty.ck-labeled-field-view_placeholder.ck-labeled-field_view_disabled .ck.ck-input:focus {
     border-color: var(--ck-color-input-disabled-border);
     box-shadow: var(--ck-focus-disabled-outer-shadow), 0 0;
+}
+
+:root[data-bs-theme="dark"] .ckbox:not(#n) .ckbox-file-preview-content__overlay {
+    background: hsl(0deg 0% 0% / 75%);
+}
+
+.ckbox:not(#n) .ckbox-gallery-figure__caption {
+    background-color: var(--bs-primary);
+}
+
+.ckbox:not(#n) .ckbox-navbar-item--active {
+    background-color: var(--bs-primary);
+}
+
+
+.ckbox:not(#n) .ckbox-btn--plain {
+    --ckbox-btn-icon-color: var(--bs-primary);
+    --ckbox-btn-text-color: var(--bs-primary);
+}
+
+.ckbox:not(#n) .ckbox-icon--accent {
+    color: var(--bs-primary);
+}
+
+.ckbox:not(#n) .ckbox-btn--fill {
+    --ckbox-btn-background-color: var(--bs-primary);
+}
+
+.ckbox:not(#n) .ckbox-btn--action {
+    --ckbox-btn-background-color-fill: var(--bs-primary);
+    --ckbox-btn-background-color-fill-hover: var(--bs-primary);
+    --ckbox-btn-background-color-fill-active: var(--bs-primary);
+    --ckbox-btn-icon-color-outline: var(--bs-primary);
+    --ckbox-btn-text-color-outline: var(--bs-primary);
+    --ckbox-btn-border-color-outline: var(--bs-primary);
+    --ckbox-btn-icon-color-plain: var(--bs-primary);
+    --ckbox-btn-text-color-plain: var(--bs-primary);
+    --ckbox-btn-icon-color-link: var(--bs-primary);
+    --ckbox-btn-text-color-link-hover: var(--bs-primary);
+    --ckbox-btn-text-color-link-active: var(--bs-primary);
+}
+
+.ckbox:not(#n) .ckbox-gallery-item__label--active {
+    outline: 1px solid var(--bs-primary);
+}
+
+.ckbox:not(#n) .ckbox-select:focus-visible,
+.ckbox:not(#n) .ckbox-select--focus-visible {
+    box-shadow: inset 0 0 3px var(--bs-primary);
+    inset 0 0 4px var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+
+.ckbox:not(#m) .ckbox-text-field:focus-visible,
+.ckbox:not(#m) .ckbox-text-field--focus-visible {
+    box-shadow: inset 0 0 3px var(--bs-primary);
+    inset 0 0 4px var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+.ckbox:not(#m) .ckbox-tag-input:focus-visible,
+.ckbox:not(#m) .ckbox-tag-input--focus-visible {
+    box-shadow: inset 0 0 3px var(--bs-primary);
+    inset 0 0 4px var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+.ckbox:not(#m) .ckbox-copyable-input:focus-visible,
+.ckbox:not(#m) .ckbox-copyable-input--focus-visible {
+    box-shadow: inset 0 0 3px var(--bs-primary);
+    inset 0 0 4px var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+.ckbox:not(#m) .ckbox-textarea:focus-visible,
+.ckbox:not(#m) .ckbox-textarea--focus-visible {
+    box-shadow: inset 0 0 3px var(--bs-primary);
+    inset 0 0 4px var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+.ckbox:not(#n) .ckbox-panel-side {
+    color: var(--bs-primary);
+}
+
+.ckbox:not(#n) .ckbox-tabs__tab--active {
+    border-color: var(--bs-primary);
+    color: var(--bs-primary);
+}
+
+.ckbox:not(#n) .ckbox-gallery-item__checkmark--active .ckbox-icon {
+    fill: var(--bs-primary);
+}
+
+.ckbox:not(#n) .ckbox-btn--fill:hover {
+    box-shadow: 0 .1rem .5rem rgba(var(--bs-primary-rgb), .5), 0 .25rem 1rem rgba(var(--bs-primary-rgb), .5);
+}
+
+.ckbox:not(#n) .ckbox-button-group .ckbox-btn--fill.ckbox-btn--action {
+    border-right: 1px solid var(--bs-primary);
+}
+
+.ckbox:not(#n) .ckbox-empty-view__content--dropzone::before {
+    background-color: var(--bs-primary);
 }

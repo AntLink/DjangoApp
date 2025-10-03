@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CKBox Integration Only</title>
+
+    <style>
+
+        #ckbox {
+            width: 100%;
+            height: 100vh;
+            background: white;
+        }
+
+        .ck-login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .ck-login-form {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            width: 350px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .ck-login-form h3 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #333;
+        }
+
+        .ck-form-group {
+            margin-bottom: 20px;
+        }
+
+        .ck-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .ck-form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .ck-form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        .ck-button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .ck-button-action {
+            background: #007cba;
+            color: white;
+        }
+
+        .ck-button-action:hover {
+            background: #005a87;
+        }
+
+        .ck-button-cancel {
+            background: #f1f1f1;
+            color: #333;
+        }
+
+        .ck-button-cancel:hover {
+            background: #e1e1e1;
+        }
+
+        .debug-info {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: monospace;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+<!-- CKBox will be mounted here -->
+<div id="ckbox"></div>
+
+<!-- Try to load CKBox from multiple possible locations -->
+<script>
+    // Try to load CKBox from different possible locations
+    window.addEventListener('DOMContentLoaded', () => {
+        debugLog('Attempting to load CKBox script...');
+
+        // Try multiple possible paths for CKBox
+        const ckboxPaths = [
+            './ckbox-ls.js'
+        ];
+
+        let currentPathIndex = 0;
+
+        function tryNextPath() {
+            if (currentPathIndex >= ckboxPaths.length) {
+                debugLog('All CKBox paths failed');
+                return;
+            }
+
+            const currentPath = ckboxPaths[currentPathIndex];
+            debugLog(`Trying to load CKBox from: ${currentPath}`);
+
+            const script = document.createElement('script');
+            script.src = currentPath;
+            script.onload = () => {
+                debugLog(`CKBox loaded successfully from: ${currentPath}`);
+
+                // Check if CKBox is properly loaded
+                if (typeof window.CKBox !== 'undefined') {
+                    debugLog('CKBox is available');
+                    initializeApp();
+                } else {
+                    debugLog('CKBox script loaded but CKBox is not available');
+                    currentPathIndex++;
+                    tryNextPath();
+                }
+            };
+            script.onerror = () => {
+                debugLog(`Failed to load CKBox from: ${currentPath}`);
+                currentPathIndex++;
+                tryNextPath();
+            };
+
+            document.head.appendChild(script);
+        }
+
+        tryNextPath();
+    });
+
+    // Global configuration
+    let config = {
+        baseUrl: 'http://127.0.0.1:8090'
+    };
+
+    // Debug function to log to status
+    function debugLog(message) {
+        console.log(message);
+    }
+
+    // Enhanced Token Manager with server-driven token lifetimes
+    class SimpleTokenManager {
+        constructor(config = {}) {
+            this.config = {
+                tokenUrl: config.tokenUrl || '/api/auth/ckbox_login',
+                refreshTokenUrl: config.refreshTokenUrl || '/api/auth/ckbox_token_refresh',
+                ...config
+            };
+            this.token = null;
+            this.refreshToken = null;
+            this.tokenExpiry = null;
+            this.refreshTokenExpiry = null;
+            this.refreshTimeout = null;
+            this.isRefreshing = false;
+            this.refreshQueue = [];
+        }
+
+        getToken() {
+            const tokenData = localStorage.getItem('ckeditor_token');
+            debugLog(`Getting token from localStorage: ${tokenData ? 'Found' : 'Not found'}`);
+
+            if (tokenData) {
+                try {
+                    const parsed = JSON.parse(tokenData);
+                    this.token = parsed.token;
+                    this.refreshToken = parsed.refreshToken;
+                    this.tokenExpiry = parsed.expiry;
+                    this.refreshTokenExpiry = parsed.refreshExpiry;
+
+                    debugLog(`Token parsed. Valid: ${this.isTokenValid()}, Refresh valid: ${this.isRefreshTokenValid()}`);
+                    return this.token;
+                } catch (e) {
+                    debugLog(`Error parsing token data: ${e.message}`);
+                    this.clearToken();
+                }
+            }
+            return null;
+        }
+
+        saveToken(token, refreshToken, expiry, refreshExpiry) {
+            const tokenData = {
+                token,
+                refreshToken,
+                expiry,
+                refreshExpiry
+            };
+            localStorage.setItem('ckeditor_token', JSON.stringify(tokenData));
+            debugLog(`Token saved to localStorage. Access expires: ${new Date(expiry).toLocaleString()}, Refresh expires: ${new Date(refreshExpiry).toLocaleString()}`);
+
+            this.token = token;
+            this.refreshToken = refreshToken;
+            this.tokenExpiry = expiry;
+            this.refreshTokenExpiry = refreshExpiry;
+
+            this.setAutoRefresh();
+        }
+
+        clearToken() {
+            localStorage.removeItem('ckeditor_token');
+            this.token = null;
+            this.refreshToken = null;
+            this.tokenExpiry = null;
+            this.refreshTokenExpiry = null;
+            if (this.refreshTimeout) {
+                clearTimeout(this.refreshTimeout);
+                this.refreshTimeout = null;
+            }
+            debugLog('Token cleared');
+        }
+
+        isTokenValid() {
+            if (!this.tokenExpiry) return false;
+            // Add a small buffer (5 seconds) to account for network latency
+            const isValid = Date.now() < (this.tokenExpiry - 5000);
+            debugLog(`Token valid: ${isValid} (Current: ${new Date().toISOString()}, Expires: ${new Date(this.tokenExpiry).toISOString()})`);
+            return isValid;
+        }
+
+        isRefreshTokenValid() {
+            if (!this.refreshTokenExpiry) return false;
+            const isValid = Date.now() < this.refreshTokenExpiry;
+            debugLog(`Refresh token valid: ${isValid}`);
+            return isValid;
+        }
+
+        setAutoRefresh() {
+            if (this.refreshTimeout) {
+                clearTimeout(this.refreshTimeout);
+            }
+
+            if (!this.tokenExpiry) return;
+
+            // Try to refresh 30 seconds before expiry
+            const refreshTime = Math.max(0, this.tokenExpiry - Date.now() - 30 * 1000);
+
+            debugLog(`Auto-refresh scheduled in ${Math.round(refreshTime / 1000)} seconds`);
+
+            this.refreshTimeout = setTimeout(() => {
+                this.refreshAccessToken();
+            }, refreshTime);
+        }
+
+        async refreshAccessToken() {
+            // If already refreshing, return the same promise
+            if (this.isRefreshing) {
+                debugLog('Token refresh already in progress, adding to queue');
+                return new Promise((resolve, reject) => {
+                    this.refreshQueue.push({resolve, reject});
+                });
+            }
+
+            this.isRefreshing = true;
+            debugLog('Refreshing token...');
+
+            if (!this.refreshToken || !this.isRefreshTokenValid()) {
+                debugLog('Refresh token not valid, clearing token');
+                this.clearToken();
+                this.isRefreshing = false;
+                return null;
+            }
+
+            try {
+                const url = `${config.baseUrl}${this.config.refreshTokenUrl}`;
+                debugLog(`Refreshing token at: ${url}`);
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${this.token}`
+                    },
+                    body: JSON.stringify({refresh: this.refreshToken})
+                });
+
+                debugLog(`Refresh response status: ${response.status}`);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    debugLog('Refresh successful, saving new token');
+
+                    // Calculate expiry times based on server response
+                    const tokenExpiry = Date.now() + (data.access_token_lifetime * 1000);
+                    const refreshExpiry = Date.now() + (data.refresh_token_lifetime * 1000);
+
+                    this.saveToken(
+                        data.access,
+                        data.refresh || this.refreshToken, // Use new refresh token if provided, otherwise keep the old one
+                        tokenExpiry,
+                        refreshExpiry
+                    );
+
+                    // Resolve all queued promises
+                    this.refreshQueue.forEach(({resolve}) => resolve(this.token));
+                    this.refreshQueue = [];
+
+                    this.isRefreshing = false;
+                    return this.token;
+                } else {
+                    debugLog(`Refresh failed with status ${response.status}`);
+                    this.clearToken();
+
+                    // Reject all queued promises
+                    this.refreshQueue.forEach(({reject}) => reject(new Error('Token refresh failed')));
+                    this.refreshQueue = [];
+
+                    this.isRefreshing = false;
+                    return null;
+                }
+            } catch (error) {
+                debugLog(`Error refreshing token: ${error.message}`);
+                this.clearToken();
+
+                // Reject all queued promises
+                this.refreshQueue.forEach(({reject}) => reject(error));
+                this.refreshQueue = [];
+
+                this.isRefreshing = false;
+                return null;
+            }
+        }
+
+        async getTokenForCKBox() {
+            let token = this.getToken();
+
+            if (!token || !this.isTokenValid()) {
+                debugLog('Token not valid, attempting refresh...');
+                token = await this.refreshAccessToken();
+            }
+
+            if (!token) {
+                throw new Error('Unable to retrieve a token from the callback.');
+            }
+
+            return token;
+        }
+
+        async login(username, password) {
+            debugLog(`Attempting login for user: ${username}`);
+
+            try {
+                const url = `${config.baseUrl}${this.config.tokenUrl}`;
+                debugLog(`Login attempt at: ${url}`);
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({username, password})
+                });
+
+                debugLog(`Login response status: ${response.status}`);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    debugLog('Login successful, saving tokens');
+
+                    // Calculate expiry times based on server response
+                    const tokenExpiry = Date.now() + (data.access_token_lifetime * 1000);
+                    const refreshExpiry = Date.now() + (data.refresh_token_lifetime * 1000);
+
+                    this.saveToken(
+                        data.access,
+                        data.refresh,
+                        tokenExpiry,
+                        refreshExpiry
+                    );
+                    return true;
+                } else {
+                    let errorMessage = 'Login failed';
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.error || errorMessage;
+                    } catch (e) {
+                        errorMessage = await response.text();
+                    }
+                    debugLog(`Login failed: ${errorMessage}`);
+                    throw new Error(errorMessage);
+                }
+            } catch (error) {
+                debugLog(`Login error: ${error.message}`);
+                throw error;
+            }
+        }
+
+        logout() {
+            debugLog('Logging out...');
+            this.clearToken();
+        }
+    }
+
+    // Initialize token manager
+    let tokenManager;
+
+    function initializeTokenManager() {
+        tokenManager = new SimpleTokenManager({
+            tokenUrl: '/api/auth/ckbox_login',
+            refreshTokenUrl: '/api/auth/ckbox_token_refresh'
+        });
+    }
+
+    // Show login overlay
+    function showLoginOverlay() {
+        debugLog('Showing login overlay');
+
+        // Remove existing overlay
+        const existingOverlay = document.querySelector('.ck-login-overlay');
+        if (existingOverlay) {
+            existingOverlay.remove();
+        }
+
+        // Create new overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'ck-login-overlay';
+        overlay.innerHTML = `
+            <div class="ck-login-form">
+                <h3>Login to your System</h3>
+                <form id="ckeditor-login-form">
+                    <div class="ck-form-group">
+                        <label>Username:</label>
+                        <input type="text" id="ckeditor-username" value="antlink" required>
+                    </div>
+                    <div class="ck-form-group">
+                        <label>Password:</label>
+                        <input type="password" id="ckeditor-password" value="815m1ll4h" required>
+                    </div>
+                    <div class="ck-form-actions">
+                        <button type="button" class="ck-button ck-button-cancel" id="cancel-login">Cancel</button>
+                        <button type="submit" class="ck-button ck-button-action">Login</button>
+                    </div>
+                </form>
+                <div class="debug-info" id="login-debug"></div>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        // Handle form submission
+        document.getElementById('ckeditor-login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('ckeditor-username').value;
+            const password = document.getElementById('ckeditor-password').value;
+            const debugDiv = document.getElementById('login-debug');
+
+            debugDiv.textContent = 'Attempting login...';
+
+            try {
+                debugLog(`Login attempt with username: ${username}`);
+                await tokenManager.login(username, password);
+                debugDiv.textContent = 'Login successful! Loading CKBox...';
+
+                // Verify token was saved correctly
+                const savedToken = localStorage.getItem('ckeditor_token');
+                if (savedToken) {
+                    debugLog('Token successfully saved to localStorage');
+                    debugDiv.textContent = 'Login successful! Token saved. Loading CKBox...';
+                } else {
+                    debugLog('ERROR: Token was not saved to localStorage');
+                    debugDiv.textContent = 'ERROR: Token was not saved. Please try again.';
+                    return;
+                }
+
+                // Hide the login overlay
+                overlay.remove();
+
+                // Load CKBox after successful login
+                setTimeout(() => {
+                    loadCKBoxInContent();
+                }, 500); // Small delay to ensure token is properly saved
+
+                debugLog('Login successful, loading CKBox in content area');
+            } catch (error) {
+                debugDiv.textContent = `Login failed: ${error.message}`;
+                debugLog(`Login failed: ${error.message}`);
+                alert(`Login failed: ${error.message}`);
+            }
+        });
+
+        // Handle cancel button
+        document.getElementById('cancel-login').addEventListener('click', () => {
+            overlay.remove();
+        });
+    }
+
+    // Create token URL function for CKBox
+    function createTokenUrlFunction() {
+        return async () => {
+            try {
+                debugLog('CKBox requesting token...');
+
+                // Selalu coba dapatkan token terbaru dari manager
+                let token = await tokenManager.getTokenForCKBox();
+
+                debugLog('CKBox token obtained successfully');
+                console.log('CKBox token:', token ? token.substring(0, 20) + '...' : 'null');
+                return token;
+            } catch (error) {
+                debugLog(`CKBox token error: ${error.message}`);
+                showLoginOverlay();
+                throw error;
+            }
+        };
+    }
+
+    // Create token refresh function for CKBox
+    function createTokenRefreshFunction() {
+        return async (oldToken) => {
+            try {
+                debugLog('CKBox refreshing token...');
+                debugLog(`Old token: ${oldToken ? oldToken.substring(0, 20) + '...' : 'null'}`);
+
+                // Refresh token menggunakan token manager
+                const newToken = await tokenManager.refreshAccessToken();
+
+                if (newToken) {
+                    debugLog('CKBox token refreshed successfully');
+                    console.log('New CKBox token:', newToken.substring(0, 20) + '...');
+                    return newToken;
+                }
+
+                throw new Error('Token refresh failed');
+            } catch (error) {
+                debugLog(`CKBox token refresh error: ${error.message}`);
+                showLoginOverlay();
+                throw error;
+            }
+        };
+    }
+
+    // Function to check if CKBox is loaded and available
+    function isCKBoxLoaded() {
+        return typeof window.CKBox !== 'undefined';
+    }
+
+    // Function to load CKBox in the content area
+    async function loadCKBoxInContent() {
+        try {
+            debugLog('Loading CKBox in content area...');
+
+            // Ensure we have a valid token
+            const token = await tokenManager.getTokenForCKBox();
+
+            if (!token) {
+                debugLog('No valid token available, showing login');
+                showLoginOverlay();
+                return;
+            }
+
+            debugLog(`Using token: ${token.substring(0, 20)}...`);
+
+            // Mount CKBox to the content area
+            CKBox.mount(document.querySelector('#ckbox'), {
+                tokenUrl: createTokenUrlFunction(),
+                onTokenRefresh: createTokenRefreshFunction(),
+                theme: 'lark',
+                onChoose: function(data) {
+                    debugLog('Files selected from CKBox');
+                    console.log('Selected files:', data);
+                },
+                onError: function(error) {
+                    debugLog(`CKBox error: ${error.message}`);
+                    console.error('CKBox error details:', error);
+
+                    // Check if error is related to authentication
+                    if (error.message.includes('token') || error.message.includes('authentication') || error.message.includes('unauthorized')) {
+                        debugLog('Authentication error, showing login form');
+                        showLoginOverlay();
+                    } else {
+                        alert(`Error with CKBox: ${error.message}`);
+                    }
+                }
+            });
+
+            debugLog('CKBox mounted successfully in content area');
+        } catch (error) {
+            debugLog(`Error loading CKBox in content area: ${error.message}`);
+            console.error('CKBox loading error:', error);
+            showLoginOverlay();
+        }
+    }
+
+    // Initialize the application after CKBox is loaded
+    function initializeApp() {
+        initializeTokenManager();
+
+        debugLog('App fully loaded, checking authentication...');
+
+        const token = tokenManager.getToken();
+
+        if (token && tokenManager.isTokenValid()) {
+            debugLog('User authenticated, loading CKBox in content area...');
+
+            // Load CKBox in content area after a short delay
+            setTimeout(() => {
+                loadCKBoxInContent();
+            }, 1000);
+        } else {
+            debugLog('User not authenticated, showing login form...');
+            showLoginOverlay();
+        }
+    }
+</script>
+</body>
+</html>
