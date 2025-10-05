@@ -22,72 +22,27 @@ class IsWorkspaceMember(permissions.BasePermission):
         return is_member
 
 
-# class IsWorkspaceOwner(permissions.BasePermission):
-#     """
-#     Memeriksa apakah user yang login adalah owner dari workspace yang terkait.
-#     Asumsikan workspaceId ada di query parameter atau di URL.
-#     """
-#
-#     def has_permission(self, request, view):
-#         # Coba dapatkan workspace_id dari URL (untuk detail view)
-#         workspace_id = view.kwargs.get('workspace_pk')  # atau nama parameter lain di URL
-#
-#         # Jika tidak ada di URL, coba di query parameter (untuk list view)
-#         if not workspace_id:
-#             workspace_id = request.query_params.get('workspaceId')
-#
-#         if not workspace_id:
-#             return False  # Tidak bisa menentukan workspace
-#
-#         try:
-#             from .models import Workspace
-#             workspace = Workspace.objects.get(id=workspace_id)
-#             return workspace.owner == request.user
-#         except Workspace.DoesNotExist:
-#             return False
-
 class IsWorkspaceOwner(permissions.BasePermission):
     """
     Memeriksa apakah user yang login adalah owner dari workspace yang terkait.
+    Asumsikan workspaceId ada di query parameter atau di URL.
     """
 
     def has_permission(self, request, view):
-        # --- AWAL KODE DEBUGGING ---
-        print("=" * 50)
-        print("DEBUGGING IsWorkspaceOwner.has_permission()")
-        print(f"User: {request.user} (ID: {request.user.id})")
-        # --- AKHIR KODE DEBUGGING ---
+        # Coba dapatkan workspace_id dari URL (untuk detail view)
+        workspace_id = view.kwargs.get('workspace_id')  # atau nama parameter lain di URL
 
-        workspace_id = view.kwargs.get('workspace_pk')
+        # Jika tidak ada di URL, coba di query parameter (untuk list view)
         if not workspace_id:
             workspace_id = request.query_params.get('workspaceId')
 
-        # --- AWAL KODE DEBUGGING ---
-        print(f"Workspace ID dari request: {workspace_id}")
-        # --- AKHIR KODE DEBUGGING ---
-
         if not workspace_id:
-            print("ERROR: Workspace ID tidak ditemukan di request.")
-            print("=" * 50)
-            return False
+            return False  # Tidak bisa menentukan workspace
 
         try:
             from .models import Workspace
             workspace = Workspace.objects.get(id=workspace_id)
-
-            # --- AWAL KODE DEBUGGING ---
-            print(f"Workspace ditemukan: {workspace.name}")
-            print(f"Owner workspace: {workspace.owner} (ID: {workspace.owner.id})")
-            print(f"Apakah user adalah owner? {workspace.owner == request.user}")
-            # --- AKHIR KODE DEBUGGING ---
-
-            is_owner = workspace.owner == request.user
-            print("=" * 50)
-            return is_owner
-
-        except (Workspace.DoesNotExist, ValueError) as e:
-            # --- AWAL KODE DEBUGGING ---
-            print(f"ERROR: Workspace tidak ditemukan atau ID tidak valid. Exception: {e}")
-            # --- AKHIR KODE DEBUGGING ---
-            print("=" * 50)
+            return workspace.owner == request.user
+        except Workspace.DoesNotExist:
             return False
+

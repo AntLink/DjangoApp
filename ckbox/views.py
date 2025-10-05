@@ -12,8 +12,111 @@ from PIL import Image
 from .models import *
 from .serializers import *
 from .permissions import IsSuperAdmin, IsWorkspaceMember, IsWorkspaceOwner
-from .pagination import CustomPagination, CustomResultsSetPagination
+from .pagination import CustomPagination
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.settings import api_settings
+from django.contrib.auth import authenticate, get_user_model
+from django.db.models import Prefetch
+
+User = get_user_model()
+
+
+class AuthViewSet(viewsets.ViewSet):
+    """
+    ViewSet untuk autentikasi dan otorisasi CKBox
+    """
+    permission_classes = [AllowAny]  # ubah agar bisa login tanpa token
+
+    @action(detail=False, methods=['get'])
+    def limits(self, request):
+        data = {
+            "maxImageInMegapixelsLimit": 50,
+            "maxFileSizeInBytesLimit": 50000000,
+            "pricingPlanName": "ckbox.pro",
+            "isMaxBandwidthExceeded": False,
+            "isMaxStorageSizeExceeded": False
+        }
+        return Response(data)
+
+    @action(detail=False, methods=['post'])
+    def ckbox_login(self, request):
+        """
+        Endpoint login CKBox: menghasilkan access dan refresh token
+        """
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        if not username or not password:
+            return Response({'error': 'Username and password are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = authenticate(username=username, password=password)
+        if not user:
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Gunakan custom serializer untuk CKBox
+        refresh = CKBoxTokenObtainPairSerializer.get_token(user)
+        access_token = refresh.access_token
+
+        access_lifetime = api_settings.ACCESS_TOKEN_LIFETIME
+        refresh_lifetime = api_settings.REFRESH_TOKEN_LIFETIME
+
+        return Response({
+            'refresh': str(refresh),
+            'access': str(access_token),
+            'access_token_lifetime': int(access_lifetime.total_seconds()),
+            'refresh_token_lifetime': int(refresh_lifetime.total_seconds()),
+            'user': {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email
+            }
+        })
+
+    @action(detail=False, methods=['post'])
+    def ckbox_token_refresh(self, request):
+        """
+        Refresh token CKBox — hasilkan access baru dengan claim CKBox
+        """
+        refresh_token = request.data.get('refresh')
+        if not refresh_token:
+            return Response({'error': 'Refresh token is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            refresh = RefreshToken(refresh_token)
+            user_id = refresh['user_id']
+            user = User.objects.get(id=user_id)
+
+            # Gunakan serializer yang sama untuk regenerate token dengan CKBox claim
+            new_refresh = CKBoxTokenObtainPairSerializer.get_token(user)
+            new_access = new_refresh.access_token
+
+            access_lifetime = api_settings.ACCESS_TOKEN_LIFETIME
+            refresh_lifetime = api_settings.REFRESH_TOKEN_LIFETIME
+
+            return Response({
+                'refresh': str(new_refresh),
+                'access': str(new_access),
+                'access_token_lifetime': int(access_lifetime.total_seconds()),
+                'refresh_token_lifetime': int(refresh_lifetime.total_seconds()),
+                'user': {
+                    'id': user.id,
+                    'username': user.username,
+                    'email': user.email
+                }
+            })
+        except Exception:
+            return Response({'error': 'Invalid refresh token'}, status=status.HTTP_401_UNAUTHORIZED)
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    """
+    View kustom yang menggunakan serializer kita.
+    """
+    serializer_class = CustomTokenObtainPairSerializer
 
 class WorkspaceGroupViewSet(viewsets.ModelViewSet):
     """
@@ -36,7 +139,6 @@ class WorkspaceGroupViewSet(viewsets.ModelViewSet):
         else:
             raise serializers.ValidationError("workspaceId is required.")
 
-
 class PermissionViewSet(viewsets.ModelViewSet):
     """
     ViewSet untuk mengelola aturan permission.
@@ -57,8 +159,6 @@ class PermissionViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response({"items": serializer.data}) # Membungkus dengan 'items'
 
-
-
 class AssetViewSet(viewsets.ModelViewSet):
     serializer_class = AssetSerializer
     parser_classes = [MultiPartParser, FormParser]
@@ -71,22 +171,22 @@ class AssetViewSet(viewsets.ModelViewSet):
     #     return AssetSerializer
 
     def get_queryset(self):
+        """
+        Filter aset berdasarkan query parameter.
+        """
         user = self.request.user
-        queryset = Asset.objects.filter(workspace__memberships__user=user)
+        queryset = Asset.objects.filter(workspace__memberships__user=user, is_trashed=False)
 
-        workspace_id = self.request.query_params.get('workspaceId')
+        # --- Filter berdasarkan folderId ---
         folder_id = self.request.query_params.get('folderId')
-        category_id = self.request.query_params.get('categoryId')
-        is_trashed = self.request.query_params.get('isTrashed', 'false').lower() == 'true'
-
-        if workspace_id:
-            queryset = queryset.filter(workspace_id=workspace_id)
         if folder_id:
             queryset = queryset.filter(folder_id=folder_id)
+
+        # Filter berdasarkan kategori (opsional)
+        category_id = self.request.query_params.get('categoryId')
         if category_id:
             queryset = queryset.filter(category_id=category_id)
 
-        queryset = queryset.filter(is_trashed=is_trashed)
         return queryset
 
     def retrieve(self, request, *args, **kwargs):
@@ -265,7 +365,6 @@ class AssetViewSet(viewsets.ModelViewSet):
     #     except Exception as e:
     #         return Response({"detail": f"Error processing image: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     pagination_class = CustomPagination
@@ -282,16 +381,92 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 class FolderViewSet(viewsets.ModelViewSet):
     serializer_class = FolderSerializer
-    # permission_classes = [permissions.IsAuthenticated, IsWorkspaceMember]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsWorkspaceMember]
 
     def get_queryset(self):
         user = self.request.user
         workspace_id = self.request.query_params.get('workspaceId')
         if workspace_id:
-            return Folder.objects.filter(workspace_id=workspace_id, workspace__memberships__user=user, is_trashed=False)
+            return Folder.objects.filter(
+                workspace_id=workspace_id,
+                parent__isnull=True,
+                is_trashed=False
+            ).select_related('workspace', 'category', 'parent').prefetch_related(
+                'children__children__children',
+                'children__category',
+                'children__workspace',
+            )
         return Folder.objects.none()
 
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Method ini dipanggil untuk GET /folders/{id}/
+        """
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return FolderCreateSerializer
+        return FolderSerializer
+
+
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({"items": serializer.data})
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+    def get_object(self):
+        # Menggunakan get_object_or_404 untuk pesan error yang lebih baik
+        obj = get_object_or_404(Folder, pk=self.kwargs['pk'])
+        return obj
+
+
+
+    @action(detail=True, methods=['get'], url_path='branch')
+    def branch(self, request, pk=None, depth=1):
+        """
+        Mengembalikan jalur folder dari root ke folder ini, plus anak-anaknya.
+        Query Parameters:
+        - depth: (int) Kedalaman anak-anak folder yang akan ditampilkan. Default 1.
+        """
+        # 1. Ambil folder target
+        folder = self.get_object()
+
+        # 2. Bangun jalur dari root ke folder target
+        path_to_root = folder.get_path()
+
+        # 3. Ambil anak-anak folder hingga kedalaman tertentu
+        children_at_depth = self._get_children_at_depth(folder, depth)
+
+        # 4. Gabungkan jalur dan anak-anak
+        # Penting: anak-anak dari folder target tidak boleh duplikasi dengan folder itu sendiri
+        final_list = path_to_root + [f for f in children_at_depth if f != folder]
+
+        # 5. Serialisasi dan kembalikan response
+        serializer = FolderSerializer(final_list, many=True, context={'request': request})
+        return Response({"items": serializer.data})
+
+    def _get_children_at_depth(self, folder, depth):
+        """
+        Method helper untuk mengambil anak-anak folder secara rekursif hingga kedalaman tertentu.
+        """
+        if depth <= 0:
+            return []
+
+        children = folder.children.filter(is_trashed=False)
+        result = list(children)
+
+        if depth > 1:
+            for child in children:
+                result.extend(self._get_children_at_depth(child, depth - 1))
+
+        return result
 
 class WorkspaceViewSet(viewsets.ModelViewSet):
     serializer_class = WorkspaceSerializer
@@ -308,56 +483,12 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
             "items": serializer.data
         })
 
+class RecentAssetViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = RecentAssetSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
-# --- TAMBAHKAN VIEW BARU INI ---
-# class UserPermissionsView(APIView):
-#     """
-#     Mengembalikan peta perizinan user untuk setiap kategori di sebuah workspace.
-#     Endpoint: GET /api/permissions?workspaceId=...
-#     """
-#     permission_classes = [permissions.IsAuthenticated]
-#
-#     def get(self, request, *args, **kwargs):
-#         workspace_id = request.query_params.get('workspaceId')
-#         if not workspace_id:
-#             return Response({"detail": "workspaceId query parameter is required."}, status=status.HTTP_400_BAD_REQUEST)
-#
-#         try:
-#             workspace = Workspace.objects.get(id=workspace_id, memberships__user=request.user)
-#         except Workspace.DoesNotExist:
-#             return Response({"detail": "Workspace not found or you are not a member."}, status=status.HTTP_404_NOT_FOUND)
-#
-#         # 1. Dapatkan semua grup Django yang menjadi anggota user di workspace ini
-#         user_group_ids = request.user.groups.values_list('id', flat=True)
-#         workspace_groups = WorkspaceGroup.objects.filter(
-#             workspace=workspace,
-#             group_id__in=user_group_ids
-#         )
-#
-#         # 2. Dapatkan semua aturan permission yang terkait dengan grup-grup tersebut
-#         permission_rules = Permission.objects.filter(
-#             group__in=workspace_groups
-#         ).prefetch_related('categories')
-#
-#         # 3. Buat peta perizinan
-#         # Struktur: { category_id: { permission_name: True/False } }
-#         user_permissions_map = {}
-#         for rule in permission_rules:
-#             for category in rule.categories.all():
-#                 if category.id not in user_permissions_map:
-#                     user_permissions_map[str(category.id)] = {}
-#                 # Gabungkan perizinan (union). Jika salah satu grup memberi izin, maka user memiliki izin tersebut.
-#                 for perm, value in rule.permissions_list.items():
-#                     if value:  # Hanya tambahkan jika izinnya True
-#                         user_permissions_map[str(category.id)][perm] = True
-#
-#         # 4. Pastikan semua kategori ada di peta, meskipun tidak ada perizinan khusus
-#         for category in workspace.categories.all():
-#             if str(category.id) not in user_permissions_map:
-#                 user_permissions_map[str(category.id)] = {}
-#
-#         return Response(user_permissions_map)
-
+    def get_queryset(self):
+        return RecentAsset.objects.filter(user=self.request.user).select_related('asset')
 
 class UserPermissionsView(APIView):
     """
@@ -407,21 +538,33 @@ class UserPermissionsView(APIView):
 
 # --- Superadmin Views ---
 class SuperadminEnvironmentConfigView(APIView):
-    permission_classes = [IsSuperAdmin]
+    permission_classes = [IsAdminUser,IsAuthenticated]
 
     def get(self, request, format=None):
-        config, created = EnvironmentConfig.objects.get_or_create(pk=1)
+        config, _ = EnvironmentConfig.objects.get_or_create(pk=1)
         serializer = EnvironmentConfigSerializer(config)
         return Response(serializer.data)
 
     def put(self, request, format=None):
-        config, created = EnvironmentConfig.objects.get_or_create(pk=1)
-        serializer = EnvironmentConfigSerializer(config, data=request.data, partial=True)
+        """
+        Update konfigurasi lingkungan global.
+        Terima payload camelCase dan konversi ke snake_case.
+        """
+        config, _ = EnvironmentConfig.objects.get_or_create(pk=1)
+
+        validated_data = {}
+        if 'allowedExtensions' in request.data:
+            validated_data['allowed_extensions'] = request.data['allowedExtensions']
+        if 'isAllowedExtensionsEnabled' in request.data:
+            validated_data['is_allowed_extensions_enabled'] = request.data['isAllowedExtensionsEnabled']
+        if 'ckboxProjectId' in request.data:
+            validated_data['ckbox_project_id'] = request.data['ckboxProjectId']
+
+        serializer = EnvironmentConfigSerializer(config, data=validated_data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class SuperadminWorkspaceTemplateView(APIView):
     permission_classes = [IsSuperAdmin]
@@ -464,14 +607,6 @@ class SuperadminWorkspaceTemplateView(APIView):
             template.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class RecentAssetViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = RecentAssetSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        return RecentAsset.objects.filter(user=self.request.user).select_related('asset')
 
 
 # admin view
@@ -552,19 +687,17 @@ class AdminCategoryViewSet(viewsets.ModelViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-
 class AdminEnvironmentConfigView(APIView):
     """
     Endpoint GET untuk /admin/environmentConfig.
     Ini membaca konfigurasi global yang sama dengan superadmin.
     """
-    permission_classes = [permissions.IsAuthenticated, IsWorkspaceOwner]
+    permission_classes = [permissions.IsAuthenticated, IsWorkspaceOwner,IsWorkspaceMember]
 
     def get(self, request, *args, **kwargs):
         config, _ = EnvironmentConfig.objects.get_or_create(pk=1)
         serializer = EnvironmentConfigAdminSerializer(config)
         return Response(serializer.data)
-
 
 class AdminImageViewSet(viewsets.GenericViewSet):
     """
@@ -624,36 +757,40 @@ class AdminImageViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(config)
         return Response(serializer.data)
 
-# ... ViewSet lainnya ...
-
-
 class AdminGroupViewSet(viewsets.ModelViewSet):
     """
     ViewSet untuk mengelola grup bagi admin workspace.
+    Contoh:
+      - GET  /api/admin/groups?workspaceId=<uuid>
+      - POST /api/admin/groups?workspaceId=<uuid>
+      - PATCH /api/admin/groups/<group_id>/?workspaceId=<uuid>
     """
     serializer_class = WorkspaceGroupAdminSerializer
     permission_classes = [permissions.IsAuthenticated, IsWorkspaceOwner]
-
-    # --- PASTIKAN MENGGUNAKAN KUSTOM PAGINATION ---
     pagination_class = CustomPagination
 
     def get_queryset(self):
         workspace_id = self.request.query_params.get('workspaceId')
-        if workspace_id:
-            return WorkspaceGroup.objects.filter(workspace_id=workspace_id)
-        return WorkspaceGroup.objects.none()
-
-    def get_serializer_class(self):
-        if self.action == 'create':
-            return WorkspaceGroupAdminSerializer
-        return WorkspaceGroupAdminSerializer
+        if not workspace_id:
+            return WorkspaceGroup.objects.none()
+        return WorkspaceGroup.objects.filter(workspace_id=workspace_id)
 
     def perform_create(self, serializer):
         workspace_id = self.request.query_params.get('workspaceId')
-        if workspace_id:
-            serializer.save(workspace_id=workspace_id)
-        else:
-            raise serializers.ValidationError("workspaceId is required.")
+        if not workspace_id:
+            raise serializers.ValidationError({"workspaceId": "Query parameter workspaceId is required."})
+        serializer.save(workspace_id=workspace_id)
 
-# Gunakan PermissionViewSet yang sudah kita buat sebelumnya, pastikan sudah benar
-# AdminPermissionViewSet = PermissionViewSet
+    def perform_update(self, serializer):
+        """
+        Pastikan update hanya bisa dilakukan dalam konteks workspaceId yang benar.
+        """
+        workspace_id = self.request.query_params.get('workspaceId')
+        if not workspace_id:
+            raise serializers.ValidationError({"workspaceId": "Query parameter workspaceId is required."})
+
+        # instance = self.get_object()
+        # if str(instance.workspace_id) != workspace_id:
+        #     raise serializers.ValidationError({"detail": "This group does not belong to the specified workspace."})
+
+        serializer.save()

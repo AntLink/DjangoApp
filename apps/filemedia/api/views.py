@@ -156,12 +156,7 @@ class AdminViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['get'])
     def environmentConfig(self, request):
         data = {
-            "allowedExtensions": [
-                "avi", "mov", "webm", "mp4", "mp3", "flac", "aac", "ogg",
-                "7z", "rar", "zip", "gz", "jpeg", "jpg", "png", "gif",
-                "bmp", "webp", "tiff", "doc", "docx", "ppt", "pptx",
-                "xls", "xlsx", "odt", "pdf", "txt", "svg"
-            ],
+            "allowedExtensions": ["avi", "mov", "webm", "mp4", "mp3", "flac", "aac", "ogg","7z", "rar", "zip", "gz", "jpeg", "jpg", "png", "gif","bmp", "webp", "tiff", "doc", "docx", "ppt", "pptx","xls", "xlsx", "odt", "pdf", "txt", "svg"],
             "isAllowedExtensionsEnabled": True
         }
         return Response(data)

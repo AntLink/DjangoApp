@@ -6,9 +6,31 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import serializers
 from .models import *
 from django.contrib.auth import get_user_model
-
+from django.shortcuts import get_object_or_404
 User = get_user_model()
 
+class CKBoxTokenObtainPairSerializer(TokenObtainPairSerializer):
+
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        role = "superadmin" if user.is_superuser and user.is_staff else "admin"
+        ws = [str(w) for w in Workspace.objects.filter(owner=user).values_list('id', flat=True)]
+
+
+        # 🔹 Ambil CKBox AUD dari database
+        env = EnvironmentConfig.objects.first()
+        aud = env.ckbox_project_id if env and env.ckbox_project_id else "default-audience"
+
+        token["aud"] = aud
+        token["sub"] = str(user.id)
+        token["auth"] = {
+            "ckbox": {
+                "role": role,
+                "workspaces": ws
+            }
+        }
+        return token
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     """
@@ -26,8 +48,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         if self.user.is_superuser:
             role = 'superadmin'
         # Anda bisa menambahkan logika lain di sini, misal untuk 'admin' workspace
-        # else:
-        #     role = 'user'
+        else:
+            role = 'admin'
 
         data['refresh'] = str(refresh)
         data['access'] = str(refresh.access_token)
@@ -45,18 +67,12 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         return data
 
 
-class CustomTokenObtainPairView(TokenObtainPairView):
-    """
-    View kustom yang menggunakan serializer kita.
-    """
-    serializer_class = CustomTokenObtainPairSerializer
-
 
 class WorkspaceGroupSerializer(serializers.ModelSerializer):
     """
     Serializer untuk WorkspaceGroup yang juga menangani pembuatan Group Django.
     """
-    name = serializers.CharField(source='group.name', write_only=True)
+    name = serializers.CharField(source='name', write_only=True)
     workspace_id = serializers.UUIDField(write_only=True)
 
     class Meta:
@@ -64,7 +80,7 @@ class WorkspaceGroupSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'workspace_id']
 
     def create(self, validated_data):
-        name = validated_data.pop('group')['name']
+        name = validated_data.pop('name')
         workspace_id = validated_data.pop('workspace_id')
 
         django_group = DjangoGroup.objects.create(name=name)
@@ -212,20 +228,128 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class FolderSerializer(serializers.ModelSerializer):
-    children = serializers.SerializerMethodField()
+    folders = serializers.SerializerMethodField()
     assets_count = serializers.SerializerMethodField()
     created_by = UserSerializer(read_only=True)
+    children = serializers.SerializerMethodField()
 
     class Meta:
         model = Folder
-        fields = ['id', 'name', 'category_id', 'parent_id', 'created_at', 'updated_at', 'children', 'assets_count', 'created_by']
+        fields = [
+            'id', 'name', 'created_at', 'updated_at',
+            'category_id', 'parent_id', 'folders',
+            'assets_count', 'created_by','parent', 'children'
+        ]
 
     def get_children(self, obj):
-        children = obj.children.filter(is_trashed=False)
+        children = obj.children.all()
+        return FolderSerializer(children, many=True).data
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        return {
+            'id': data['id'],
+            'name': data['name'],
+            'createdAt': data['created_at'],
+            'updatedAt': data['updated_at'],
+            'categoryId': data['category_id'],
+            'parentId': data['parent_id'],
+            'folders': data['folders'],
+            'assetsCount': data['assets_count'],
+            'createdBy': data['created_by']
+        }
+
+    def get_folders(self, obj):
+        # Karena `children` sudah di-prefetch, ini akan sangat cepat
+        children = obj.children.all()
         return FolderSerializer(children, many=True, context=self.context).data
 
     def get_assets_count(self, obj):
         return obj.assets.filter(is_trashed=False).count()
+
+class FolderCreateSerializer(serializers.ModelSerializer):
+    """
+    Serializer fleksibel untuk membuat folder baru:
+    - Jika `categoryId` diberikan → folder root.
+    - Jika `parentId` diberikan → subfolder.
+    """
+    parentId = serializers.UUIDField(write_only=True, required=False)
+    categoryId = serializers.UUIDField(write_only=True, required=False)
+
+    class Meta:
+        model = Folder
+        fields = ['name', 'parentId', 'categoryId']
+
+    def validate(self, attrs):
+        """
+        Validasi input dasar — salah satu dari categoryId atau parentId harus ada.
+        """
+        parent_id = attrs.get('parentId')
+        category_id = attrs.get('categoryId')
+
+        if not parent_id and not category_id:
+            raise serializers.ValidationError({
+                "detail": "Either 'categoryId' or 'parentId' must be provided."
+            })
+
+        return attrs
+
+    def create(self, validated_data):
+        """
+        Logika utama untuk membuat folder baru.
+        """
+        request = self.context['request']
+        user = request.user
+        workspace_id = request.query_params.get('workspaceId')
+
+        if not workspace_id:
+            raise serializers.ValidationError({
+                "detail": "workspaceId query parameter is required."
+            })
+
+        # --- Cek workspace ---
+        try:
+            workspace = Workspace.objects.get(id=workspace_id)
+        except Workspace.DoesNotExist:
+            raise serializers.ValidationError({
+                "detail": f"Workspace with id '{workspace_id}' not found."
+            })
+
+        parent_id = validated_data.get('parentId')
+        category_id = validated_data.get('categoryId')
+        name = validated_data['name']
+
+        # --- CASE 1: Membuat subfolder ---
+        if parent_id:
+            parent_folder = get_object_or_404(Folder, id=parent_id, workspace=workspace)
+
+            # Warisi kategori dari parent
+            category = parent_folder.category
+
+            # Validasi permission
+            if parent_folder.workspace.owner != user:
+                raise PermissionDenied("You do not have permission to create a subfolder here.")
+
+            folder = Folder.objects.create(
+                name=name,
+                workspace=workspace,
+                parent=parent_folder,
+                category=category,
+                created_by=user
+            )
+
+        # --- CASE 2: Membuat folder di bawah kategori ---
+        elif category_id:
+            category = get_object_or_404(Category, id=category_id, workspace=workspace)
+
+            folder = Folder.objects.create(
+                name=name,
+                workspace=workspace,
+                category=category,
+                created_by=user
+            )
+
+        return folder
 
 
 class AssetSerializer(serializers.ModelSerializer):
@@ -456,30 +580,31 @@ class AssetListSerializer(serializers.ModelSerializer):
         return metadata
 
 
-class WorkspaceGroupSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source='group.name', write_only=True)
-    workspace_id = serializers.UUIDField(write_only=True)
-
-    class Meta:
-        model = WorkspaceGroup
-        fields = ['id', 'name', 'workspace_id']
-
-    def create(self, validated_data):
-        name = validated_data.pop('group')['name']
-        workspace = validated_data.pop('workspace_id')
-
-        django_group = DjangoGroup.objects.create(name=name)
-        workspace_group = WorkspaceGroup.objects.create(
-            group=django_group,
-            workspace_id=workspace
-        )
-        return workspace_group
-
-
 class EnvironmentConfigSerializer(serializers.ModelSerializer):
+    """
+    Serializer untuk EnvironmentConfig dengan output camelCase.
+    """
+
     class Meta:
         model = EnvironmentConfig
-        fields = '__all__'
+        fields = ['allowed_extensions', 'is_allowed_extensions_enabled', 'ckbox_project_id']
+
+    def to_representation(self, instance):
+        """
+        Ubah snake_case → camelCase untuk output API.
+        """
+        data = super().to_representation(instance)
+
+        allowed_extensions = data.pop('allowed_extensions', [])
+        is_allowed_extensions_enabled = data.pop('is_allowed_extensions_enabled', False)
+        ckbox_project_id = data.pop('ckbox_project_id', None)
+
+        return {
+            'allowedExtensions': allowed_extensions,
+            'isAllowedExtensionsEnabled': is_allowed_extensions_enabled,
+            'ckboxProjectId': ckbox_project_id,
+        }
+
 
 
 class WorkspaceTemplateSerializer(serializers.ModelSerializer):
@@ -505,7 +630,7 @@ class CategoryAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         # --- SESUAIKAN URUTAN FIELD ---
-        fields = ['id', 'name', 'position', 'extensions', 'extensionsInUse']
+        fields = ['id', 'name', 'position','isPrivate', 'extensions', 'extensionsInUse']
 
     def get_extensionsInUse(self, obj):
         used_exts = Asset.objects.filter(category=obj, is_trashed=False).values_list('extension', flat=True).distinct()
@@ -559,10 +684,11 @@ class ImageQualityConfigSerializer(serializers.ModelSerializer):
 
 class WorkspaceGroupAdminSerializer(serializers.ModelSerializer):
     """
-    Serializer untuk endpoint /admin/groups.
+    Serializer untuk endpoint /api/admin/groups
+    - bisa untuk list, create, update
+    - workspace diambil dari query param, jadi tidak dikirim di body
     """
-    name = serializers.CharField(source='group.name', read_only=True)
-    isDefault = serializers.BooleanField(source='is_default', read_only=True)
+    isDefault = serializers.BooleanField(source='is_default', required=False)
 
     class Meta:
         model = WorkspaceGroup

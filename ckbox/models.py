@@ -29,8 +29,17 @@ class EnvironmentConfig(models.Model):
     allowed_extensions = models.JSONField(default=list, blank=True, help_text="Ekstensi file yang diizinkan.")
     is_allowed_extensions_enabled = models.BooleanField(default=True)
 
+    # ✅ field tambahan untuk CKBox audience (aud)
+    ckbox_project_id = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text="CKBox Project ID / Audience"
+    )
+
     def __str__(self):
         return "Environment Configuration"
+
 
 
 class WorkspaceTemplate(models.Model):
@@ -40,11 +49,6 @@ class WorkspaceTemplate(models.Model):
 
     def __str__(self):
         return self.name
-
-
-# myapp/models.py
-
-# ... model lainnya ...
 
 class ImageQualityConfig(models.Model):
     """
@@ -119,7 +123,37 @@ class Folder(models.Model):
 
     class Meta:
         unique_together = ('name', 'parent', 'workspace')
+        ordering = ['name']
 
+    def get_root(self):
+        """
+        Mencari folder root dari kategori yang sama.
+        """
+        if self.parent is None:
+            return self
+        return self.parent.get_root()
+
+    def get_path(self):
+        """
+        Membangun jalur dari folder root ke folder ini.
+        Mengembalikan list of Folder objects.
+        """
+        path = []
+        current = self
+        while current is not None:
+            path.insert(0, current)
+            current = current.parent
+        return path
+
+
+    def get_descendants(self, max_depth=3):
+        """
+        Mengambil semua keturunan (anak-anak, cucu cucu, dst) secara rekursif.
+        """
+        descendants = []
+        for child in self.get_children(is_trashed=False):
+            descendants.append(child.to_tree(max_depth - 1))
+        return descendants
 
 class Asset(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -164,17 +198,18 @@ class RecentAsset(models.Model):
 
 
 # --- Model Perizinan (Admin) ---
-
 class WorkspaceGroup(models.Model):
     """Model untuk menambahkan relasi workspace ke Group bawaan Django."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    group = models.OneToOneField(DjangoGroup, on_delete=models.CASCADE, related_name='workspace_profile')
+    name = models.CharField(max_length=150)
     workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name='workspace_groups')
     is_default = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"{self.group.name} in {self.workspace.name}"
-
+    class META:
+        ordering = ['name']
+    # def __str__(self):
+    #     return f"{self.group.name} in {self.workspace.name}"
+    # def __str__(self):
+    #     return f"{self.name} @ {self.workspace.name}"
 
 class Permission(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

@@ -8,8 +8,6 @@ from rest_framework_simplejwt.views import (
 )
 
 from .views import *
-from .serializers import CustomTokenObtainPairView
-from apps.filemedia.api.views import AuthViewSet
 # Buat router dan daftarkan viewsets kita
 router = DefaultRouter(trailing_slash=False)
 # router = DefaultRouter()
@@ -35,8 +33,8 @@ urlpatterns = [
     path('api/', include(router.urls)),
 
     # Endpoint Autentikasi
-    path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
 
     # Endpoint Superadmin
     path('api/superadmin/environmentConfig', SuperadminEnvironmentConfigView.as_view(), name='superadmin-env-config'),
