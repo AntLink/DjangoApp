@@ -1,19 +1,10 @@
-# myapp/models.py
-
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group as DjangoGroup
 from django.core.exceptions import ValidationError
 from django.conf import settings
 
-
-# --- Model User (Opsional, jika ingin kustom) ---
-# Jika Anda ingin menggunakan ini, uncomment dan ubah AUTH_USER_MODEL di settings.py
-# class User(AbstractUser):
-#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-
 # --- Model Konfigurasi Sistem (Superadmin) ---
-
 class EnvironmentConfig(models.Model):
     """Model untuk menyimpan konfigurasi global aplikasi. Dikelola oleh superadmin."""
 
@@ -39,8 +30,6 @@ class EnvironmentConfig(models.Model):
 
     def __str__(self):
         return "Environment Configuration"
-
-
 
 class WorkspaceTemplate(models.Model):
     """Template untuk membuat workspace baru dengan struktur awal. Dikelola oleh superadmin."""
@@ -73,7 +62,6 @@ class ImageQualityConfig(models.Model):
     def __str__(self):
         return "Image Quality Configuration"
 
-
 # --- Model Inti ---
 class Workspace(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -86,12 +74,10 @@ class Workspace(models.Model):
     def __str__(self):
         return self.name
 
-
 class WorkspaceMember(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name='memberships')
     date_joined = models.DateTimeField(auto_now_add=True)
-
 
 class Category(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -107,7 +93,6 @@ class Category(models.Model):
         verbose_name_plural = "Categories"
         unique_together = ('name', 'workspace')
         ordering = ['position']
-
 
 class Folder(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -161,7 +146,7 @@ class Asset(models.Model):
     extension = models.CharField(max_length=10)
     size = models.BigIntegerField()
     mime_type = models.CharField(max_length=100)
-    file = models.FileField(upload_to='ckbox_assets/')
+    file = models.FileField(upload_to='assets/')
 
     # Relasi
     workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name='assets')
@@ -204,7 +189,8 @@ class WorkspaceGroup(models.Model):
     name = models.CharField(max_length=150)
     workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name='workspace_groups')
     is_default = models.BooleanField(default=False)
-    class META:
+
+    class Meta:
         ordering = ['name']
     # def __str__(self):
     #     return f"{self.group.name} in {self.workspace.name}"

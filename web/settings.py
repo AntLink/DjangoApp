@@ -35,7 +35,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'p#9)0ixeb6*e8=gi45--#gz#0e+k4yn59_e4g_^vtkgu8f@x%m'
 
 CKBOX_SECRET = 'p#9)0ixeb6*e8=gi45--#gz#0e+k4yn59_e4g_^vtkgu8f@x%m'
-
+X_FRAME_OPTIONS = 'ALLOWALL'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

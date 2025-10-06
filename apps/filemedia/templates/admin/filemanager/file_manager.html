@@ -30,6 +30,21 @@
             color: var(--bs-primary);
         }
 
+        :root[data-bs-theme="dark"] .ckbox:not(#n) .ckbox-btn--fill .ckbox-icon {
+            fill: rgba(232, 232, 232, 0.93);
+            max-width: initial;
+            transition: color calc(var(--ckbox-animation-duration-primary) * 1ms);
+        }
+
+
+        :root[data-bs-theme="dark"] .ckbox:not(#n) .ckbox-btn--fill .ckbox-btn__icon {
+            color: rgba(232, 232, 232, 0.93);
+        }
+
+        :root[data-bs-theme="dark"] .ckbox:not(#n) .ckbox-btn--fill .ckbox-btn__text {
+            color: rgba(232, 232, 232, 0.93);
+        }
+
         .ckbox:not(#n) .ckbox-btn--fill {
             --ckbox-btn-background-color: var(--bs-primary);
         }
@@ -102,7 +117,7 @@
         }
 
 
-       .ckbox:not(#n) .ckbox-btn:focus {
+        .ckbox:not(#n) .ckbox-btn:focus {
             box-shadow: 0 0 0 1.5px var(--bs-primary), 0 0 0 3.5px var(--bs-primary);
         }
 
@@ -117,6 +132,7 @@
         .ckbox:not(#n) .ckbox-button-group .ckbox-btn--fill.ckbox-btn--action {
             border-right: 1px solid var(--bs-primary);
         }
+
         .ckbox:not(#n) .ckbox-empty-view__content--dropzone::before {
             background-color: var(--bs-primary);
         }

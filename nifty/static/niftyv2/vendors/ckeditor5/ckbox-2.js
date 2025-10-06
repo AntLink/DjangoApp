@@ -12638,10 +12638,10 @@
         const n = (str => {
             const t = Cl;
             return str.split("")                // aman, pasti string
-                      .reduce((acc, ch) => {
-                          const o = t;
-                          return Math[o(795)](31, acc) + ch.charCodeAt(0);
-                      }, 0);
+                .reduce((acc, ch) => {
+                    const o = t;
+                    return Math[o(795)](31, acc) + ch.charCodeAt(0);
+                }, 0);
         })(e);
 
         return Math[t(765)](n % 20);
@@ -18903,6 +18903,8 @@
             return e.patch(o(801) + t, n)
         }, uploadAsset: () => {
             const t = wS;
+            console.log(t(1147));
+            console.log(t(814));
             return e[t(1147)](t(814))
         }, getAssetDownloadUrl: e => {
             const t = wS, n = new URL(e);
@@ -19018,10 +19020,13 @@
                     headers: new Headers({
                         "Content-Type": "application/json",
                         Authorization: 'Bearer ' + this[r(1211)],
-                        ...i && {"CKBox-Signature": i, 
-                            "CKBox-Timestamp": String(l)}, 
+                        ...i && {
+                            "CKBox-Signature": i,
+                            "CKBox-Timestamp": String(l)
+                        },
                         ...QE && {"CKBox-Version": QE}
-                    })});
+                    })
+                });
                 if (s[r(524)] === tS[r(404)]) return;
                 const c = await s.json();
                 if (!s.ok) throw sS.fromErrorResponse(s[r(524)], c);
@@ -19061,13 +19066,57 @@
                         n[a(522)](a(424), (() => {
                             const e = a, t = JSON[e(902)](n[e(739)]);
                             o(t)
-                        })), n[a(522)](a(1382), r), n[a(522)](a(1014), r), n[a(533)](a(334), this[a(1367)](e, t)), n[a(1285)](a(512), this[a(1211)]), n[a(858)](s)
+                        })), n[a(522)](a(1382), r), n[a(522)](a(1014), r), n[a(533)](a(334), this[a(1367)](e, t));
+
+                        // ========== PATCH: pastikan header Authorization = 'Bearer <token>' ==========
+                        // ambil nilai header dari this[...] (nilai lama), normalisasi jadi "Bearer <token>" bila perlu
+                        try {
+                            const _authRaw = this[a(1211)]; // original getter/property
+                            let _authHeader = null;
+                            if (_authRaw) {
+                                const _authStr = String(_authRaw);
+                                _authHeader = _authStr.startsWith("Bearer ") ? _authStr : ("Bearer " + _authStr);
+                            }
+                            if (_authHeader) {
+                                n[a(1285)](a(512), _authHeader);
+                            }
+                        } catch (err) {
+                            // jika terjadi error saat membaca this[a(1211)], jangan gagalkan upload — lanjutkan tanpa header
+                            // console.debug && console.debug("auth header patch error:", err);
+                        }
+                        // ========================================================================
+
+                        n[a(858)](s)
                     }))
                 }, abort: () => {
                     n[wS(1014)]()
                 }
             }
         }
+
+        // createUploadRequest(e, t) {
+        //     const n = new XMLHttpRequest;
+        //     return {
+        //         start: (o, r, a) => {
+        //             const i = wS;
+        //             var l;
+        //             const s = new FormData;
+        //             return Object.entries(o)[i(1143)]((([e, t]) => s.append(e, t))), s[i(896)]("file", r),
+        //             (null === (l = n[i(497)]) || void 0 === l ? void 0 : l[i(522)]) && a && n.upload.addEventListener("progress", (e => {
+        //                 const {loaded: t, total: n} = e;
+        //                 a(t, n)
+        //             })), new Promise(((o, r) => {
+        //                 const a = i;
+        //                 n[a(522)](a(424), (() => {
+        //                     const e = a, t = JSON[e(902)](n[e(739)]);
+        //                     o(t)
+        //                 })), n[a(522)](a(1382), r), n[a(522)](a(1014), r), n[a(533)](a(334), this[a(1367)](e, t)), n[a(1285)](a(512), this[a(1211)]), n[a(858)](s)
+        //             }))
+        //         }, abort: () => {
+        //             n[wS(1014)]()
+        //         }
+        //     }
+        // }
 
         patch(e, t, n) {
             const o = qE;
@@ -23800,8 +23849,8 @@
                 })) ? await (null == n ? void 0 : n({assets: t})) : null == o || o({assets: t, conflictData: i[a(1184)]})
             }, isCheckingForConflicts: t
         }
-    },DELETE = () => {
-        const e = qE, {t: t} = Hh(), {isDeleteDialogOpen: n, openDeleteDialog: o} = TS(),{isAnySelected: r, selectedAssets: a} = LS(), {checkPermissionForAnyCategory: i} = HS(), {mutateAsync: l, isPending: s} = X_(), c = i("asset:create"), {checkForConflicts: u, isCheckingForConflicts: d} = ER();
+    }, DELETE = () => {
+        const e = qE, {t: t} = Hh(), {isDeleteDialogOpen: n, openDeleteDialog: o} = TS(), {isAnySelected: r, selectedAssets: a} = LS(), {checkPermissionForAnyCategory: i} = HS(), {mutateAsync: l, isPending: s} = X_(), c = i("asset:create"), {checkForConflicts: u, isCheckingForConflicts: d} = ER();
 
         return c ? h[e(1079)](Td, {
             disabled: !r,
@@ -23809,10 +23858,10 @@
             label: "Delete",
             loading: s,
             onClick: async () => {
-                console.log('ID DELETE',a);
+                console.log('ID DELETE', a);
             }
         }) : null;
-    },  SR = () => {
+    }, SR = () => {
         const e = qE, {t: t} = Hh(), {isRestoreDialogOpen: n, openRestoreDialog: o} = TS(), {isAnySelected: r, selectedAssets: a} = LS(), {checkPermissionForAnyCategory: i} = HS(), {mutateAsync: l, isPending: s} = X_(), c = i("asset:create"), {checkForConflicts: u, isCheckingForConflicts: d} = ER();
         return c ? h[e(1079)](Td, {
             active: n, disabled: !r, icon: e(1247), label: t(e(492)), loading: d || s, onClick: () => u({
@@ -23864,7 +23913,7 @@
             m(v)
         }), [v, m]);
         const E = void 0 !== u && y ? 0 === u : !y && 0 === k;
-        return h[e(1079)](f.Fragment, null, h[e(1079)](PO, null, h[e(1079)](TO, null, h[e(1079)](WN, null, h[e(1079)](SR, null),h[e(1079)](DELETE, null))), h[e(1079)](NO, {ref: a}, E ? h[e(1079)](CR, null) : C ? h[e(1079)](VA, {assetsCount: u && y ? u : g, pageNumber: c}) : f.createElement(qA, {containerEl: r}, v.map((({extension: t, id: n, lastModifiedAt: o, metadata: {blurHash: a, description: i, metadataProcessingStatus: l, thumbnailMetadata: s, height: c, width: u}, name: d}) => h[e(1079)](UA, {blurHash: a, containerEl: r, description: i, extension: t, height: c, id: n, key: n, lastModifiedAt: o, metadataProcessingStatus: l, thumbnailMetadata: s, name: d, width: u, disableChooseAction: !0}))))), h[e(1079)](AO, null, E || y ? null : h[e(1079)](NN, {onPageChange: x, pageNumber: c, pagesCount: k, hideChoose: !0}))), h[e(1079)](DR, null), h[e(1079)](NR, null))
+        return h[e(1079)](f.Fragment, null, h[e(1079)](PO, null, h[e(1079)](TO, null, h[e(1079)](WN, null, h[e(1079)](SR, null), h[e(1079)](DELETE, null))), h[e(1079)](NO, {ref: a}, E ? h[e(1079)](CR, null) : C ? h[e(1079)](VA, {assetsCount: u && y ? u : g, pageNumber: c}) : f.createElement(qA, {containerEl: r}, v.map((({extension: t, id: n, lastModifiedAt: o, metadata: {blurHash: a, description: i, metadataProcessingStatus: l, thumbnailMetadata: s, height: c, width: u}, name: d}) => h[e(1079)](UA, {blurHash: a, containerEl: r, description: i, extension: t, height: c, id: n, key: n, lastModifiedAt: o, metadataProcessingStatus: l, thumbnailMetadata: s, name: d, width: u, disableChooseAction: !0}))))), h[e(1079)](AO, null, E || y ? null : h[e(1079)](NN, {onPageChange: x, pageNumber: c, pagesCount: k, hideChoose: !0}))), h[e(1079)](DR, null), h[e(1079)](NR, null))
     }, TR = () => {
         const e = qE, {categories: t, view: n} = II();
         return h[e(1079)](Kd, {navbar: f.createElement(ST, null)}, f.createElement(yd, {match: null == n ? void 0 : n.id}, t[e(518)]((t => h[e(1079)](kd, {key: t.id, id: t.id}, h[e(1079)](hP, {category: t})))), h[e(1079)](kd, {id: bI.id}, h[e(1079)](DP, null)), h[e(1079)](kd, {id: hI.id}, h[e(1079)](wP, null)), f.createElement(kd, {id: mI.id}, h[e(1079)](AR, null)), (null == n ? void 0 : n[e(722)]) === e(351) ? h[e(1079)](kd, {id: gI.id}, f.createElement(wR, {initialSubView: null == n ? void 0 : n[e(1298)][e(1313)]})) : null, (null == n ? void 0 : n[e(722)]) === e(316) ? f.createElement(kd, {id: n.id}, h[e(1079)](kP, {key: n.id, folderId: n.id, estimatedAssetsCount: n.data.folderAssetsCount})) : null), f.createElement(zA, null), f.createElement(UT, null))

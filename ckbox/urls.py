@@ -8,6 +8,19 @@ from rest_framework_simplejwt.views import (
 )
 
 from .views import *
+from .view.folder import FolderViewSet
+from .view.admin import (
+    AdminCategoryViewSet,
+    AdminImageViewSet,
+    AdminGroupViewSet,
+    AdminEnvironmentConfigView
+)
+from .view.superadmin import SuperadminWorkspaceTemplateView, SuperadminEnvironmentConfigView
+from .view.category import CategoryViewSet
+from .view.workspaces import WorkspaceViewSet
+from .view.permission import PermissionViewSet
+from .view.asset import AssetViewSet
+from .view.recentasset import RecentAssetViewSet
 # Buat router dan daftarkan viewsets kita
 router = DefaultRouter(trailing_slash=False)
 # router = DefaultRouter()
@@ -22,7 +35,6 @@ router.register(r'auth', AuthViewSet, basename='auth')
 # router.register(r'admin/groups', WorkspaceGroupViewSet, basename='workspace-group')
 router.register(r'admin/permissions', PermissionViewSet, basename='permission')
 
-
 # --- DAFTARKAN VIEWSET ADMIN BARU INI ---
 router.register(r'admin/categories', AdminCategoryViewSet, basename='admin-category')
 router.register(r'admin/images', AdminImageViewSet, basename='admin-image')
@@ -31,16 +43,15 @@ router.register(r'admin/groups', AdminGroupViewSet, basename='admin-group')
 # URL API ditentukan secara otomatis oleh router
 urlpatterns = [
     path('api/', include(router.urls)),
-
     # Endpoint Autentikasi
-    path('api/token', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
+    # path('api/token', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # path('api/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
 
     # Endpoint Superadmin
     path('api/superadmin/environmentConfig', SuperadminEnvironmentConfigView.as_view(), name='superadmin-env-config'),
     path('api/superadmin/workspacesTemplate', SuperadminWorkspaceTemplateView.as_view(), name='superadmin-workspace-template'),
 
-# --- TAMBAHKAN RUTE UNTUK VIEW YANG BUKAN VIEWSET ---
+    # --- TAMBAHKAN RUTE UNTUK VIEW YANG BUKAN VIEWSET ---
     path('api/permissions', UserPermissionsView.as_view(), name='user-permissions'),
     path('api/admin/environmentConfig', AdminEnvironmentConfigView.as_view(), name='admin-env-config'),
 ]
