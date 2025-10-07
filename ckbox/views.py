@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.settings import api_settings
 from django.contrib.auth import authenticate, get_user_model
+from django.http import HttpResponse
 
 User = get_user_model()
 
@@ -30,7 +31,7 @@ class AuthViewSet(viewsets.ViewSet):
         }
         return Response(data)
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['post'], url_path='login')
     def ckbox_login(self, request):
         """
         Endpoint login CKBox: menghasilkan access dan refresh token
@@ -64,7 +65,7 @@ class AuthViewSet(viewsets.ViewSet):
             }
         })
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['post'], url_path='token-refresh')
     def ckbox_token_refresh(self, request):
         """
         Refresh token CKBox — hasilkan access baru dengan claim CKBox
@@ -98,6 +99,112 @@ class AuthViewSet(viewsets.ViewSet):
             })
         except Exception:
             return Response({'error': 'Invalid refresh token'}, status=status.HTTP_401_UNAUTHORIZED)
+
+    @action(detail=False, methods=['post'], url_path='authorize-private-access')
+    def authorizeprivateaccess(self, request):
+        """
+        Membuat dan mengatur cookie autentikasi CKBox.
+        Payload token diambil dari database menggunakan serializer.
+        """
+        # 1. Buat instance serializer dengan request
+        auth_serializer = CKBoxAuthSerializer(request)
+
+        # 2. Dapatkan payload dari serializer
+        payload = auth_serializer.get_payload()
+
+        # 3. Encode payload menjadi JWT
+        token = jwt.encode(payload, settings.CKBOX_SECRET, algorithm="HS256")
+
+        # 4. Buat response dan atur cookie
+        response = HttpResponse(status=status.HTTP_204_NO_CONTENT)
+        response.set_cookie(
+            key="CKBox-Auth",
+            value=token,
+            httponly=True,
+            secure=not settings.DEBUG,
+            samesite="Strict",
+        )
+        return response
+
+    @action(detail=False, methods=['get'], url_path='permissions')
+    def permissions(self, request):
+        """
+        Get permissions for the current user across all accessible workspaces and categories.
+        """
+        user = request.user
+
+        # 1. Dapatkan workspace yang dimiliki user (role: owner)
+        owned_workspaces = Workspace.objects.filter(owner=user)
+
+        # 2. Dapatkan workspace di mana user adalah anggota (role: member)
+        #    Ini akan termasuk workspace yang dimilikinya juga, jadi kita perlu filter nanti
+        member_workspaces = user.workspaces.all()
+
+        # 3. Buat peta peran user di setiap workspace
+        user_roles = {}
+
+        # Tandai semua workspace yang dimiliki sebagai 'owner'
+        for ws in owned_workspaces:
+            user_roles[str(ws.id)] = 'owner'
+
+        # Tandai workspace lain di mana user adalah anggota sebagai 'member'
+        for ws in member_workspaces:
+            ws_id = str(ws.id)
+            # Hanya tambahkan jika workspace ini belum ditandai sebagai 'owner'
+            if ws_id not in user_roles:
+                user_roles[ws_id] = 'member'
+
+        # Jika user tidak ada di workspace manapun, kembalikan respons kosong
+        if not user_roles:
+            return Response({})
+
+        # 4. Dapatkan semua kategori dari workspace-workspace tersebut
+        categories = Category.objects.filter(workspace_id__in=user_roles.keys())
+
+        # 5. Definisikan set izin
+        OWNER_PERMISSIONS = {
+            "category:access": True,
+            "asset:create": True,
+            "asset:delete": True,
+            "asset:metadata:modify": True,
+            "asset:overwrite": True,
+            "folder:create": True,
+            "folder:delete": True,
+            "folder:metadata:modify": True
+        }
+
+        MEMBER_PERMISSIONS = {
+            "category:access": True,
+            "asset:create": True,
+            "asset:delete": True,
+            "asset:metadata:modify": True,
+            "asset:overwrite": True,
+            "folder:create": True,
+            "folder:delete": True,
+            "folder:metadata:modify": True
+        }
+
+        permissions_data = {}
+
+        # 6. Bangun data izin untuk setiap kategori
+        for category in categories:
+            workspace_id = str(category.workspace_id)
+            category_id = str(category.id)
+
+            role = user_roles.get(workspace_id)
+
+            if role == 'owner':
+                permissions_data[category_id] = OWNER_PERMISSIONS
+            else:  # role == 'member'
+                permissions_data[category_id] = MEMBER_PERMISSIONS
+
+        return Response(permissions_data)
+
+    # ... (aksi lainnya) ...
+
+    # ... (aksi lainnya) ...
+
+
 class UserPermissionsView(APIView):
     """
     Mengembalikan peta perizinan untuk setiap kategori di sebuah workspace.
@@ -149,7 +256,6 @@ class UserPermissionsView(APIView):
 #     View kustom yang menggunakan serializer kita.
 #     """
 #     serializer_class = CustomTokenObtainPairSerializer
-
 
 
 # class WorkspaceGroupViewSet(viewsets.ModelViewSet):

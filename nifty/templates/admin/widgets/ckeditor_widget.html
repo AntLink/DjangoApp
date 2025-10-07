@@ -55,6 +55,7 @@
     styleTag.textContent = `.ckbox {--ckbox-action-h: ${hsl.h};--ckbox-action-s: ${hsl.s}%;}`;
 </script>
 <script>
+
     document.addEventListener('DOMContentLoaded', function () {
         const config = {{ widget.config_json|safe }};
         const editorId = '{{ widget.attrs.id }}';
@@ -76,8 +77,8 @@
         class TokenManager {
             constructor(config = {}) {
                 this.config = {
-                    tokenUrl: config.tokenUrl || '/api/auth/ckbox_login',
-                    refreshTokenUrl: config.refreshTokenUrl || '/api/auth/ckbox_token_refresh',
+                    tokenUrl: config.tokenUrl || '/api/auth/login',
+                    refreshTokenUrl: config.refreshTokenUrl || '/api/auth/token-refresh',
                     ...config
                 };
                 this.token = null;
@@ -580,6 +581,7 @@
                 image: {
                     toolbar: ['toggleImageCaption', 'imageTextAlternative', '|', 'imageStyle:inline', 'imageStyle:wrapText', 'imageStyle:breakText', '|', 'resizeImage', '|', 'ckboxImageEdit']
                 },
+
                 initialData: document.getElementById(editorId + '-editor').innerHTML,
                 licenseKey: config.license_key,
                 link: {
@@ -692,27 +694,30 @@
 
         // Initialize editor without CKBox
         function initializeEditorWithoutCKBox() {
-  console.log('Initializing CKEditor without CKBox...');
-  const { ClassicEditor, Essentials, Paragraph, Bold, Italic, Underline, Strikethrough, Code, Link, List, Indent, IndentBlock, BlockQuote, Heading, FontSize, FontFamily, FontColor, FontBackgroundColor, Alignment, Table, TableToolbar, ImageUpload, MediaEmbed, SourceEditing, Fullscreen, FindAndReplace, Typing } = window.CKEDITOR;
+            console.log('Initializing CKEditor without CKBox...');
+            const {ClassicEditor, Essentials, Paragraph, Bold, Italic, Underline, Strikethrough, Code, Link, List, Indent, IndentBlock, BlockQuote, Heading, FontSize, FontFamily, FontColor, FontBackgroundColor, Alignment, Table, TableToolbar, ImageUpload, MediaEmbed, SourceEditing, Fullscreen, FindAndReplace, Typing} = window.CKEDITOR;
 
-  const editorElement = document.querySelector(`#${editorId}-editor`);
-  if (!editorElement) return console.error('Editor element not found');
+            const editorElement = document.querySelector(`#${editorId}-editor`);
+            if (!editorElement) return console.error('Editor element not found');
 
-  ClassicEditor.create(editorElement, {
-    plugins: [Essentials, Paragraph, Bold, Italic, Underline, Strikethrough, Code, Link, List, Indent, IndentBlock, BlockQuote, Heading, FontSize, FontFamily, FontColor, FontBackgroundColor, Alignment, Table, TableToolbar, ImageUpload, MediaEmbed, SourceEditing, Fullscreen, FindAndReplace, Typing],
-    toolbar: ['heading','|','bold','italic','underline','strikethrough','|','fontSize','fontFamily','fontColor','fontBackgroundColor','|','link','bulletedList','numberedList','outdent','indent','|','blockQuote','insertTable','|','sourceEditing','fullscreen','|','findAndReplace'],
-    initialData: editorElement.innerHTML,
-    placeholder: config.placeholder,
-    typing:{transformations:{remove:['symbols','quotes','mathematicalSymbols','arrows','miscellaneous']}}
-  }).then(editor=>{
-    console.log('CKEditor initialized without CKBox');
-    window.currentEditor = editor;
-    editor.model.document.on('change:data',()=>updateInputValue(editor));
-    const inputElement=document.getElementById(inputId);
-    if(inputElement?.form) inputElement.form.addEventListener('submit',()=>updateInputValue(editor));
-    editor.editing.view.document.on('keydown',(event,data)=>{ if(data.domEvent.key===' ') data.domEvent.preventDefault(); },{priority:'high'});
-  }).catch(error=>console.error(`Error initializing CKEditor without CKBox: ${error.message}`, error));
-}
+            ClassicEditor.create(editorElement, {
+                plugins: [Essentials, Paragraph, Bold, Italic, Underline, Strikethrough, Code, Link, List, Indent, IndentBlock, BlockQuote, Heading, FontSize, FontFamily, FontColor, FontBackgroundColor, Alignment, Table, TableToolbar, ImageUpload, MediaEmbed, SourceEditing, Fullscreen, FindAndReplace, Typing],
+                toolbar: ['heading', '|', 'bold', 'italic', 'underline', 'strikethrough', '|', 'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|', 'link', 'bulletedList', 'numberedList', 'outdent', 'indent', '|', 'blockQuote', 'insertTable', '|', 'sourceEditing', 'fullscreen', '|', 'findAndReplace'],
+                initialData: editorElement.innerHTML,
+                placeholder: config.placeholder,
+                typing: {transformations: {remove: ['symbols', 'quotes', 'mathematicalSymbols', 'arrows', 'miscellaneous']}}
+            }).then(editor => {
+                console.log('CKEditor initialized without CKBox');
+                window.currentEditor = editor;
+                editor.model.document.on('change:data', () => updateInputValue(editor));
+                const inputElement = document.getElementById(inputId);
+                if (inputElement?.form) inputElement.form.addEventListener('submit', () => updateInputValue(editor));
+                editor.editing.view.document.on('keydown', (event, data) => {
+                    if (data.domEvent.key === ' ') data.domEvent.preventDefault();
+                }, {priority: 'high'});
+            }).catch(error => console.error(`Error initializing CKEditor without CKBox: ${error.message}`, error));
+        }
+
         // Initialize when the page is fully loaded
         initializeTokenManager();
         const token = tokenManager.getToken();

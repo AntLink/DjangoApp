@@ -219,15 +219,14 @@ class AssetViewSet(viewsets.ModelViewSet):
 
                     for size_name, format_ext in thumbnail_sizes.items():
                         # --- PERBAIKAN DIMULAI DI SINI ---
-                        # Periksa apakah size_name adalah 'default'
                         if size_name == 'default':
-                            # Gunakan ukuran tetap untuk 'default', misalnya 240px
-                            size_pixels = 240
-                        else:
-                            # Konversi ke integer untuk ukuran lainnya
-                            size_pixels = int(size_name)
+                            # Untuk 'default', gunakan URL file asli, tidak perlu membuat thumbnail baru
+                            image_urls[size_name] = request.build_absolute_uri(asset.file.url)
+                            continue  # Lewati ke iterasi berikutnya
                         # --- PERBAIKAN BERAKHIR DI SINI ---
 
+                        # Kode di bawah ini hanya dijalankan untuk '80', '160', '240'
+                        size_pixels = int(size_name)
                         thumb = img.copy()
                         thumb.thumbnail((size_pixels, size_pixels), PilImage.Resampling.LANCZOS)
 
@@ -540,8 +539,6 @@ class AssetViewSet(viewsets.ModelViewSet):
         else:
             return Response(response_data, status=status.HTTP_207_MULTI_STATUS)
 
-    # ... (aksi lainnya) ...
-
     @action(detail=True, methods=['get'], url_path=r'thumbs/(?P<dimensions>[\dx]+)\.(?P<frm>[\w]+)', permission_classes=[permissions.AllowAny])
     def thumbs(self, request, id=None, dimensions=None, frm=None):  # <-- UBAH pk MENJADI id
         """
@@ -729,7 +726,7 @@ class AssetViewSet(viewsets.ModelViewSet):
                         metadata={'metadataProcessingStatus': 'pending'}
                     )
                     # Proses metadata untuk aset baru (sinkron)
-                    self._process_metadata_sync(new_asset)
+                    self._process_metadata_sync(new_asset,self.request)
 
                 response_serializer = AssetSerializer(new_asset, context={'request': request})
                 return Response(response_serializer.data, status=status.HTTP_201_CREATED)
@@ -747,7 +744,7 @@ class AssetViewSet(viewsets.ModelViewSet):
                 asset.save()
 
                 # Proses metadata ulang
-                self._process_metadata_sync(asset)
+                self._process_metadata_sync(asset,self.request)
 
                 response_serializer = AssetSerializer(asset, context={'request': request})
                 return Response(response_serializer.data, status=status.HTTP_200_OK)
@@ -787,8 +784,10 @@ class AssetViewSet(viewsets.ModelViewSet):
 
         return image
 
-    def _process_metadata_sync(self, asset):
-        """Memproses metadata untuk aset secara sinkron (digunakan setelah edit)."""
+    def _process_metadata_sync(self, asset, request):
+        """
+        Memproses metadata untuk aset secara sinkron (digunakan setelah edit).
+        """
         try:
             file_path = asset.file.path
             with PilImage.open(file_path) as img:
@@ -810,8 +809,17 @@ class AssetViewSet(viewsets.ModelViewSet):
                 os.makedirs(image_dir, exist_ok=True)
                 image_urls = {}
                 thumbnail_sizes = {'80': 'webp', '160': 'webp', '240': 'webp', 'default': 'png'}
+
                 for size_name, format_ext in thumbnail_sizes.items():
-                    size_pixels = int(size_name) if size_name != 'default' else 240
+                    # --- PERBAIKAN DIMULAI DI SINI ---
+                    if size_name == 'default':
+                        # Untuk 'default', gunakan URL file asli
+                        image_urls[size_name] = request.build_absolute_uri(asset.file.url)
+                        continue  # Lewati ke iterasi berikutnya
+                    # --- PERBAIKAN BERAKHIR DI SINI ---
+
+                    # Kode di bawah ini hanya dijalankan untuk '80', '160', '240'
+                    size_pixels = int(size_name)
                     thumb = img.copy()
                     thumb.thumbnail((size_pixels, size_pixels), PilImage.Resampling.LANCZOS)
                     thumb_filename = f"{size_name}.{format_ext}"
@@ -819,6 +827,7 @@ class AssetViewSet(viewsets.ModelViewSet):
                     thumb.save(thumb_path, format_ext.upper() if format_ext != 'webp' else 'WEBP')
                     relative_path = os.path.relpath(thumb_path, settings.MEDIA_ROOT)
                     image_urls[size_name] = f"{settings.MEDIA_URL}{relative_path.replace(os.sep, '/')}"
+
                 metadata_to_update['imageUrls'] = image_urls
 
             asset.metadata.update(metadata_to_update)
@@ -828,7 +837,6 @@ class AssetViewSet(viewsets.ModelViewSet):
             asset.metadata.update({'metadataProcessingStatus': 'failed', 'error': str(e)})
             asset.save(update_fields=['metadata', 'last_modified_at'])
 
-        # ... (aksi lainnya) ...
 
     @action(detail=True, methods=['patch'])
     def metadata(self, request, pk=None):

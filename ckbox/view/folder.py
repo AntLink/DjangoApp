@@ -1,10 +1,13 @@
 from rest_framework import permissions
 
-from ..serializer.folder import *
+from ..serializer.folder import FolderSerializer, FolderCreateSerializer
 from ..permissions import IsWorkspaceMember
+from ..models import Asset, Folder
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+
 
 class FolderViewSet(viewsets.ModelViewSet):
     serializer_class = FolderSerializer
@@ -37,7 +40,49 @@ class FolderViewSet(viewsets.ModelViewSet):
             return FolderCreateSerializer
         return FolderSerializer
 
+    def _get_all_folder_ids(self, folder):
+        """
+        Metode helper untuk mendapatkan ID folder dan semua subfoldernya secara rekursif.
+        """
+        ids = [str(folder.id)]
+        # Gunakan prefetch_related untuk efisiensi jika sudah di-get_queryset
+        for child in folder.children.all():
+            ids.extend(self._get_all_folder_ids(child))
+        return ids
 
+    def perform_destroy(self, instance):
+        """
+        Override perform_destroy untuk memindahkan semua aset di dalam folder
+        dan subfoldernya ke trash, serta mengubah category_id-nya ke kategori
+        dari folder yang dihapus.
+        """
+        # 1. Dapatkan ID kategori dari folder yang akan dihapus
+        #    Gunakan .category_id untuk menghindari error jika kategori tidak ada (None)
+        target_category_id = instance.category_id
+
+        # 2. Dapatkan semua ID folder yang akan terpengaruh
+        folder_ids_to_trash = self._get_all_folder_ids(instance)
+
+        if folder_ids_to_trash:
+            # 3. Persiapkan data untuk update
+            update_data = {
+                'is_trashed': True,
+            }
+
+            # Hanya update category_id jika folder induk memiliki kategori
+            if target_category_id:
+                update_data['category_id'] = target_category_id
+
+            # 4. Pindahkan semua aset di dalam folder-folder tersebut ke trash
+            #    dan ubah kategorinya dalam satu operasi database yang efisien
+            updated_count = Asset.objects.filter(
+                folder_id__in=folder_ids_to_trash
+            ).update(**update_data)
+
+            print(f"Moved {updated_count} assets to trash and updated their category from folder {instance.name} and its subfolders.")
+
+        # 5. Lanjutkan proses penghapusan folder itu sendiri
+        super().perform_destroy(instance)
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -52,8 +97,6 @@ class FolderViewSet(viewsets.ModelViewSet):
         obj = get_object_or_404(Folder, pk=self.kwargs['pk'])
         return obj
 
-
-
     @action(detail=True, methods=['get'], url_path='branch')
     def branch(self, request, pk=None, depth=1):
         """
@@ -63,13 +106,10 @@ class FolderViewSet(viewsets.ModelViewSet):
         """
         # 1. Ambil folder target
         folder = self.get_object()
-
         # 2. Bangun jalur dari root ke folder target
         path_to_root = folder.get_path()
-
         # 3. Ambil anak-anak folder hingga kedalaman tertentu
         children_at_depth = self._get_children_at_depth(folder, depth)
-
         # 4. Gabungkan jalur dan anak-anak
         # Penting: anak-anak dari folder target tidak boleh duplikasi dengan folder itu sendiri
         final_list = path_to_root + [f for f in children_at_depth if f != folder]

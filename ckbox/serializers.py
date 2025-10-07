@@ -5,6 +5,50 @@ from .models import *
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
+# app/serializers.py
+
+import jwt
+from django.conf import settings
+import datetime
+
+class CKBoxAuthSerializer:
+    """
+    Serializer untuk membuat payload JWT CKBox.
+    Tidak menerima data, tapi menghasilkan payload berdasarkan request.
+    """
+
+    def __init__(self, request):
+        self.request = request
+        self.user = request.user
+
+    def get_payload(self):
+        """Membuat payload untuk token CKBox."""
+        # Tentukan role berdasarkan user
+        role = "superadmin" if self.user.is_superuser and self.user.is_staff else "admin"
+
+        # Ambil workspace yang dimiliki user
+        workspaces = [
+            str(w) for w in Workspace.objects.filter(owner=self.user).values_list('id', flat=True)
+        ]
+
+        # 🔹 Ambil CKBox AUD dari database
+        env_config = EnvironmentConfig.objects.first()
+        aud = env_config.ckbox_project_id if env_config and env_config.ckbox_project_id else "ckbox"
+
+        payload = {
+            "aud": aud,
+            "sub": str(self.user.id),
+            "iat": datetime.datetime.utcnow(),
+            "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=30),
+            "auth": {
+                "ckbox": {
+                    "role": role,
+                    "workspaces": workspaces
+                }
+            }
+        }
+        return payload
+
 class CKBoxTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     @classmethod

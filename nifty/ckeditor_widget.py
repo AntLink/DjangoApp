@@ -20,7 +20,7 @@ class CKEditorWidget(Widget):
         js = (
             'niftyv2/vendors/ckeditor5/ckeditor5-custom.js',
             'niftyv2/vendors/ckeditor5/premium-features.js',
-            'niftyv2/vendors/ckeditor5/ckbox-custom.js',
+            'niftyv2/vendors/ckeditor5/ckbox-2.js',
         )
 
     def __init__(self, attrs=None, config=None):
@@ -36,8 +36,8 @@ class CKEditorWidget(Widget):
             'cloud_services_api_url': 'http://127.0.0.1:8090/api/',
             'placeholder': 'Type or paste your content here!',
             'license_key': '-',
-            'tokenUrl': '/api/auth/ckbox_login',
-            'refreshTokenUrl': '/api/auth/ckbox_token_refresh',
+            'tokenUrl': '/api/auth/login',
+            'refreshTokenUrl': '/api/auth/token-refresh',
         }
 
         # Gabungkan dengan konfigurasi kustom jika ada

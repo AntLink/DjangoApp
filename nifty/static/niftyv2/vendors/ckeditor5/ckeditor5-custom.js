@@ -24870,7 +24870,7 @@
         async _authorizePrivateCategoriesAccess(e) {
             const t = this.editor.config.get("ckbox.serviceOrigin");
 
-            await fetch(`${t}/auth/authorizeprivateaccess`, {
+            await fetch(`${t}/auth/authorize-private-access`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -24962,7 +24962,15 @@
         init() {
             const e = this.editor;
             this._shouldBeInitialised() && (this._checkImagePlugins(), qk() && e.commands.add("ckbox", new Vk(e)), async function (e) {
-                const t = e.plugins.get(Mk), i = e.config.get("ckbox.serviceOrigin"), n = new URL("/api/auth/permissions", i), {value: s} = await t.getToken(), o = await Tk({url: n, authorization: 'Bearer ' + s, "Content-Type": "application/json", signal: (new AbortController).signal});
+                const t = e.plugins.get(Mk), 
+                    i = e.config.get("ckbox.serviceOrigin"), 
+                    n = new URL("/api/auth/permissions", i),
+                    {value: s} = await t.getToken(), 
+                    o = await Tk({
+                        url: n,
+                        authorization: 'Bearer ' + s,
+                        "Content-Type": "application/json", signal: (new AbortController).signal
+                    });
                 return Object.values(o).some(e => e["asset:create"])
             }(e).then(e => {
                 e || this._blockImageCommands();
