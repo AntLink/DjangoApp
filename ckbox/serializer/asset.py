@@ -4,6 +4,23 @@ import os
 from rest_framework import serializers
 from ..models import Asset, Workspace, Category, Folder
 
+class AssetDeleteSerializer(serializers.Serializer):
+    """Serializer untuk menerima daftar ID aset yang akan dihapus permanen."""
+    ids = serializers.ListField(child=serializers.CharField())
+
+class ImageTransformationsSerializer(serializers.Serializer):
+    """Serializer untuk berbagai jenis transformasi gambar."""
+    crop = serializers.DictField(child=serializers.IntegerField(), required=False)
+    resize = serializers.DictField(child=serializers.IntegerField(), required=False)
+    rotate = serializers.DictField(child=serializers.IntegerField(), required=False)
+    flip = serializers.DictField(child=serializers.BooleanField(), required=False)
+
+class EditImageSerializer(serializers.Serializer):
+    """Serializer untuk payload endpoint editImage."""
+    action = serializers.ChoiceField(choices=['create', 'replace'])
+    assetName = serializers.CharField(max_length=255)
+    transformations = ImageTransformationsSerializer()
+
 class NamesExistTargetSerializer(serializers.Serializer):
     """Serializer untuk objek 'target' dalam payload namesExist."""
     folderId = serializers.UUIDField(required=False)

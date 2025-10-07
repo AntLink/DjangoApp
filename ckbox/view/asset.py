@@ -10,17 +10,19 @@ from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 import numpy as np
-from django.db.models import Q
+from io import BytesIO
+from django.core.files.base import ContentFile
 
 # Impor library untuk pemrosesan gambar
-from PIL import Image as PilImage
+from PIL import Image as PilImage, ImageOps
 from blurhash import encode
 
 from ..models import Asset, Workspace, Category, Folder, RecentAsset
 from ..serializer.asset import (
-    AssetSerializer, AssetCreateSerializer, AssetUpdateSerializer,NamesExistSerializer,
+    AssetSerializer, AssetCreateSerializer, AssetUpdateSerializer, NamesExistSerializer, EditImageSerializer,
     AssetMetadataUpdateSerializer, AssetBulkActionSerializer, RestoreValidateSerializer,
-    CategoryTargetSerializer, FolderTargetSerializer, AssetNamesExistSerializer, AssetRestoreSerializer
+    CategoryTargetSerializer, FolderTargetSerializer, AssetNamesExistSerializer, AssetRestoreSerializer,
+    AssetDeleteSerializer
 )
 
 
@@ -474,30 +476,73 @@ class AssetViewSet(viewsets.ModelViewSet):
             final_results = {k: (200 if v == 204 else v) for k, v in results.items()}
             return Response(final_results, status=status.HTTP_207_MULTI_STATUS)
 
-    # ... (aksi lainnya) ...
-
-
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['post'], url_path='delete')
     def delete(self, request):
-        serializer = AssetBulkActionSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        asset_ids = serializer.validated_data['ids']
-        assets_to_delete = Asset.objects.filter(id__in=asset_ids, workspace__memberships__user=request.user, is_trashed=True)
+        """
+        Delete multiple assets permanently from trash and their files from storage.
+        """
+        # 1. Validasi payload secara manual (harus berupa list)
+        asset_ids = request.data
+        if not isinstance(asset_ids, list):
+            return Response({"detail": "Invalid data. Expected a list of asset IDs."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not asset_ids:
+            return Response({"detail": "No asset IDs provided."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 2. Cari semua aset yang akan dihapus (harus ada di trash dan dimiliki user)
+        assets_to_delete = Asset.objects.filter(
+            id__in=asset_ids,
+            is_trashed=True,
+            workspace__memberships__user=request.user
+        )
+
+        # 3. Kumpulkan ID aset yang berhasil ditemukan
+        found_ids = {str(asset.id) for asset in assets_to_delete}
+
+        # 4. Hapus file dari storage (file utama dan thumbnail)
         for asset in assets_to_delete:
-            asset.file.delete(save=False)
-        count, _ = assets_to_delete.delete()
-        if count == len(asset_ids):
+            try:
+                # Hapus file utama
+                if asset.file and asset.file.name:
+                    asset.file.delete(save=False)
+
+                # Hapus thumbnail
+                image_urls = asset.metadata.get('imageUrls', {})
+                if image_urls:
+                    for url in image_urls.values():
+                        try:
+                            # Konversi URL menjadi path file sistem
+                            file_path = url.replace(settings.MEDIA_URL, settings.MEDIA_ROOT)
+                            if os.path.exists(file_path):
+                                os.remove(file_path)
+                        except Exception as e:
+                            # Log error jika thumbnail gagal dihapus, tapi jangan gagalkan proses
+                            print(f"Warning: Could not delete thumbnail {url}: {e}")
+            except Exception as e:
+                # Log error jika file utama gagal dihapus
+                print(f"Warning: Could not delete file for asset {asset.id}: {e}")
+
+        # 5. Hapus record dari database dalam satu transaksi
+        with transaction.atomic():
+            count, _ = assets_to_delete.delete()
+
+        # 6. Buat respons
+        response_data = {}
+        for asset_id in asset_ids:
+            if asset_id in found_ids:
+                response_data[asset_id] = 204  # Success
+            else:
+                response_data[asset_id] = 404  # Not Found (not in trash or not owned)
+
+        # 7. Tentukan status code HTTP
+        if all(status == 204 for status in response_data.values()):
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
-            response_data = {asset_id: 404 for asset_id in asset_ids if not Asset.objects.filter(id=asset_id).exists()}
             return Response(response_data, status=status.HTTP_207_MULTI_STATUS)
 
-    @action(
-        detail=True,
-        methods=['get'],
-        url_path=r'thumbs/(?P<dimensions>[\dx]+)\.(?P<frm>[\w]+)',
-        permission_classes=[permissions.AllowAny]
-    )
+    # ... (aksi lainnya) ...
+
+    @action(detail=True, methods=['get'], url_path=r'thumbs/(?P<dimensions>[\dx]+)\.(?P<frm>[\w]+)', permission_classes=[permissions.AllowAny])
     def thumbs(self, request, id=None, dimensions=None, frm=None):  # <-- UBAH pk MENJADI id
         """
         Mengambil thumbnail gambar dengan ukuran tertentu.
@@ -621,7 +666,169 @@ class AssetViewSet(viewsets.ModelViewSet):
 
         return Response(result)
 
-    # ... (aksi lainnya) ...
+    @action(detail=True, methods=['post'], url_path='editImage')
+    def edit_image(self, request, id=None):
+        """
+        Edits an image using transformations and can create a new asset or replace the original.
+        """
+        asset = self.get_object()
+
+        if not asset.mime_type.startswith('image/'):
+            return Response({"detail": "Asset is not an image."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 1. Validasi payload
+        serializer = EditImageSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        action = serializer.validated_data['action']
+        new_asset_name = serializer.validated_data['assetName']
+        transformations = serializer.validated_data['transformations']
+
+        try:
+            # 2. Buka gambar asli
+            original_image = PilImage.open(asset.file.path)
+            edited_image = self._apply_transformations(original_image, transformations)
+
+            # 3. Siapkan file baru di memori
+            new_extension = asset.extension
+            new_filename = f"{new_asset_name}.{new_extension}"
+            buffer = BytesIO()
+
+            # --- PERBAIKAN FORMAT DAN TRANSPARANSI ---
+            # Buat penerjemah dari ekstensi ke format Pillow yang benar
+            format_mapping = {
+                'JPG': 'JPEG',
+                'TIF': 'TIFF',
+            }
+            # Gunakan format yang sudah diterjemahkan, atau gunakan aslinya jika tidak ada di peta
+            save_format = format_mapping.get(new_extension.upper(), new_extension.upper())
+
+            # Jika formatnya JPEG, konversi gambar ke RGB untuk menghapus transparansi
+            if save_format == 'JPEG':
+                if edited_image.mode in ('RGBA', 'LA', 'P'):
+                    edited_image = edited_image.convert('RGB')
+
+            # Simpan gambar yang sudah diedit ke buffer
+            edited_image.save(buffer, format=save_format)
+            buffer.seek(0)
+            new_file = ContentFile(buffer.getvalue(), name=new_filename)
+
+            # 4. Proses berdasarkan aksi ('create' atau 'replace')
+            if action == 'create':
+                with transaction.atomic():
+                    new_asset = Asset.objects.create(
+                        name=new_asset_name,
+                        extension=new_extension,
+                        size=new_file.size,
+                        mime_type=asset.mime_type,  # Mime type tetap sama
+                        file=new_file,
+                        workspace=asset.workspace,
+                        folder=asset.folder,
+                        category=asset.category,
+                        uploaded_by=request.user,
+                        metadata={'metadataProcessingStatus': 'pending'}
+                    )
+                    # Proses metadata untuk aset baru (sinkron)
+                    self._process_metadata_sync(new_asset)
+
+                response_serializer = AssetSerializer(new_asset, context={'request': request})
+                return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
+            else:  # action == 'replace'
+                # Hapus file lama
+                if asset.file:
+                    asset.file.delete(save=False)
+
+                # Update aset yang ada
+                asset.file = new_file
+                asset.name = new_asset_name
+                asset.size = new_file.size
+                asset.metadata = {'metadataProcessingStatus': 'pending'}
+                asset.save()
+
+                # Proses metadata ulang
+                self._process_metadata_sync(asset)
+
+                response_serializer = AssetSerializer(asset, context={'request': request})
+                return Response(response_serializer.data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            # Cetak traceback lengkap untuk debugging yang lebih baik
+            import traceback
+            traceback.print_exc()
+            return Response({"detail": f"Error processing image: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # --- Helper Methods ---
+
+    def _apply_transformations(self, image, transformations):
+        """Menerapkan transformasi ke objek gambar Pillow."""
+        # Urutan: flip -> rotate -> crop -> resize
+        if transformations.get('flip'):
+            flip_data = transformations['flip']
+            if flip_data.get('x', False):
+                image = image.transpose(PilImage.Transpose.FLIP_LEFT_RIGHT)
+            if flip_data.get('y', False):
+                image = image.transpose(PilImage.Transpose.FLIP_TOP_BOTTOM)
+
+        if transformations.get('rotate'):
+            angle = transformations['rotate'].get('angle', 0)
+            if angle != 0:
+                image = image.rotate(angle, expand=True, fillcolor='white')  # Tambahkan background putih
+
+        if transformations.get('crop'):
+            crop_data = transformations['crop']
+            x, y, width, height = crop_data['x'], crop_data['y'], crop_data['width'], crop_data['height']
+            image = image.crop((x, y, x + width, y + height))
+
+        if transformations.get('resize'):
+            resize_data = transformations['resize']
+            width, height = resize_data['width'], resize_data['height']
+            image = image.resize((width, height), PilImage.Resampling.LANCZOS)
+
+        return image
+
+    def _process_metadata_sync(self, asset):
+        """Memproses metadata untuk aset secara sinkron (digunakan setelah edit)."""
+        try:
+            file_path = asset.file.path
+            with PilImage.open(file_path) as img:
+                width, height = img.size
+                metadata_to_update = {'width': width, 'height': height, 'metadataProcessingStatus': 'success'}
+
+                # Generate BlurHash
+                if img.mode != 'RGB':
+                    img = img.convert('RGB')
+                img_copy = img.copy()
+                img_copy.thumbnail((32, 32))
+                pixels = np.array(img_copy)
+                blurhash_str = encode(pixels, 4, 3)
+                metadata_to_update['blurHash'] = blurhash_str
+
+                # Buat ulang thumbnail
+                asset_dir = os.path.dirname(file_path)
+                image_dir = os.path.join(asset_dir, 'images')
+                os.makedirs(image_dir, exist_ok=True)
+                image_urls = {}
+                thumbnail_sizes = {'80': 'webp', '160': 'webp', '240': 'webp', 'default': 'png'}
+                for size_name, format_ext in thumbnail_sizes.items():
+                    size_pixels = int(size_name) if size_name != 'default' else 240
+                    thumb = img.copy()
+                    thumb.thumbnail((size_pixels, size_pixels), PilImage.Resampling.LANCZOS)
+                    thumb_filename = f"{size_name}.{format_ext}"
+                    thumb_path = os.path.join(image_dir, thumb_filename)
+                    thumb.save(thumb_path, format_ext.upper() if format_ext != 'webp' else 'WEBP')
+                    relative_path = os.path.relpath(thumb_path, settings.MEDIA_ROOT)
+                    image_urls[size_name] = f"{settings.MEDIA_URL}{relative_path.replace(os.sep, '/')}"
+                metadata_to_update['imageUrls'] = image_urls
+
+            asset.metadata.update(metadata_to_update)
+            asset.save(update_fields=['metadata', 'last_modified_at'])
+        except Exception as e:
+            print(f"ERROR processing metadata for edited asset {asset.id}: {e}")
+            asset.metadata.update({'metadataProcessingStatus': 'failed', 'error': str(e)})
+            asset.save(update_fields=['metadata', 'last_modified_at'])
+
+        # ... (aksi lainnya) ...
 
     @action(detail=True, methods=['patch'])
     def metadata(self, request, pk=None):

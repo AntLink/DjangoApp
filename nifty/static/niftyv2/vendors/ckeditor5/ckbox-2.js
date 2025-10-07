@@ -18903,8 +18903,6 @@
             return e.patch(o(801) + t, n)
         }, uploadAsset: () => {
             const t = wS;
-            console.log(t(1147));
-            console.log(t(814));
             return e[t(1147)](t(814))
         }, getAssetDownloadUrl: e => {
             const t = wS, n = new URL(e);
@@ -23849,18 +23847,80 @@
                 })) ? await (null == n ? void 0 : n({assets: t})) : null == o || o({assets: t, conflictData: i[a(1184)]})
             }, isCheckingForConflicts: t
         }
-    }, DELETE = () => {
-        const e = qE, {t: t} = Hh(), {isDeleteDialogOpen: n, openDeleteDialog: o} = TS(), {isAnySelected: r, selectedAssets: a} = LS(), {checkPermissionForAnyCategory: i} = HS(), {mutateAsync: l, isPending: s} = X_(), c = i("asset:create"), {checkForConflicts: u, isCheckingForConflicts: d} = ER();
-
+    },DELETE = () => {
+      const e = qE,
+      { t: t } = Hh(),
+      { isDeleteDialogOpen: n, openDeleteDialog: o } = TS(),
+      { isAnySelected: r, selectedAssets: a } = LS(),
+      { checkPermissionForAnyCategory: i } = HS(),
+      { mutateAsync: l, isPending: s } = X_(),
+      c = i("asset:delete"),
+      { pushSuccessNotification, pushErrorNotification } = t_(),  // ✅ ambil notifikasi sukses & error
+      { checkForConflicts: u, isCheckingForConflicts: d } = ER();
         return c ? h[e(1079)](Td, {
             disabled: !r,
             icon: 'DeleteOutlineOutlined',
-            label: "Delete",
+            label: "Delete Permanently",
             loading: s,
             onClick: async () => {
-                console.log('ID DELETE', a);
+                try {
+                    const ckboxData = localStorage.getItem('ckbox_token');
+                    if (!ckboxData) throw new Error("CKBox token not found in localStorage");
+
+                    const token = JSON.parse(ckboxData).token;
+                    if (!token) throw new Error("Invalid CKBox token format");
+
+                    const assetIds = a.map(item => item.id);
+                    const count = assetIds.length;
+
+                    const res = await fetch("/api/assets/delete", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`
+                        },
+                        body: JSON.stringify(assetIds)
+                    });
+
+                    if (!res.ok) {
+                        const errorText = await res.text();
+                        console.error("Server responded with error:", res.status, errorText);
+                        throw new Error(`Delete failed with status: ${res.status}`);
+                    }
+
+                    // Jika backend tidak mengembalikan data (204 No Content)
+                    if (res.status !== 204) {
+                        const data = await res.json();
+                        console.log("Delete successful:", data);
+                    }
+
+                    // ✅ Refresh data CKBox agar trash langsung update
+                    if (typeof l === 'function') {
+                        await l();
+                    }
+
+                    // ✅ Notifikasi sukses (jumlah item)
+                    pushSuccessNotification(
+                        t("%d asset permanently deleted.", {
+                            plural: count,
+                            values: [count]
+                        })
+                    );
+
+                } catch (err) {
+                    console.error("Delete failed:", err);
+
+                    // ✅ Notifikasi gagal
+                    pushErrorNotification(
+                        t("Failed to delete selected assets.")
+                    );
+                }
             }
         }) : null;
+
+
+
+
     }, SR = () => {
         const e = qE, {t: t} = Hh(), {isRestoreDialogOpen: n, openRestoreDialog: o} = TS(), {isAnySelected: r, selectedAssets: a} = LS(), {checkPermissionForAnyCategory: i} = HS(), {mutateAsync: l, isPending: s} = X_(), c = i("asset:create"), {checkForConflicts: u, isCheckingForConflicts: d} = ER();
         return c ? h[e(1079)](Td, {
