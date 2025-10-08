@@ -27,6 +27,42 @@ class AdminCategoryViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+    def perform_destroy(self, instance):
+        """
+        Override perform_destroy untuk:
+        1. Memindahkan semua aset yang terkait (langsung atau lewat folder) ke trash.
+        2. Menghapus folder-folder yang kosong.
+        3. Menghapus kategori itu sendiri.
+        """
+        # 1. Cari semua folder yang menggunakan kategori ini
+        folders_to_delete = Folder.objects.filter(category=instance)
+        folder_ids = [f.id for f in folders_to_delete]
+
+        # --- PERUBAHAN KRUSIAL DIMULAI DI SINI ---
+        # 2. Cari semua aset yang TERHUBUNG LANGSUNG ke kategori ini
+        assets_directly_in_category = Asset.objects.filter(category=instance)
+
+        # 3. Cari semua aset yang berada di dalam folder-folder tersebut
+        assets_in_folders = Asset.objects.filter(folder_id__in=folder_ids)
+
+        # 4. Gabungkan kedua set aset
+        all_related_assets = assets_directly_in_category | assets_in_folders
+        # --- AKHIR PERUBAHAN KRUSIAL ---
+
+        if all_related_assets.exists():
+            # 5. Pindahkan SEMUA aset yang terkait ke trash
+            count = all_related_assets.update(is_trashed=True)
+            print(f"Moved {count} assets to trash from category '{instance.name}' and its folders.")
+
+        # 6. Hapus semua folder yang terkait (sekarang sudah kosong)
+        if folder_ids:
+            folders_to_delete.delete()
+            print(f"Deleted {len(folder_ids)} empty folders from category '{instance.name}'.")
+
+        # 7. Lanjutkan dengan penghapusan kategori itu sendiri
+        super().perform_destroy(instance)
+
+
     def perform_create(self, serializer):
         """
         Dipanggil saat category baru dibuat.
@@ -39,7 +75,6 @@ class AdminCategoryViewSet(viewsets.ModelViewSet):
             raise serializers.ValidationError("workspaceId query parameter is required.")
 
         try:
-            from .models import Workspace
             workspace = Workspace.objects.get(id=workspace_id)
         except Workspace.DoesNotExist:
             raise serializers.ValidationError(f"Workspace with id '{workspace_id}' not found.")

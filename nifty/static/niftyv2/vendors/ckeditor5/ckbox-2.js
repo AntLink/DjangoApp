@@ -18912,7 +18912,7 @@
             return e.get(n(801) + t)
         }, updateAssetLastUse: (t, n) => {
             const o = wS;
-            return e[o(426)](o(659), t, {workspaceId: n})
+            return e[o(426)](o(659) + "/update", t , {workspaceId: n})
         }, assetsNamesExist: (t, n, o) => {
             const r = wS;
             return e[r(846)](r(1369), {target: t, names: n}, {workspaceId: o})

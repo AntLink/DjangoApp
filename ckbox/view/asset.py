@@ -12,12 +12,14 @@ from rest_framework.pagination import PageNumberPagination
 import numpy as np
 from io import BytesIO
 from django.core.files.base import ContentFile
+import shutil
 
 # Impor library untuk pemrosesan gambar
 from PIL import Image as PilImage, ImageOps
 from blurhash import encode
 
 from ..models import Asset, Workspace, Category, Folder, RecentAsset
+from ..pagination import CustomPagination
 from ..serializer.asset import (
     AssetSerializer, AssetCreateSerializer, AssetUpdateSerializer, NamesExistSerializer, EditImageSerializer,
     AssetMetadataUpdateSerializer, AssetBulkActionSerializer, RestoreValidateSerializer,
@@ -26,22 +28,6 @@ from ..serializer.asset import (
 )
 
 
-# --- Pagination Kustom ---
-class CustomPagination(PageNumberPagination):
-    page_size = 50
-    page_size_query_param = 'limit'
-    max_page_size = 500
-
-    def get_paginated_response(self, data):
-        return Response({
-            'totalCount': self.page.paginator.count,
-            'offset': (self.page.number - 1) * self.page_size,
-            'limit': self.page_size,
-            'items': data
-        })
-
-
-# --- ViewSet Utama ---
 class AssetViewSet(viewsets.ModelViewSet):
     """
     ViewSet untuk mengelola aset, tanpa Celery (sinkron).
@@ -111,8 +97,7 @@ class AssetViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """
-        Upload an asset secara sinkron (tanpa Celery).
-        PERINGATAN: Metode ini akan memblokir request sampai pemrosesan selesai.
+        Upload an asset. File akan disimpan di dalam folder unik berdasarkan ID.
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -145,7 +130,6 @@ class AssetViewSet(viewsets.ModelViewSet):
         if not workspace.memberships.filter(user=request.user).exists():
             return Response({"detail": "Workspace not found or you do not have access."}, status=status.HTTP_404_NOT_FOUND)
 
-        # Ekstrak informasi file
         original_filename = file_obj.name
         name, extension = os.path.splitext(original_filename)
         extension = extension.lstrip('.').lower()
@@ -153,103 +137,22 @@ class AssetViewSet(viewsets.ModelViewSet):
         size = file_obj.size
 
         with transaction.atomic():
+            # Django akan otomatis memanggil get_asset_upload_path untuk menentukan lokasi file
             asset = Asset.objects.create(
-                name=name,
-                extension=extension,
-                size=size,
-                mime_type=mime_type,
-                file=file_obj,
-                workspace=workspace,
-                folder=folder,
-                category=category,
-                uploaded_by=request.user,
-                metadata={'metadataProcessingStatus': 'pending'}
+                name=name, extension=extension, size=size, mime_type=mime_type,
+                file=file_obj, workspace=workspace, folder=folder, category=category,
+                uploaded_by=request.user, metadata={'metadataProcessingStatus': 'pending'}
             )
 
-        # --- AWAL PROSES PEMROSESAN SINKRON ---
-        # Semua kode di bawah ini akan memblokir respons hingga selesai
-        try:
-            file_path = asset.file.path
-            asset_dir = os.path.dirname(file_path)
-            image_dir = os.path.join(asset_dir, 'images')
-            os.makedirs(image_dir, exist_ok=True)
+        # Panggil helper untuk memproses metadata
+        if asset.mime_type.startswith('image/'):
+            # Panggil helper untuk memproses metadata hanya untuk gambar
+            self._process_metadata_sync(asset, request)
+        else:
+            # Jika bukan gambar, cukup tandai status sebagai sukses tanpa pemrosesan
+            asset.metadata.update({'metadataProcessingStatus': 'success'})
+            asset.save(update_fields=['metadata'])
 
-            metadata_to_update = {'metadataProcessingStatus': 'success'}
-
-            if asset.mime_type.startswith('image/'):
-                with PilImage.open(file_path) as img:
-                    width, height = img.size
-                    metadata_to_update.update({'width': width, 'height': height})
-
-                    # --- PERBAIKAN UNTUK BLURHASH ---
-                    # 1. Pastikan gambar dalam mode RGB untuk mencegah error
-                    if img.mode != 'RGB':
-                        img = img.convert('RGB')
-
-                    # 2. Coba buat BlurHash
-                    try:
-                        img_copy = img.copy()
-                        img_copy.thumbnail((32, 32))
-
-                        if img_copy.mode != 'RGB':
-                            img_copy = img_copy.convert('RGB')
-
-                        # 3. KONVERSI IMAGE PILLOW MENJADI ARRAY NUMPY
-                        pixels = np.array(img_copy)
-
-                        # 4. ENCODE MENGGUNAKAN ARRAY NUMPY
-                        # Gunakan argumen posisi untuk versi library lama
-                        blurhash_str = encode(pixels, 4, 3)  # <-- PERUBAHAN KRUSIAL DI SINI
-                        metadata_to_update['blurHash'] = blurhash_str
-
-                        # Hapus error field jika berhasil
-                        if 'blurHashError' in metadata_to_update:
-                            del metadata_to_update['blurHashError']
-
-                    except Exception as e:
-                        print(f"ERROR generating BlurHash for asset {asset.id}: {e}")
-                        import traceback
-                        traceback.print_exc()
-                        metadata_to_update['blurHashError'] = str(e)
-                    # --- AKHIR PERBAIKAN ---
-
-                    # Buat Thumbnail dan URL
-                    image_urls = {}
-                    thumbnail_sizes = {'80': 'webp', '160': 'webp', '240': 'webp', 'default': 'png'}
-
-                    for size_name, format_ext in thumbnail_sizes.items():
-                        # --- PERBAIKAN DIMULAI DI SINI ---
-                        if size_name == 'default':
-                            # Untuk 'default', gunakan URL file asli, tidak perlu membuat thumbnail baru
-                            image_urls[size_name] = request.build_absolute_uri(asset.file.url)
-                            continue  # Lewati ke iterasi berikutnya
-                        # --- PERBAIKAN BERAKHIR DI SINI ---
-
-                        # Kode di bawah ini hanya dijalankan untuk '80', '160', '240'
-                        size_pixels = int(size_name)
-                        thumb = img.copy()
-                        thumb.thumbnail((size_pixels, size_pixels), PilImage.Resampling.LANCZOS)
-
-                        thumb_filename = f"{size_name}.{format_ext}"
-                        thumb_path = os.path.join(image_dir, thumb_filename)
-                        thumb.save(thumb_path, format_ext.upper() if format_ext != 'webp' else 'WEBP')
-
-                        relative_path = os.path.relpath(thumb_path, settings.MEDIA_ROOT)
-                        image_urls[size_name] = f"{settings.MEDIA_URL}{relative_path.replace(os.sep, '/')}"
-
-                    metadata_to_update['imageUrls'] = image_urls
-
-            # Update metadata dengan hasil pemrosesan
-            asset.metadata.update(metadata_to_update)
-            asset.save(update_fields=['metadata', 'last_modified_at'])
-
-        except Exception as e:
-            # Jika ada error, tandai status sebagai gagal
-            asset.metadata.update({'metadataProcessingStatus': 'failed', 'error': str(e)})
-            asset.save(update_fields=['metadata', 'last_modified_at'])
-        # --- AKHIR PROSES PEMROSESAN SINKRON ---
-
-        # Karena proses sudah selesai, respons akan langsung berisi data lengkap
         read_serializer = AssetSerializer(asset, context={'request': request})
         return Response(read_serializer.data, status=status.HTTP_201_CREATED)
 
@@ -314,10 +217,9 @@ class AssetViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'], url_path='restore/validate')
     def restore_validate(self, request):
         """
-        Validates whether the specified assets in the trash bin can be restored,
-        providing detailed information for each asset.
+        Validates whether the specified assets in the trash bin can be restored.
         """
-        # 1. Ambil dan validasi workspaceId
+        # 1. Validasi workspaceId
         workspace_id = request.query_params.get('workspaceId')
         if not workspace_id:
             return Response({"detail": "workspaceId query parameter is required."}, status=status.HTTP_400_BAD_REQUEST)
@@ -330,64 +232,77 @@ class AssetViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         asset_ids = serializer.validated_data['assetsIds']
 
-        # 3. Ambil semua aset yang ada di trash dan cocok dengan ID yang diminta
-        trashed_assets_map = {
-            str(asset.id): asset for asset in Asset.objects.filter(
-                id__in=asset_ids,
-                is_trashed=True,
-                workspace_id=workspace_id
-            ).select_related('category', 'folder')
-        }
+        # 3. Ambil semua objek yang relevan
+        trashed_assets_map = {str(asset.id): asset for asset in Asset.objects.filter(id__in=asset_ids, is_trashed=True, workspace_id=workspace_id)}
+        categories_map = {str(cat.id): cat for cat in Category.objects.filter(id__in=[a.category_id for a in trashed_assets_map.values() if a.category_id], workspace_id=workspace_id)}
+        folders_map = {str(fol.id): fol for fol in Folder.objects.filter(id__in=[a.folder_id for a in trashed_assets_map.values() if a.folder_id], workspace_id=workspace_id)}
 
         response_map = {}
 
         for asset_id in asset_ids:
             asset = trashed_assets_map.get(asset_id)
 
-            # Default status jika aset tidak ditemukan
-            validation_status = {
-                "sourceExists": False,
-                "hasNameConflict": False,
-                "isExtensionAllowed": False
+            # Default response jika aset tidak ditemukan
+            if not asset:
+                response_map[asset_id] = {
+                    "sourceExists": False,
+                    "hasNameConflict": False,
+                    "isExtensionAllowed": False
+                }
+                continue
+
+            # --- PERUBAHAN KRUSIAL: CEK LOKASI ASAL ---
+            # Jika aset tidak memiliki category_id atau folder_id, validasi gagal
+            if not asset.category_id and not asset.folder_id:
+                response_map[asset_id] = {
+                    "sourceExists": True,
+                    "hasNameConflict": False,
+                    "isExtensionAllowed": False,
+                    "customError": "Asset has no original location (category or folder) to restore to."
+                }
+                continue
+            # --- AKHIR PERUBAHAN ---
+
+            # Sisanya adalah logika validasi yang sudah ada
+            target_category = categories_map.get(str(asset.category_id)) if asset.category_id else None
+            target_folder = folders_map.get(str(asset.folder_id)) if asset.folder_id else None
+
+            if not target_category and not target_folder:
+                response_map[asset_id] = {
+                    "sourceExists": True,
+                    "hasNameConflict": False,
+                    "isExtensionAllowed": False,
+                    "customError": "Original target location (category or folder) not found."
+                }
+                continue
+
+            # Cek Konflik Nama
+            conflict_query = Q(name=asset.name, extension=asset.extension, is_trashed=False)
+            if target_category:
+                conflict_query &= Q(category=target_category)
+            elif target_folder:
+                conflict_query &= Q(folder=target_folder)
+
+            has_conflict = Asset.objects.filter(conflict_query).exclude(id=asset.id).exists()
+
+            # Cek Izin Ekstensi
+            is_allowed = True
+            category_to_check = target_folder.category if target_folder else target_category
+            if category_to_check and category_to_check.extensions:
+                is_allowed = asset.extension in category_to_check.extensions
+
+            response_map[asset_id] = {
+                "sourceExists": True,
+                "hasNameConflict": has_conflict,
+                "isExtensionAllowed": is_allowed
             }
 
-            if asset:
-                # Aset ditemukan, lakukan validasi lebih lanjut
-                validation_status["sourceExists"] = True
-
-                # Tentukan lokasi tujuan (category atau folder)
-                target_category = asset.category
-                target_folder = asset.folder
-
-                # 4. Cek Konflik Nama
-                conflict_query = Q(name=asset.name, extension=asset.extension, is_trashed=False)
-                if target_category:
-                    conflict_query &= Q(category=target_category)
-                elif target_folder:
-                    conflict_query &= Q(folder=target_folder)
-
-                has_conflict = Asset.objects.filter(conflict_query).exclude(id=asset.id).exists()
-                validation_status["hasNameConflict"] = has_conflict
-
-                # 5. Cek Izin Ekstensi
-                # Ekstensi diizinkan jika kategori tidak memiliki pembatasan atau ekstensi ada dalam daftar
-                is_allowed = True
-                # Cek di kategori folder jika tujuannya adalah folder
-                category_to_check = target_folder.category if target_folder else target_category
-
-                if category_to_check and category_to_check.extensions:
-                    is_allowed = asset.extension in category_to_check.extensions
-
-                validation_status["isExtensionAllowed"] = is_allowed
-
-            response_map[asset_id] = validation_status
-
-        # 6. Tentukan status code respons
-        # Jika ada masalah pada salah satu aset, gunakan 207 Multi-Status
+        # Tentukan status code HTTP
         has_issues = any(
             not status.get("sourceExists", False) or
             status.get("hasNameConflict", False) or
-            not status.get("isExtensionAllowed", False)
+            not status.get("isExtensionAllowed", False) or
+            status.get("customError")
             for status in response_map.values()
         )
 
@@ -477,67 +392,77 @@ class AssetViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'], url_path='delete')
     def delete(self, request):
-        """
-        Delete multiple assets permanently from trash and their files from storage.
-        """
-        # 1. Validasi payload secara manual (harus berupa list)
         asset_ids = request.data
         if not isinstance(asset_ids, list):
-            return Response({"detail": "Invalid data. Expected a list of asset IDs."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Invalid data. Expected a list of asset IDs."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         if not asset_ids:
-            return Response({"detail": "No asset IDs provided."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "No asset IDs provided."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-        # 2. Cari semua aset yang akan dihapus (harus ada di trash dan dimiliki user)
         assets_to_delete = Asset.objects.filter(
             id__in=asset_ids,
             is_trashed=True,
             workspace__memberships__user=request.user
         )
 
-        # 3. Kumpulkan ID aset yang berhasil ditemukan
-        found_ids = {str(asset.id) for asset in assets_to_delete}
+        response_data = {}
 
-        # 4. Hapus file dari storage (file utama dan thumbnail)
         for asset in assets_to_delete:
             try:
-                # Hapus file utama
+                asset_dir = os.path.join(settings.MEDIA_ROOT, 'assets', str(asset.id))
+                image_dir = os.path.join(asset_dir, 'images')
+
+                # 1️⃣ Hapus file utama
                 if asset.file and asset.file.name:
-                    asset.file.delete(save=False)
+                    try:
+                        asset.file.delete(save=False)
+                        print(f"✅ Deleted main file for asset {asset.id}")
+                    except Exception as e:
+                        print(f"⚠️ Failed to delete main file for asset {asset.id}: {e}")
 
-                # Hapus thumbnail
-                image_urls = asset.metadata.get('imageUrls', {})
-                if image_urls:
-                    for url in image_urls.values():
-                        try:
-                            # Konversi URL menjadi path file sistem
-                            file_path = url.replace(settings.MEDIA_URL, settings.MEDIA_ROOT)
-                            if os.path.exists(file_path):
-                                os.remove(file_path)
-                        except Exception as e:
-                            # Log error jika thumbnail gagal dihapus, tapi jangan gagalkan proses
-                            print(f"Warning: Could not delete thumbnail {url}: {e}")
+                # 2️⃣ Hapus folder thumbnail
+                if os.path.exists(image_dir):
+                    try:
+                        os.chmod(image_dir, 0o755)
+                        shutil.rmtree(image_dir)
+                        print(f"✅ Deleted images directory for {asset.id}")
+                    except Exception as e:
+                        print(f"⚠️ Failed to delete images directory for {asset.id}: {e}")
+                else:
+                    print(f"ℹ️ No images directory found for {asset.id}")
+
+                # 3️⃣ Jika folder induk kosong, hapus juga
+                if os.path.exists(asset_dir):
+                    try:
+                        # Hapus hanya jika kosong
+                        if not os.listdir(asset_dir):
+                            os.rmdir(asset_dir)
+                            print(f"✅ Deleted empty folder: {asset_dir}")
+                        else:
+                            print(f"ℹ️ Folder not empty, skipping: {asset_dir}")
+                    except Exception as e:
+                        print(f"⚠️ Could not delete folder {asset_dir}: {e}")
+
+                # 4️⃣ Hapus dari database
+                asset.delete()
+                response_data[str(asset.id)] = 204
+
             except Exception as e:
-                # Log error jika file utama gagal dihapus
-                print(f"Warning: Could not delete file for asset {asset.id}: {e}")
+                import traceback
+                traceback.print_exc()
+                print(f"❌ ERROR deleting asset {asset.id}: {e}")
+                response_data[str(asset.id)] = 500
 
-        # 5. Hapus record dari database dalam satu transaksi
-        with transaction.atomic():
-            count, _ = assets_to_delete.delete()
-
-        # 6. Buat respons
-        response_data = {}
-        for asset_id in asset_ids:
-            if asset_id in found_ids:
-                response_data[asset_id] = 204  # Success
-            else:
-                response_data[asset_id] = 404  # Not Found (not in trash or not owned)
-
-        # 7. Tentukan status code HTTP
-        if all(status == 204 for status in response_data.values()):
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
+        # 5️⃣ Tentukan respon akhir
+        if any(code != 204 for code in response_data.values()):
             return Response(response_data, status=status.HTTP_207_MULTI_STATUS)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, methods=['get'], url_path=r'thumbs/(?P<dimensions>[\dx]+)\.(?P<frm>[\w]+)', permission_classes=[permissions.AllowAny])
     def thumbs(self, request, id=None, dimensions=None, frm=None):  # <-- UBAH pk MENJADI id
@@ -669,11 +594,9 @@ class AssetViewSet(viewsets.ModelViewSet):
         Edits an image using transformations and can create a new asset or replace the original.
         """
         asset = self.get_object()
-
         if not asset.mime_type.startswith('image/'):
             return Response({"detail": "Asset is not an image."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # 1. Validasi payload
         serializer = EditImageSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -682,149 +605,135 @@ class AssetViewSet(viewsets.ModelViewSet):
         transformations = serializer.validated_data['transformations']
 
         try:
-            # 2. Buka gambar asli
             original_image = PilImage.open(asset.file.path)
             edited_image = self._apply_transformations(original_image, transformations)
 
-            # 3. Siapkan file baru di memori
             new_extension = asset.extension
             new_filename = f"{new_asset_name}.{new_extension}"
             buffer = BytesIO()
 
-            # --- PERBAIKAN FORMAT DAN TRANSPARANSI ---
-            # Buat penerjemah dari ekstensi ke format Pillow yang benar
-            format_mapping = {
-                'JPG': 'JPEG',
-                'TIF': 'TIFF',
-            }
-            # Gunakan format yang sudah diterjemahkan, atau gunakan aslinya jika tidak ada di peta
+            format_mapping = {'JPG': 'JPEG', 'TIF': 'TIFF'}
             save_format = format_mapping.get(new_extension.upper(), new_extension.upper())
 
-            # Jika formatnya JPEG, konversi gambar ke RGB untuk menghapus transparansi
             if save_format == 'JPEG':
                 if edited_image.mode in ('RGBA', 'LA', 'P'):
                     edited_image = edited_image.convert('RGB')
 
-            # Simpan gambar yang sudah diedit ke buffer
             edited_image.save(buffer, format=save_format)
             buffer.seek(0)
             new_file = ContentFile(buffer.getvalue(), name=new_filename)
 
-            # 4. Proses berdasarkan aksi ('create' atau 'replace')
             if action == 'create':
                 with transaction.atomic():
+                    # Django akan otomatis memanggil get_asset_upload_path untuk aset baru ini
                     new_asset = Asset.objects.create(
-                        name=new_asset_name,
-                        extension=new_extension,
-                        size=new_file.size,
-                        mime_type=asset.mime_type,  # Mime type tetap sama
-                        file=new_file,
-                        workspace=asset.workspace,
-                        folder=asset.folder,
-                        category=asset.category,
-                        uploaded_by=request.user,
+                        name=new_asset_name, extension=new_extension, size=new_file.size,
+                        mime_type=asset.mime_type, file=new_file, workspace=asset.workspace,
+                        folder=asset.folder, category=asset.category, uploaded_by=request.user,
                         metadata={'metadataProcessingStatus': 'pending'}
                     )
-                    # Proses metadata untuk aset baru (sinkron)
-                    self._process_metadata_sync(new_asset,self.request)
+                    self._process_metadata_sync(new_asset, request)
 
                 response_serializer = AssetSerializer(new_asset, context={'request': request})
                 return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
             else:  # action == 'replace'
-                # Hapus file lama
                 if asset.file:
                     asset.file.delete(save=False)
 
-                # Update aset yang ada
                 asset.file = new_file
                 asset.name = new_asset_name
                 asset.size = new_file.size
                 asset.metadata = {'metadataProcessingStatus': 'pending'}
                 asset.save()
 
-                # Proses metadata ulang
-                self._process_metadata_sync(asset,self.request)
+                self._process_metadata_sync(asset, request)
 
                 response_serializer = AssetSerializer(asset, context={'request': request})
                 return Response(response_serializer.data, status=status.HTTP_200_OK)
 
         except Exception as e:
-            # Cetak traceback lengkap untuk debugging yang lebih baik
             import traceback
             traceback.print_exc()
             return Response({"detail": f"Error processing image: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        # --- Helper Methods ---
-
     def _apply_transformations(self, image, transformations):
         """Menerapkan transformasi ke objek gambar Pillow."""
-        # Urutan: flip -> rotate -> crop -> resize
         if transformations.get('flip'):
             flip_data = transformations['flip']
             if flip_data.get('x', False):
                 image = image.transpose(PilImage.Transpose.FLIP_LEFT_RIGHT)
             if flip_data.get('y', False):
                 image = image.transpose(PilImage.Transpose.FLIP_TOP_BOTTOM)
-
         if transformations.get('rotate'):
             angle = transformations['rotate'].get('angle', 0)
             if angle != 0:
-                image = image.rotate(angle, expand=True, fillcolor='white')  # Tambahkan background putih
-
+                image = image.rotate(angle, expand=True, fillcolor='white')
         if transformations.get('crop'):
             crop_data = transformations['crop']
             x, y, width, height = crop_data['x'], crop_data['y'], crop_data['width'], crop_data['height']
             image = image.crop((x, y, x + width, y + height))
-
         if transformations.get('resize'):
             resize_data = transformations['resize']
             width, height = resize_data['width'], resize_data['height']
             image = image.resize((width, height), PilImage.Resampling.LANCZOS)
-
         return image
 
     def _process_metadata_sync(self, asset, request):
         """
-        Memproses metadata untuk aset secara sinkron (digunakan setelah edit).
+        Memproses metadata untuk aset secara sinkron.
+        Folder 'images' hanya dibuat jika file adalah gambar.
         """
         try:
             file_path = asset.file.path
+
+            # --- PERUBAHAN: PEMERIKSAAN MIME TYPE DI AWAL ---
+            if not asset.mime_type.startswith('image/'):
+                # Jika bukan gambar, tidak ada yang perlu diproses.
+                print(f"Skipping metadata processing for non-image asset {asset.id}.")
+                return
+            # --- AKHIR PERUBAHAN ---
+
+            # Kode di bawah ini hanya akan dijalankan untuk gambar
+            asset_dir = os.path.dirname(file_path)
+            image_dir = os.path.join(asset_dir, 'images')
+            os.makedirs(image_dir, exist_ok=True)
+
             with PilImage.open(file_path) as img:
+                # ... (semua kode di dalam blok `with` tetap sama) ...
                 width, height = img.size
                 metadata_to_update = {'width': width, 'height': height, 'metadataProcessingStatus': 'success'}
 
                 # Generate BlurHash
                 if img.mode != 'RGB':
                     img = img.convert('RGB')
-                img_copy = img.copy()
-                img_copy.thumbnail((32, 32))
-                pixels = np.array(img_copy)
-                blurhash_str = encode(pixels, 4, 3)
-                metadata_to_update['blurHash'] = blurhash_str
+                try:
+                    img_copy = img.copy()
+                    img_copy.thumbnail((32, 32))
+                    pixels = np.array(img_copy)
+                    blurhash_str = encode(pixels, 4, 3)
+                    metadata_to_update['blurHash'] = blurhash_str
+                except Exception as e:
+                    print(f"ERROR generating BlurHash for asset {asset.id}: {e}")
 
-                # Buat ulang thumbnail
-                asset_dir = os.path.dirname(file_path)
-                image_dir = os.path.join(asset_dir, 'images')
-                os.makedirs(image_dir, exist_ok=True)
+                # --- LOGIKA THUMBNAIL ---
+                thumbnail_sizes = settings.GLOBAL_THUMBNAIL_SIZES
                 image_urls = {}
-                thumbnail_sizes = {'80': 'webp', '160': 'webp', '240': 'webp', 'default': 'png'}
-
                 for size_name, format_ext in thumbnail_sizes.items():
-                    # --- PERBAIKAN DIMULAI DI SINI ---
                     if size_name == 'default':
-                        # Untuk 'default', gunakan URL file asli
                         image_urls[size_name] = request.build_absolute_uri(asset.file.url)
-                        continue  # Lewati ke iterasi berikutnya
-                    # --- PERBAIKAN BERAKHIR DI SINI ---
+                        continue
 
-                    # Kode di bawah ini hanya dijalankan untuk '80', '160', '240'
+                    thumb_filename = f"thumb_{size_name}.{format_ext}"
+                    format_mapping = {'JPG': 'JPEG', 'TIF': 'TIFF'}
+                    save_format = format_mapping.get(format_ext.upper(), format_ext.upper())
                     size_pixels = int(size_name)
                     thumb = img.copy()
                     thumb.thumbnail((size_pixels, size_pixels), PilImage.Resampling.LANCZOS)
-                    thumb_filename = f"{size_name}.{format_ext}"
+
                     thumb_path = os.path.join(image_dir, thumb_filename)
-                    thumb.save(thumb_path, format_ext.upper() if format_ext != 'webp' else 'WEBP')
+                    thumb.save(thumb_path, format=save_format)
+
                     relative_path = os.path.relpath(thumb_path, settings.MEDIA_ROOT)
                     image_urls[size_name] = f"{settings.MEDIA_URL}{relative_path.replace(os.sep, '/')}"
 
@@ -834,9 +743,10 @@ class AssetViewSet(viewsets.ModelViewSet):
             asset.save(update_fields=['metadata', 'last_modified_at'])
         except Exception as e:
             print(f"ERROR processing metadata for edited asset {asset.id}: {e}")
+            import traceback
+            traceback.print_exc()
             asset.metadata.update({'metadataProcessingStatus': 'failed', 'error': str(e)})
             asset.save(update_fields=['metadata', 'last_modified_at'])
-
 
     @action(detail=True, methods=['patch'])
     def metadata(self, request, pk=None):

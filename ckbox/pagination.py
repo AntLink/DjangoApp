@@ -14,7 +14,7 @@ class CustomPagination(PageNumberPagination):
     """
     page_size = 50  # Default limit
     page_size_query_param = 'limit'
-    max_page_size = 1000
+    max_page_size = 500
 
     def get_paginated_response(self, data):
         return Response({
@@ -23,7 +23,6 @@ class CustomPagination(PageNumberPagination):
             'limit': self.page_size,
             'items': data
         })
-
 
 class CustomResultsSetPagination(PageNumberPagination):
     """

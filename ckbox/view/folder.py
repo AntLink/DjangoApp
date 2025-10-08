@@ -40,15 +40,6 @@ class FolderViewSet(viewsets.ModelViewSet):
             return FolderCreateSerializer
         return FolderSerializer
 
-    def _get_all_folder_ids(self, folder):
-        """
-        Metode helper untuk mendapatkan ID folder dan semua subfoldernya secara rekursif.
-        """
-        ids = [str(folder.id)]
-        # Gunakan prefetch_related untuk efisiensi jika sudah di-get_queryset
-        for child in folder.children.all():
-            ids.extend(self._get_all_folder_ids(child))
-        return ids
 
     def perform_destroy(self, instance):
         """
@@ -58,7 +49,7 @@ class FolderViewSet(viewsets.ModelViewSet):
         """
         # 1. Dapatkan ID kategori dari folder yang akan dihapus
         #    Gunakan .category_id untuk menghindari error jika kategori tidak ada (None)
-        target_category_id = instance.category_id
+        # target_category_id = instance.category_id
 
         # 2. Dapatkan semua ID folder yang akan terpengaruh
         folder_ids_to_trash = self._get_all_folder_ids(instance)
@@ -70,8 +61,8 @@ class FolderViewSet(viewsets.ModelViewSet):
             }
 
             # Hanya update category_id jika folder induk memiliki kategori
-            if target_category_id:
-                update_data['category_id'] = target_category_id
+            # if target_category_id:
+            #     update_data['category_id'] = target_category_id
 
             # 4. Pindahkan semua aset di dalam folder-folder tersebut ke trash
             #    dan ubah kategorinya dalam satu operasi database yang efisien
@@ -117,6 +108,16 @@ class FolderViewSet(viewsets.ModelViewSet):
         # 5. Serialisasi dan kembalikan response
         serializer = FolderSerializer(final_list, many=True, context={'request': request})
         return Response({"items": serializer.data})
+
+    def _get_all_folder_ids(self, folder):
+        """
+        Metode helper untuk mendapatkan ID folder dan semua subfoldernya secara rekursif.
+        """
+        ids = [str(folder.id)]
+        # Gunakan prefetch_related untuk efisiensi jika sudah di-get_queryset
+        for child in folder.children.all():
+            ids.extend(self._get_all_folder_ids(child))
+        return ids
 
     def _get_children_at_depth(self, folder, depth):
         """

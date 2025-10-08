@@ -24857,8 +24857,8 @@
             }
 
             async function r(e) {
-                const t = new URL("categories", s);
-                return t.searchParams.set("limit", String(50)), t.searchParams.set("offset", String(e)), t.searchParams.set("workspaceId", o), Tk({url: t, signal: n, authorization: (await i).value})
+                const t = new URL("api/categories", s);
+                return t.searchParams.set("limit", String(50)), t.searchParams.set("offset", String(e)), t.searchParams.set("workspaceId", o), Tk({url: t, signal: n, authorization: "Bearer " + (await i).value})
             }
         }
 
@@ -24925,12 +24925,12 @@
         }
 
         async upload() {
-            const e = this.ckboxUtils, t = this.editor.t, i = await this.loader.file, n = await e.getCategoryIdForFile(i, {signal: this.controller.signal}), s = new URL("assets", this.serviceOrigin), o = new FormData;
+            const e = this.ckboxUtils, t = this.editor.t, i = await this.loader.file, n = await e.getCategoryIdForFile(i, {signal: this.controller.signal}), s = new URL("api/assets", this.serviceOrigin), o = new FormData;
             s.searchParams.set("workspaceId", await e.getWorkspaceId()), o.append("categoryId", n), o.append("file", i);
             return Tk({
                 method: "POST", url: s, data: o, onUploadProgress: e => {
                     e.lengthComputable && (this.loader.uploadTotal = e.total, this.loader.uploaded = e.loaded);
-                }, signal: this.controller.signal, authorization: (await this.token).value
+                }, signal: this.controller.signal, authorization: "Bearer " + (await this.token).value
             }).then(async e => {
                 const t = Ck(e.imageUrls);
                 return {ckboxImageId: e.id, default: t.imageFallbackUrl, sources: t.imageSources}
@@ -25209,7 +25209,7 @@
         }
 
         async _getAssetStatusFromServer(e, t) {
-            const i = this.editor.plugins.get(Mk), n = new URL("assets/" + e, this.editor.config.get("ckbox.serviceOrigin")), s = await Tk({url: n, signal: t, authorization: (await i.getToken()).value}), o = s.metadata.metadataProcessingStatus;
+            const i = this.editor.plugins.get(Mk), n = new URL("api/assets/" + e, this.editor.config.get("ckbox.serviceOrigin")), s = await Tk({url: n, signal: t, authorization: "Bearer " + (await i.getToken()).value}), o = s.metadata.metadataProcessingStatus;
             if (!o || "queued" == o) throw new I("ckbox-image-not-processed");
             return {data: {...s}}
         }

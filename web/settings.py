@@ -63,6 +63,13 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'ckbox.apps.CkboxConfig'
 ]
+GLOBAL_THUMBNAIL_SIZES = {
+    '100': 'webp',
+    '200': 'webp',
+    '400': 'webp',
+    '1024': 'webp',
+    'default': 'webp'
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [

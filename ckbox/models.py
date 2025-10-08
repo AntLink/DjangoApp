@@ -1,4 +1,4 @@
-import uuid
+import uuid, os
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group as DjangoGroup
 from django.core.exceptions import ValidationError
@@ -140,13 +140,24 @@ class Folder(models.Model):
             descendants.append(child.to_tree(max_depth - 1))
         return descendants
 
+
+def get_asset_upload_path(instance, filename):
+    """
+    Menghasilkan path upload unik untuk setiap file aset.
+    Path: assets/<asset_id>/<asset_id>.<ekstensi>
+    """
+    # Ambil ekstensi file asli
+    ext = filename.split('.')[-1]
+    # Buat path baru
+    return os.path.join('assets', str(instance.id), f"{instance.id}.{ext}")
+
 class Asset(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)  # Nama tanpa ekstensi
     extension = models.CharField(max_length=10)
     size = models.BigIntegerField()
     mime_type = models.CharField(max_length=100)
-    file = models.FileField(upload_to='assets/')
+    file = models.FileField(upload_to=get_asset_upload_path)
 
     # Relasi
     workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name='assets')
