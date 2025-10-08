@@ -1204,6 +1204,37 @@
     background-color: var(--bs-primary);
 }
 
+:root[data-bs-theme="dark"] .ckbox:not(#n) .ckbox-btn--fill .ckbox-icon {
+    fill: rgba(232, 232, 232, 0.93);
+    max-width: initial;
+    transition: color calc(var(--ckbox-animation-duration-primary) * 1ms);
+}
+
+
+:root[data-bs-theme="dark"] .ckbox:not(#n) .ckbox-btn--fill .ckbox-btn__icon {
+    color: rgba(232, 232, 232, 0.93);
+}
+
+:root[data-bs-theme="dark"] .ckbox:not(#n) .ckbox-btn--fill .ckbox-btn__text {
+    color: rgba(232, 232, 232, 0.93);
+}
+
+:root[data-scheme="night"] .ckbox-navbar-item-label__content {
+    color: #666666 !important;
+}
+
+:root[data-scheme="night"] .ckbox:not(#n) .ckbox-gallery-figure__caption {
+    background-color: #6b6e72 !important;
+}
+
+:root[data-scheme="night"] .ckbox:not(#n) .ckbox-icon--accent {
+    color: #666666 !important;
+}
+
+:root[data-scheme="night"] .ckbox:not(#n) .ckbox-btn--plain {
+    --ckbox-btn-icon-color: #666666 !important;
+    --ckbox-btn-text-color: #6b6e72 !important;
+}
 
 .ckbox:not(#n) .ckbox-btn--plain {
     --ckbox-btn-icon-color: var(--bs-primary);
