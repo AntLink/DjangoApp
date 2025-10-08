@@ -10,7 +10,6 @@ from ..serializer.recentasset import AssetSerializer, RecentAssetUpdateSerialize
 from ..pagination import CustomPagination
 
 
-
 class RecentAssetViewSet(viewsets.ModelViewSet):
     """
     ViewSet untuk melihat dan memperbarui daftar aset yang baru diakses.
@@ -20,27 +19,38 @@ class RecentAssetViewSet(viewsets.ModelViewSet):
     pagination_class = CustomPagination
 
     def get_queryset(self):
+        # Ambil workspaceId dari query parameter
+        workspace_id = self.request.query_params.get('workspaceId')
+
+        # Ambil semua recent asset milik user
         recent_asset_records = RecentAsset.objects.filter(
             user=self.request.user
         ).select_related('asset')
 
+        # Ambil daftar ID asset
         asset_ids = [record.asset_id for record in recent_asset_records]
 
-        queryset = Asset.objects.filter(
-            id__in=asset_ids,
-            is_trashed=False
-        )
+        # Filter aset sesuai workspace_id (jika diberikan)
+        asset_filter = {
+            "id__in": asset_ids,
+            "is_trashed": False,
+        }
+        if workspace_id:
+            asset_filter["workspace_id"] = workspace_id
 
+        queryset = Asset.objects.filter(**asset_filter)
+
+        # Buat dictionary agar lookup cepat
         asset_dict = {asset.id: asset for asset in queryset}
 
-        # Hanya ambil asset yang masih valid (ada di asset_dict)
+        # Ambil hanya asset yang masih valid
         valid_assets = [
             asset_dict[record.asset_id]
             for record in recent_asset_records
             if record.asset_id in asset_dict
         ]
 
-        # Urutkan berdasarkan waktu akses RecentAsset
+        # Urutkan berdasarkan waktu akses
         sorted_assets = sorted(
             valid_assets,
             key=lambda asset: next(
@@ -117,13 +127,15 @@ class RecentAssetViewSet(viewsets.ModelViewSet):
         else:
             return Response(response_data, status=status.HTTP_207_MULTI_STATUS)
 
-
-
     @action(detail=True, methods=['get'], url_path='asset_detail')
     def asset_detail(self, request, pk=None):
         """Endpoint untuk mendapatkan detail satu aset berdasarkan ID."""
         try:
-            asset = Asset.objects.get(pk=pk, is_trashed=False, workspace__memberships__user=request.user)
+            asset = Asset.objects.get(
+                pk=pk,
+                is_trashed=False,
+                workspace__memberships__user=request.user
+            )
             serializer = self.get_serializer(asset)
             return Response(serializer.data)
         except Asset.DoesNotExist:
