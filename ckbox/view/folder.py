@@ -7,7 +7,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-
+from rest_framework import status
 
 class FolderViewSet(viewsets.ModelViewSet):
     serializer_class = FolderSerializer
@@ -87,6 +87,16 @@ class FolderViewSet(viewsets.ModelViewSet):
         # Menggunakan get_object_or_404 untuk pesan error yang lebih baik
         obj = get_object_or_404(Folder, pk=self.kwargs['pk'])
         return obj
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        folder = serializer.save()  # Ini akan mengembalakan instance Folder
+
+        # Di sini kamu bisa sesuaikan responsnya:
+        # - Jika CKBox mengharapkan field "id" dengan format tertentu, ubah di sini.
+        #   Misalnya kalau ingin respons hanya seperti {"id": "<uuid>"}:
+        return Response({"id": str(folder.id)}, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=['get'], url_path='branch')
     def branch(self, request, pk=None, depth=1):
