@@ -28,8 +28,9 @@ class CKEditorWidget(Widget):
         default_config = {
             'baseUrl': 'http://127.0.0.1:8090',
             'emoji_lang_url':'http://127.0.0.1:8090/static/niftyv2/vendors/ckeditor5/emoji-en.json',
-            'ai_api_key': '09ac094bc293454b94457cf556ee8616.opW0YYeFQce1AA0m',
-            'ai_api_url': 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
+            'ai_api_key': 'c043b4797fd245cf9d104dddda39a383.P8hW0m9To6Lf1rIC',
+            # 'ai_api_url': 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
+            'ai_api_url': 'https://api.z.ai/api/paas/v4/chat/completions',
             'ai_model': "glm-4.5-flash",
             'ai_temperature': 0.8,
             'ai_top_p': 1,
