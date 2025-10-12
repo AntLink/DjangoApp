@@ -4,6 +4,31 @@ import os
 from rest_framework import serializers
 from ..models import Asset, Workspace, Category, Folder
 
+
+class TargetSerializer(serializers.Serializer):
+    """Serializer untuk memvalidasi target (kategori atau folder)."""
+    categoryId = serializers.UUIDField(required=False)
+    folderId = serializers.UUIDField(required=False)
+
+    def validate(self, data):
+        """
+        Memastikan bahwa hanya salah satu dari categoryId atau folderId yang disediakan.
+        """
+        if not data.get('categoryId') and not data.get('folderId'):
+            raise serializers.ValidationError("Salah satu dari 'categoryId' atau 'folderId' harus disediakan.")
+        if data.get('categoryId') and data.get('folderId'):
+            raise serializers.ValidationError("Hanya salah satu dari 'categoryId' atau 'folderId' yang boleh disediakan.")
+        return data
+
+class AssetActionSerializer(serializers.Serializer):
+    """Serializer untuk memvalidasi aksi pada satu aset."""
+    assetId = serializers.UUIDField()
+
+class AssetBulkActionSerializer(serializers.Serializer):
+    """Serializer utama untuk payload aksi bulk seperti move dan copy."""
+    target = TargetSerializer()
+    assetsActions = serializers.ListField(child=AssetActionSerializer())
+
 class AssetDeleteSerializer(serializers.Serializer):
     """Serializer untuk menerima daftar ID aset yang akan dihapus permanen."""
     ids = serializers.ListField(child=serializers.CharField())
@@ -151,9 +176,9 @@ class AssetMetadataUpdateSerializer(serializers.Serializer):
     customAttributes = serializers.JSONField(required=False, default=dict)
 
 # --- Serializer untuk Aksi Massal ---
-class AssetBulkActionSerializer(serializers.Serializer):
-    """Serializer untuk menerima array ID aset."""
-    ids = serializers.ListField(child=serializers.UUIDField())
+# class AssetBulkActionSerializer(serializers.Serializer):
+#     """Serializer untuk menerima array ID aset."""
+#     ids = serializers.ListField(child=serializers.UUIDField())
 
 class CategoryTargetSerializer(serializers.Serializer):
     categoryId = serializers.UUIDField()

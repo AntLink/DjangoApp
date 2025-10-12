@@ -24,7 +24,7 @@ from ..serializer.asset import (
     AssetSerializer, AssetCreateSerializer, AssetUpdateSerializer, NamesExistSerializer, EditImageSerializer,
     AssetMetadataUpdateSerializer, AssetBulkActionSerializer, RestoreValidateSerializer,
     CategoryTargetSerializer, FolderTargetSerializer, AssetNamesExistSerializer, AssetRestoreSerializer,
-    AssetDeleteSerializer
+    AssetDeleteSerializer, TargetSerializer, AssetActionSerializer
 )
 
 
@@ -657,6 +657,150 @@ class AssetViewSet(viewsets.ModelViewSet):
             traceback.print_exc()
             return Response({"detail": f"Error processing image: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    @action(detail=False, methods=['post'], url_path='move')
+    def move(self, request):
+        """
+        Memindahkan satu atau lebih aset ke kategori atau folder target.
+        """
+        # 1. Validasi Workspace
+        workspace_id = request.query_params.get('workspaceId')
+        if not workspace_id:
+            return Response({"detail": "Parameter 'workspaceId' diperlukan."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not Workspace.objects.filter(id=workspace_id, memberships__user=request.user).exists():
+            return Response({"detail": "Workspace tidak ditemukan atau Anda tidak memiliki akses."}, status=status.HTTP_404_NOT_FOUND)
+
+        # 2. Validasi Payload
+        serializer = AssetBulkActionSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        target_data = serializer.validated_data['target']
+        asset_actions = serializer.validated_data['assetsActions']
+        asset_ids = [action['assetId'] for action in asset_actions]
+
+        # 3. Tentukan Target (Kategori atau Folder)
+        target_category = None
+        target_folder = None
+        if 'categoryId' in target_data:
+            try:
+                target_category = Category.objects.get(id=target_data['categoryId'], workspace_id=workspace_id)
+            except Category.DoesNotExist:
+                return Response({"detail": "Kategori target tidak ditemukan."}, status=status.HTTP_404_NOT_FOUND)
+        else:  # 'folderId' in target_data
+            try:
+                target_folder = Folder.objects.get(id=target_data['folderId'], workspace_id=workspace_id)
+            except Folder.DoesNotExist:
+                return Response({"detail": "Folder target tidak ditemukan."}, status=status.HTTP_404_NOT_FOUND)
+
+        # 4. Pindahkan Aset
+        assets_to_move = Asset.objects.filter(
+            id__in=asset_ids,
+            workspace_id=workspace_id,
+            is_trashed=False
+        )
+
+        results = {}
+        with transaction.atomic():
+            for asset in assets_to_move:
+                asset.category = target_category
+                asset.folder = target_folder
+                asset.save()
+                results[str(asset.id)] = 204  # 204 No Content = Sukses
+
+        # 5. Tangani Aset yang Tidak Ditemukan
+        found_ids = {str(a.id) for a in assets_to_move}
+        not_found_ids = [str(a_id) for a_id in asset_ids if str(a_id) not in found_ids]
+        for asset_id in not_found_ids:
+            results[asset_id] = 404  # 404 Not Found
+
+        # 6. Kembalikan Respons
+        if all(status == 204 for status in results.values()):
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(results, status=status.HTTP_207_MULTI_STATUS)
+
+    @action(detail=False, methods=['post'], url_path='copy')
+    def copy(self, request):
+        """
+        Menyalin satu atau lebih aset ke kategori atau folder target.
+        """
+        # 1. Validasi Workspace
+        workspace_id = request.query_params.get('workspaceId')
+        if not workspace_id:
+            return Response({"detail": "Parameter 'workspaceId' diperlukan."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not Workspace.objects.filter(id=workspace_id, memberships__user=request.user).exists():
+            return Response({"detail": "Workspace tidak ditemukan atau Anda tidak memiliki akses."}, status=status.HTTP_404_NOT_FOUND)
+
+        # 2. Validasi Payload
+        serializer = AssetBulkActionSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        target_data = serializer.validated_data['target']
+        asset_actions = serializer.validated_data['assetsActions']
+        asset_ids = [action['assetId'] for action in asset_actions]
+
+        # 3. Tentukan Target (Kategori atau Folder)
+        target_category = None
+        target_folder = None
+        if 'categoryId' in target_data:
+            try:
+                target_category = Category.objects.get(id=target_data['categoryId'], workspace_id=workspace_id)
+            except Category.DoesNotExist:
+                return Response({"detail": "Kategori target tidak ditemukan."}, status=status.HTTP_404_NOT_FOUND)
+        else:  # 'folderId' in target_data
+            try:
+                target_folder = Folder.objects.get(id=target_data['folderId'], workspace_id=workspace_id)
+            except Folder.DoesNotExist:
+                return Response({"detail": "Folder target tidak ditemukan."}, status=status.HTTP_404_NOT_FOUND)
+
+        # 4. Salin Aset
+        original_assets = Asset.objects.filter(
+            id__in=asset_ids,
+            workspace_id=workspace_id,
+            is_trashed=False
+        ).select_related('uploaded_by')
+
+        new_assets = []
+        with transaction.atomic():
+            for original_asset in original_assets:
+                # Buka file asli untuk dibaca isinya
+                with original_asset.file.open('rb') as f:
+                    file_content = f.read()
+
+                # Buat instance ContentFile dari file yang dibaca
+                new_file = ContentFile(file_content, name=original_asset.file.name)
+
+                # Buat instance aset baru
+                new_asset = Asset(
+                    name=original_asset.name,
+                    extension=original_asset.extension,
+                    size=original_asset.size,
+                    mime_type=original_asset.mime_type,
+                    file=new_file,
+                    workspace=original_asset.workspace,
+                    category=target_category,
+                    folder=target_folder,
+                    uploaded_by=request.user,  # Penyalin menjadi pengunggah baru
+                    tags=original_asset.tags,
+                    metadata=original_asset.metadata,
+                )
+                new_assets.append(new_asset)
+
+            # Gunakan bulk_create untuk efisiensi
+            created_assets = Asset.objects.bulk_create(new_assets)
+
+        # 5. Proses Metadata untuk Aset Baru (jika perlu)
+        # Jika Anda perlu memproses metadata (seperti thumbnail) untuk aset yang disalin,
+        # Anda harus melakukannya secara individual setelah bulk_create.
+        for asset in created_assets:
+            if asset.mime_type.startswith('image/'):
+                self._process_metadata_sync(asset, request)
+
+        # 6. Kembalikan Respons
+        # Kembalikan data aset yang baru dibuat
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     def _apply_transformations(self, image, transformations):
         """Menerapkan transformasi ke objek gambar Pillow."""
         if transformations.get('flip'):
@@ -748,20 +892,20 @@ class AssetViewSet(viewsets.ModelViewSet):
             asset.metadata.update({'metadataProcessingStatus': 'failed', 'error': str(e)})
             asset.save(update_fields=['metadata', 'last_modified_at'])
 
-    @action(detail=True, methods=['patch'])
-    def metadata(self, request, pk=None):
-        """
-        Update the metadata of the asset.
-        """
-        asset = self.get_object()
-        serializer = AssetMetadataUpdateSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        validated_data = serializer.validated_data
-        asset.metadata.update({
-            'description': validated_data.get('description', asset.metadata.get('description')),
-            'customAttributes': validated_data.get('customAttributes', asset.metadata.get('customAttributes'))
-        })
-        asset.save(update_fields=['metadata', 'last_modified_at'])
-
-        return Response(asset.metadata)
+    # @action(detail=True, methods=['patch'])
+    # def metadata(self, request, pk=None):
+    #     """
+    #     Update the metadata of the asset.
+    #     """
+    #     asset = self.get_object()
+    #     serializer = AssetMetadataUpdateSerializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #
+    #     validated_data = serializer.validated_data
+    #     asset.metadata.update({
+    #         'description': validated_data.get('description', asset.metadata.get('description')),
+    #         'customAttributes': validated_data.get('customAttributes', asset.metadata.get('customAttributes'))
+    #     })
+    #     asset.save(update_fields=['metadata', 'last_modified_at'])
+    #
+    #     return Response(asset.metadata)
