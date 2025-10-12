@@ -1204,6 +1204,15 @@
     background-color: var(--bs-primary);
 }
 
+:root[data-scheme="night"] .ckbox:not(#n) .ckbox-tabs__tab--active {
+    border-color: #6b6e72;
+    color: #6b6e72;
+}
+
+:root[data-scheme="night"] .ckbox:not(#n) .ckbox-icon {
+    fill: #6b6e72;
+}
+
 :root[data-bs-theme="dark"] .ckbox:not(#n) .ckbox-btn--fill .ckbox-icon {
     fill: rgba(232, 232, 232, 0.93);
     max-width: initial;

@@ -7,12 +7,15 @@ from ..pagination import CustomPagination
 
 from rest_framework.decorators import action
 from rest_framework.response import Response
+
+
 class AdminCategoryViewSet(viewsets.ModelViewSet):
     """
     ViewSet untuk mengelola kategori bagi admin workspace.
     """
-    permission_classes = [permissions.IsAuthenticated, IsWorkspaceOwner]
+    permission_classes = [permissions.IsAuthenticated, IsWorkspaceMember]
     pagination_class = CustomPagination
+
     def get_queryset(self):
         workspace_id = self.request.query_params.get('workspaceId')
         if workspace_id:
@@ -61,7 +64,6 @@ class AdminCategoryViewSet(viewsets.ModelViewSet):
 
         # 7. Lanjutkan dengan penghapusan kategori itu sendiri
         super().perform_destroy(instance)
-
 
     def perform_create(self, serializer):
         """
@@ -119,24 +121,26 @@ class AdminCategoryViewSet(viewsets.ModelViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class AdminEnvironmentConfigView(APIView):
     """
     Endpoint GET untuk /admin/environmentConfig.
     Ini membaca konfigurasi global yang sama dengan superadmin.
     """
-    permission_classes = [permissions.IsAuthenticated, IsWorkspaceOwner,IsWorkspaceMember]
+    permission_classes = [permissions.IsAuthenticated, IsWorkspaceOwner, IsWorkspaceMember]
 
     def get(self, request, *args, **kwargs):
         config, _ = EnvironmentConfig.objects.get_or_create(pk=1)
         serializer = EnvironmentConfigAdminSerializer(config)
         return Response(serializer.data)
 
+
 class AdminImageViewSet(viewsets.GenericViewSet):
     """
     ViewSet untuk mengelola konfigurasi gambar.
     Endpoint: GET /admin/images, PUT /admin/images/{format}
     """
-    permission_classes = [permissions.IsAuthenticated, IsWorkspaceOwner]
+    permission_classes = [permissions.IsAuthenticated, IsWorkspaceMember]
     serializer_class = ImageQualityConfigSerializer
     pagination_class = None
 
@@ -189,6 +193,7 @@ class AdminImageViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(config)
         return Response(serializer.data)
 
+
 class AdminGroupViewSet(viewsets.ModelViewSet):
     """
     ViewSet untuk mengelola grup bagi admin workspace.
@@ -198,7 +203,7 @@ class AdminGroupViewSet(viewsets.ModelViewSet):
       - PATCH /api/admin/groups/<group_id>/?workspaceId=<uuid>
     """
     serializer_class = WorkspaceGroupAdminSerializer
-    permission_classes = [permissions.IsAuthenticated, IsWorkspaceOwner]
+    permission_classes = [permissions.IsAuthenticated, IsWorkspaceMember]
     pagination_class = CustomPagination
 
     def get_queryset(self):
