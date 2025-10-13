@@ -189,3 +189,37 @@ class FolderTargetSerializer(serializers.Serializer):
 class AssetNamesExistSerializer(serializers.Serializer):
     target = serializers.DictField(child=serializers.UUIDField())
     names = serializers.ListField(child=serializers.CharField())
+
+
+class DateRangeSerializer(serializers.Serializer):
+    """Serializer untuk filter rentang tanggal (from/to)."""
+    from_date = serializers.DateTimeField(required=False, source="from")
+    to_date = serializers.DateTimeField(required=False, source="to")
+
+class InListFilterSerializer(serializers.Serializer):
+    """Serializer untuk filter dengan daftar nilai (e.g., {'in': [...]})"""
+    in_list = serializers.ListField(required=False, source="in", child=serializers.CharField())
+
+class SearchFiltersSerializer(serializers.Serializer):
+    """Serializer untuk objek 'filters' di payload."""
+    categories = InListFilterSerializer(required=False)
+    extensions = InListFilterSerializer(required=False)
+    tags = InListFilterSerializer(required=False)
+    uploadedAt = DateRangeSerializer(required=False)
+    lastModifiedAt = DateRangeSerializer(required=False)
+
+class SearchPaginationSerializer(serializers.Serializer):
+    """Serializer untuk objek 'pagination' di payload."""
+    limit = serializers.IntegerField(default=20, min_value=1, max_value=100)
+    offset = serializers.IntegerField(default=0, min_value=0)
+    sortBy = serializers.ChoiceField(
+        choices=['name', 'size', 'uploadedAt', 'lastModifiedAt'],
+        default='uploadedAt'
+    )
+    order = serializers.ChoiceField(choices=['asc', 'desc'], default='desc')
+
+class SearchPayloadSerializer(serializers.Serializer):
+    """Serializer utama untuk payload endpoint search."""
+    searchPhrase = serializers.CharField(required=False, allow_blank=True)
+    filters = SearchFiltersSerializer(required=False)
+    pagination = SearchPaginationSerializer()

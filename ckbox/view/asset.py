@@ -24,7 +24,7 @@ from ..serializer.asset import (
     AssetSerializer, AssetCreateSerializer, AssetUpdateSerializer, NamesExistSerializer, EditImageSerializer,
     AssetMetadataUpdateSerializer, AssetBulkActionSerializer, RestoreValidateSerializer,
     CategoryTargetSerializer, FolderTargetSerializer, AssetNamesExistSerializer, AssetRestoreSerializer,
-    AssetDeleteSerializer, TargetSerializer, AssetActionSerializer
+    AssetDeleteSerializer, TargetSerializer, AssetActionSerializer, SearchPayloadSerializer
 )
 
 
@@ -800,6 +800,98 @@ class AssetViewSet(viewsets.ModelViewSet):
         # 6. Kembalikan Respons
         # Kembalikan data aset yang baru dibuat
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=False, methods=['post'], url_path='search')
+    def search(self, request):
+        """
+        Mencari aset berdasarkan frasa dan berbagai filter.
+        Endpoint ini menggunakan POST untuk menerima payload filter yang kompleks.
+        """
+        # 1. Validasi Workspace
+        workspace_id = request.query_params.get('workspaceId')
+        if not workspace_id:
+            raise ValidationError("Parameter 'workspaceId' diperlukan.")
+
+        if not Workspace.objects.filter(id=workspace_id, memberships__user=request.user).exists():
+            raise ValidationError("Workspace tidak ditemukan atau Anda tidak memiliki akses.")
+
+        # 2. Validasi Payload
+        serializer = SearchPayloadSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        validated_data = serializer.validated_data
+        search_phrase = validated_data.get('searchPhrase')
+        filters = validated_data.get('filters', {})
+        pagination = validated_data['pagination']
+
+        # 3. Bangun Queryset Dasar
+        queryset = Asset.objects.filter(workspace_id=workspace_id, is_trashed=False)
+
+        # 4. Terapkan Filter Pencarian (searchPhrase)
+        if search_phrase:
+            queryset = queryset.filter(name__icontains=search_phrase)
+
+        # 5. Terapkan Filter Dinamis
+        if filters:
+            # Filter Kategori
+            if 'categories' in filters and filters['categories'].get('in'):
+                queryset = queryset.filter(category_id__in=filters['categories']['in'])
+
+            # Filter Ekstensi
+            if 'extensions' in filters and filters['extensions'].get('in'):
+                queryset = queryset.filter(extension__in=[ext.lower() for ext in filters['extensions']['in']])
+
+            # Filter Tags
+            if 'tags' in filters and filters['tags'].get('in'):
+                tags_to_find = filters['tags']['in']
+                tag_query = Q()
+                for tag in tags_to_find:
+                    tag_query |= Q(tags__contains=[tag])
+                queryset = queryset.filter(tag_query)
+
+            # Filter Rentang Tanggal
+            if 'uploadedAt' in filters:
+                if filters['uploadedAt'].get('from'):
+                    queryset = queryset.filter(uploaded_at__gte=filters['uploadedAt']['from'])
+                if filters['uploadedAt'].get('to'):
+                    queryset = queryset.filter(uploaded_at__lte=filters['uploadedAt']['to'])
+
+            if 'lastModifiedAt' in filters:
+                if filters['lastModifiedAt'].get('from'):
+                    queryset = queryset.filter(last_modified_at__gte=filters['lastModifiedAt']['from'])
+                if filters['lastModifiedAt'].get('to'):
+                    queryset = queryset.filter(last_modified_at__lte=filters['lastModifiedAt']['to'])
+
+        # 6. Terapkan Pengurutan (Sorting)
+        sort_mapping = {
+            'name': 'name',
+            'size': 'size',
+            'uploadedAt': 'uploaded_at',
+            'lastModifiedAt': 'last_modified_at',
+        }
+        sort_by_field = sort_mapping.get(pagination['sortBy'], 'uploaded_at')
+        ordering_prefix = '' if pagination['order'] == 'asc' else '-'
+        queryset = queryset.order_by(f"{ordering_prefix}{sort_by_field}")
+
+        # 7. Terapkan Pagination Manual
+        limit = pagination['limit']
+        offset = pagination['offset']
+
+        total_count = queryset.count()
+        results = queryset[offset: offset + limit]
+
+        # 8. Serialisasi Hasil dengan AssetSerializer yang baru
+        # Penting: meneruskan context={'request': request}
+        asset_serializer = AssetSerializer(results, many=True, context={'request': request})
+
+        # 9. Kembalikan Respons dengan Format Baru
+        response_data = {
+            "items": asset_serializer.data,
+            "limit": limit,
+            "offset": offset,
+            "totalCount": total_count
+        }
+        return Response(response_data, status=status.HTTP_200_OK)
 
     def _apply_transformations(self, image, transformations):
         """Menerapkan transformasi ke objek gambar Pillow."""

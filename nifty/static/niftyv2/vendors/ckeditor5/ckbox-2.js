@@ -19558,7 +19558,7 @@
                             const e = wS;
                             return p.get(e(934))
                         }
-                    }), search: (d = a, {search: (e, t) => d[wS(846)]("/api/search", e, {workspaceId: t})}), workspaces: (u = a, {
+                    }), search: (d = a, {search: (e, t) => d[wS(846)]("/api/assets/search", e, {workspaceId: t})}), workspaces: (u = a, {
                         createWorkspace: e => {
                             const t = wS;
                             return u[t(846)](t(318), e)
