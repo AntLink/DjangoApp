@@ -60,8 +60,9 @@ INSTALLED_APPS = [
     'word',
     'apps.users',
     'apps.filemedia',
+    'apps.ckbox',
     'debug_toolbar',
-    'ckbox.apps.CkboxConfig'
+
 ]
 GLOBAL_THUMBNAIL_SIZES = {
     '100': 'webp',

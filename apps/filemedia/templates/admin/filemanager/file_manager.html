@@ -383,9 +383,9 @@
         };
     </script>
 
-    <script type="text/javascript" src="{% static 'niftyv2/vendors/ckeditor5/ckbox-2.js' %}"></script>
-    <script type="text/javascript" src="{% static 'niftyv2/vendors/ckeditor5/tokenmanager.js' %}"></script>
-    <script type="text/javascript" src="{% static 'niftyv2/vendors/ckeditor5/ckbox-init.js' %}"></script>
+    <script type="text/javascript" src="{% static 'ckbox/js/ckbox-2.js' %}"></script>
+    <script type="text/javascript" src="{% static 'ckbox/js/tokenmanager.js' %}"></script>
+    <script type="text/javascript" src="{% static 'ckbox/js/ckbox-init.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -434,10 +434,7 @@
 
         // konversi hex → hsl
         const hsl = hexToHSL(hexColor);
-        console.log('hsl baru', hsl);
         // isi ke dalam .header
-
-
         const styleTag = document.getElementById("ckbox-style");
         styleTag.textContent = `.ckbox {--ckbox-action-h: ${hsl.h};--ckbox-action-s: ${hsl.s}%;}`;
     </script>

@@ -200,11 +200,6 @@ class AuthViewSet(viewsets.ViewSet):
 
         return Response(permissions_data)
 
-    # ... (aksi lainnya) ...
-
-    # ... (aksi lainnya) ...
-
-
 class UserPermissionsView(APIView):
     """
     Mengembalikan peta perizinan untuk setiap kategori di sebuah workspace.

@@ -36,7 +36,7 @@ from apps.filemedia.api.views import (
 urlpatterns = i18n_patterns(
     path('', nifty_site.urls),
     path('doc/', include('django.contrib.admindocs.urls')),
-    path('', include('ckbox.urls')),
+    path('', include('apps.ckbox.urls')),
     # path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     # path('api/token/', CKBoxTokenObtainPairView.as_view(), name='token_obtain_pair'),
     # path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

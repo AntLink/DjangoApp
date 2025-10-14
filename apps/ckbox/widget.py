@@ -5,7 +5,7 @@ from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
 class CKEditorWidget(Widget):
-    template_name = 'admin/widgets/ckeditor_widget.html'
+    template_name = 'ckbox/widgets/ckeditor_widget.html'
 
     class Media:
         css = {
