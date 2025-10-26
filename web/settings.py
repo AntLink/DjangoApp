@@ -17,6 +17,9 @@ from nifty import VERSION
 
 from .ckeditor import *
 
+DATA_UPLOAD_MAX_MEMORY_SIZE = 209715200  # 200MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 209715200
+
 # JWT Settings
 JWT_SECRET_KEY = '89asd7klasdoas'
 APPEND_SLASH = False

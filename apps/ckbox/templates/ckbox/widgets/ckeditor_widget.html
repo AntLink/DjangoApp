@@ -60,6 +60,9 @@
         const config = {{ widget.config_json|safe }};
         const editorId = '{{ widget.attrs.id }}';
         const inputId = editorId + '-input';
+        const plugins = config.plugins.join(', ');
+
+        console.log(plugins);
 
         // Fungsi untuk memperbarui nilai input
         function updateInputValue(editor) {
@@ -470,7 +473,6 @@
         // Initialize editor with CKBox
         function initializeEditorWithCKBox() {
             console.log('Initializing CKEditor with CKBox...');
-
             const {
                 ClassicEditor, Alignment, Autoformat, AutoImage, AutoLink, Autosave, BalloonToolbar, BlockQuote, BlockToolbar, Bold,
                 Bookmark, CKBox, CKBoxImageEdit, CloudServices, Code, CodeBlock, Emoji, Essentials, FindAndReplace, FontBackgroundColor, FontColor, FontFamily,
@@ -481,10 +483,23 @@
                 SpecialCharactersEssentials, SpecialCharactersLatin, SpecialCharactersMathematical, SpecialCharactersText, Strikethrough, Subscript, Superscript, Table,
                 TableCaption, TableCellProperties, TableColumnResize, TableLayout, TableProperties, TableToolbar, TextTransformation, TodoList, Underline, Typing
             } = window.CKEDITOR;
-
             const {AIAssistant, OpenAITextAdapter, SourceEditingEnhanced, ExportPdf, ExportWord, ImportWord, PasteFromOfficeEnhanced} = window.CKEDITOR_PREMIUM_FEATURES;
-
             const editorConfig = {
+                plugins: [
+                    AIAssistant, OpenAITextAdapter, PasteFromOfficeEnhanced, SourceEditingEnhanced, Alignment, Autoformat,
+                    BlockToolbar, Bold, Bookmark, CKBox, CKBoxImageEdit, CloudServices, Code, CodeBlock, Emoji,
+                    Essentials, FindAndReplace, FontBackgroundColor, FontColor, FontFamily, FontSize, Fullscreen,
+                    GeneralHtmlSupport, Heading, Highlight, HorizontalLine, ImageBlock, ImageCaption, ImageEditing,
+                    ImageInline, ImageInsert, ImageInsertViaUrl, ImageResize, ImageStyle, ImageTextAlternative,
+                    ImageToolbar, ImageUpload, ImageUtils, Indent, IndentBlock, Italic, Link, LinkImage, List,
+                    ListProperties, MediaEmbed, Mention, PageBreak, Paragraph, ExportPdf, ExportWord, ImportWord,
+                    PasteFromMarkdownExperimental, PasteFromOffice, PictureEditing, PlainTableOutput, RemoveFormat,
+                    ShowBlocks, SourceEditing, SpecialCharacters, SpecialCharactersArrows, SpecialCharactersCurrency,
+                    SpecialCharactersEssentials, SpecialCharactersLatin, SpecialCharactersMathematical,
+                    SpecialCharactersText, Strikethrough, Subscript, Superscript, Table, TableCaption,
+                    TableCellProperties, TableColumnResize, TableLayout, TableProperties, TableToolbar,
+                    TextTransformation, TodoList, Underline, AutoLink, Autosave, BalloonToolbar, AutoImage, BlockQuote, Typing
+                ],
                 toolbar: {
                     items: [
                         'fullscreen', '|', 'undo', 'redo', '|', 'importWord', 'exportWord', 'exportPdf', 'SourceEditingEnhanced', '|', 'aiCommands', 'aiAssistant', '|', 'heading',
@@ -497,21 +512,6 @@
                     ],
                     shouldNotGroupWhenFull: false
                 },
-                plugins: [
-                    AIAssistant, OpenAITextAdapter, SourceEditingEnhanced, Alignment, Autoformat, AutoImage, AutoLink, Autosave, BalloonToolbar, BlockQuote,
-                    BlockToolbar, Bold, Bookmark, CKBox, CKBoxImageEdit, CloudServices, Code, CodeBlock, Emoji,
-                    Essentials, FindAndReplace, FontBackgroundColor, FontColor, FontFamily, FontSize, Fullscreen,
-                    GeneralHtmlSupport, Heading, Highlight, HorizontalLine, ImageBlock, ImageCaption, ImageEditing,
-                    ImageInline, ImageInsert, ImageInsertViaUrl, ImageResize, ImageStyle, ImageTextAlternative,
-                    ImageToolbar, ImageUpload, ImageUtils, Indent, IndentBlock, Italic, Link, LinkImage, List,
-                    ListProperties, MediaEmbed, Mention, PageBreak, Paragraph, ExportPdf, ExportWord, ImportWord,
-                    PasteFromMarkdownExperimental, PasteFromOffice, PictureEditing, PlainTableOutput, RemoveFormat,
-                    ShowBlocks, SourceEditing, SpecialCharacters, SpecialCharactersArrows, SpecialCharactersCurrency,
-                    SpecialCharactersEssentials, SpecialCharactersLatin, SpecialCharactersMathematical,
-                    SpecialCharactersText, Strikethrough, Subscript, Superscript, Table, TableCaption,
-                    TableCellProperties, TableColumnResize, TableLayout, TableProperties, TableToolbar,
-                    TextTransformation, TodoList, Underline, Typing
-                ],
                 balloonToolbar: ['aiAssistant', '|', 'bold', 'italic', '|', 'link', 'insertImage', '|', 'bulletedList', 'numberedList', 'emoji', 'specialCharacters', 'horizontalLine', 'pageBreak', 'link'],
                 blockToolbar: ['fontSize', 'fontColor', 'fontBackgroundColor', '|', 'bold', 'italic', '|', 'link', 'insertImage', 'insertTable', 'insertTableLayout', '|', 'bulletedList', 'numberedList', 'outdent', 'indent'],
                 emoji: {

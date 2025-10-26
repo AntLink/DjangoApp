@@ -3,6 +3,7 @@ from django import forms
 from django.forms.widgets import Widget
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
+from django.conf import settings
 
 class CKEditorWidget(Widget):
     template_name = 'ckbox/widgets/ckeditor_widget.html'
@@ -26,19 +27,19 @@ class CKEditorWidget(Widget):
     def __init__(self, attrs=None, config=None):
         # Konfigurasi default
         default_config = {
-            'baseUrl': 'http://127.0.0.1:8090',
-            'emoji_lang_url':'http://127.0.0.1:8090/static/niftyv2/vendors/ckeditor5/emoji-en.json',
-            'ai_api_key': 'c043b4797fd245cf9d104dddda39a383.P8hW0m9To6Lf1rIC',
-            # 'ai_api_url': 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
-            'ai_api_url': 'https://api.z.ai/api/paas/v4/chat/completions',
-            'ai_model': "glm-4.5-flash",
-            'ai_temperature': 0.8,
-            'ai_top_p': 1,
-            'cloud_services_api_url': 'http://127.0.0.1:8090/api/',
-            'placeholder': 'Type or paste your content here!',
-            'license_key': '-',
-            'tokenUrl': '/api/auth/login',
-            'refreshTokenUrl': '/api/auth/token-refresh',
+            'baseUrl': settings.CKEDITOR_BASE_URL,
+            'emoji_lang_url':settings.CKEDITOR_EMOJI_LANG,
+            'ai_api_key': settings.CKEDITOR_AI_API_KEY,
+            'ai_api_url': settings.CKEDITOR_AI_API_URL,
+            'ai_model': settings.CKEDITOR_AI_MODEL,
+            'ai_temperature': settings.CKEDITOR_AI_TEMPERATURE,
+            'ai_top_p': settings.CKEDITOR_AI_TOP_P,
+            'cloud_services_api_url': settings.CKEDITOR_API_URL,
+            'placeholder': settings.CKEDITOR_PLACEHOLDER,
+            'license_key': settings.CKEDITOR_LICENSE_KEY,
+            'tokenUrl': settings.CKEDITOR_TOKEN_URL,
+            'refreshTokenUrl': settings.CKEDITOR_REFRESH_TOKEN_URL,
+            'plugins': settings.CKEDITOR_PLUGIN,
         }
 
         # Gabungkan dengan konfigurasi kustom jika ada
